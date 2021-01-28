@@ -1,0 +1,17 @@
+.site_footer_wrap .site_footer {
+  clear: both;
+  margin: 50px 0 15px 0;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  font-family: "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei",
+    SimSun, sans-serif; }
+  .site_footer_wrap .site_footer a {
+    font-size: 12px;
+    margin: 0 12px;
+    color: #999; }
+    .site_footer_wrap .site_footer a:hover {
+      color: #333;
+      border-bottom: 1px dashed #ccc; }

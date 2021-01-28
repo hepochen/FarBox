@@ -1,0 +1,176 @@
+
+.bitcron_nav{
+	width: 100%;
+    text-align: right;
+	position: relative;
+	-webkit-font-smoothing: antialiased;
+
+	a{
+		text-decoration: none;
+	}
+
+}
+
+$font_size: 14px;
+$align: right;
+$link_color: #333;
+$hover_link_color: #d23600;
+$sub_bg_color: rgba(238,238,238, 0.85);
+$sub_border_color: #bbb;
+$sub_link_color: #333;
+$sub_active_link_color: #111;
+$sub_active_bg_color: #ddd;
+$menu_btn_color: #555;
+
+
+
+$tmp_sub_arrow_color: lighten($sub_link_color, 20%);
+
+
+.menu_btn{
+	.menu_btn_icon, .menu_btn_icon:before, .menu_btn_icon:after{
+		background: $menu_btn_color;
+	}
+}
+
+
+// 移动端
+.site_nav {
+	// float: right;
+
+
+	a {
+		// display: inline-block;
+
+		padding: 12px 20px;
+		color: $link_color;
+		font-size: $font_size;
+		border: 1px solid transparent;
+
+		&:hover {
+			//border-bottom-color: #fff;
+			color: $hover_link_color;
+		}
+		&.current {
+			&:before{
+				content: ">";
+				font-size: 9px;
+				margin-right: 2px;
+				opacity: 0.7;
+			}
+		}
+
+
+		span.sub-arrow{
+			background: rgba($sub_bg_color, 0.5); // mobile 模式下, 相当于切换的button 的背景色
+			border-color: lighten($link_color, 10%) transparent transparent transparent;
+		}
+	}
+
+	// 二级（以上）导航
+	ul{
+		padding: 5px 0;
+		background: rgba($sub_bg_color, 0.5);
+
+		li{
+			border-top: 1px solid rgba(0, 0, 0, 0.05);
+		}
+		a{
+			margin-left: 0;
+			margin-right: 0;
+			color: $sub_link_color;
+			font-size: $font_size - 1;
+			&:hover,
+			&:focus,
+			&:active,
+			&.highlighted {
+				background: rgba($sub_active_bg_color, 0.1);
+				color: $sub_active_link_color;
+			}
+		}
+	}
+
+}
+
+
+// desktop
+@media (min-width: 768px){
+
+	.site_nav{
+
+		@if $align == 'right' {
+			float: right;
+		}
+
+		@if $align == 'center' {
+			text-align: center;
+			display: table;
+			margin-right: auto;
+			margin-left: auto;
+
+			li{
+				display: inline;
+			}
+		}
+
+		a{
+			padding: 12px;
+
+			&.current {
+				color: darken($link_color, 5%);
+				// border-bottom-color: $link_color;
+				&:before{
+					display: none;
+				}
+			}
+
+			span.sub-arrow{
+				background: transparent;
+			}
+		}
+
+		> li > ul:before, > li > ul:after{
+		// 连接区域箭头边框
+			border-color: transparent transparent $sub_border_color transparent;
+		}
+		> li > ul:after {
+			// 连接区域箭头颜色
+			border-color: transparent transparent $sub_bg_color transparent;
+		}
+
+
+		// 上滚动，下滚动的背景色
+		span.scroll-up, span.scroll-down{
+			background: $sub_bg_color;
+		}
+
+		// 二级菜单以上的箭头的颜色
+		span.scroll-up-arrow{
+			border-color: transparent transparent $tmp_sub_arrow_color transparent;
+		}
+
+		span.scroll-down-arrow{
+			border-color: $tmp_sub_arrow_color transparent transparent transparent;
+		}
+
+		ul{
+			border: 1px solid  $sub_border_color;
+			background: $sub_bg_color;
+
+			span.sub-arrow{
+				// 二级菜单的箭头（三级菜单）颜色
+				border-color: transparent transparent transparent $tmp_sub_arrow_color;
+			}
+
+			a{
+				&:hover,
+				&:focus,
+				&:active,
+				&.highlighted {
+					background: $sub_active_bg_color;
+					color: $sub_active_link_color;
+				}
+			}
+		}
+	}
+}

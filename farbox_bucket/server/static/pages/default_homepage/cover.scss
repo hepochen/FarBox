@@ -1,0 +1,282 @@
+$light_color: #4aa3ff;
+$text_color: #333333;
+$white_color: #ffffff;
+
+.page_cover {
+	a {
+		text-decoration: none;
+		color: lighten($text_color, 10);
+		&:focus{outline:none;}
+	}
+
+
+	.aha {
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: cover;
+		text-align: center;
+		padding: 135px 0 150px 0;
+		-webkit-font-smoothing: antialiased;
+
+		.title{
+			margin-top: 0;
+			margin-bottom: 20px;
+			font-size: 42px;
+			line-height: 1.1;
+		}
+
+		.content {
+			letter-spacing: 1px;
+			-webkit-font-smoothing: subpixel-antialiased;
+		}
+
+		.buttons {
+			margin-top: 115px;
+			text-align: center;
+			-webkit-font-smoothing: antialiased;
+
+			a {
+				letter-spacing: 1px;
+				font-family: Arial;
+				font-size: 16px;
+				padding: 12px 25px;
+				border-radius: 3px;
+				margin: 0 18px;
+				display: inline-block;
+				margin-bottom: 20px !important;
+				line-height: 1.2;
+
+				border: 1px solid lighten($text_color, 65);
+				color: lighten($text_color, 10);
+
+				&:hover {
+					color: $light_color;
+				}
+			}
+		}
+
+
+		.with_bg{
+			color: $white_color;
+			.title{
+				text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.05);
+			}
+			.content{
+				text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.05);
+			}
+
+			.buttons{
+				a{
+					border: 1px solid rgba($white_color,0.35);
+					color: $white_color;
+					&:hover{
+						color: darken($white_color, 15)
+					}
+				}
+			}
+
+		}
+
+		.without_bg{
+			color: lighten($text_color, 30);
+
+			h1, h2{
+				color: $text_color;
+			}
+
+		}
+	}
+
+
+	.one_page{
+		padding: 0;
+		height: 100%;
+		width: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+
+		.aha_body{
+			position: relative;
+			top: 45%;
+			-webkit-transform: translateY(-50%);
+			-moz-transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+			-o-transform: translateY(-50%);
+			transform: translateY(-50%);
+		}
+	}
+}
+
+
+
+
+@media only screen and (max-width: 680px){
+	.page_cover{
+		.buttons{
+			a{
+				font-size: 14px;
+				padding: 10px 20px;
+				margin: 0 12px;
+			}
+		}
+	}
+}
+
+
+.page_h{
+	font-family: 'PT Sans', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+  	font-size: 14px;
+	-webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    background: $white_color;
+    color: lighten($text_color, 35);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+	max-width: 1280px;
+	margin: 0 auto;
+
+	&::selection {
+		background: $light_color;
+		color: $white_color;
+		text-shadow: none;
+	}
+
+	.v_center{
+		-ms-flex-align:center;
+		-webkit-align-items:center;
+		align-items:center;
+	}
+
+	a{
+		text-decoration: none;
+	}
+	img{
+		max-width: 100%;
+	}
+	.page_h_body{
+		padding: 100px 30px;
+
+
+		.rl_right{
+			padding: 0 15px;
+			.links{
+				text-align: right;
+			}
+		}
+
+		.title{
+			color: lighten($text_color, 10);
+			font-size: 54px;
+			line-height: 1.2;
+			font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-weight: 300;
+			margin: 0 0 30px 0;
+
+			small{
+				font-size: 13px;
+			}
+		}
+		.description{
+			font-size: 24px;
+			line-height: 42px;
+			font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+			font-weight: 300;
+			margin-top: 20px;
+			p{
+				margin: 0;
+			}
+		}
+
+		.links{
+			margin-top: 60px;
+			a{
+				display: inline-block;
+				margin-right: 30px;
+				margin-bottom: 15px;
+				color: lighten($text_color, 20);
+
+				&:last-child{
+					margin-right: 0;
+				}
+
+				&:hover{
+					color: $text_color;
+					border-bottom: 1px solid $text_color;
+				}
+			}
+
+			a.primary{
+				background: darken($light_color, 15);
+				padding: 10px 30px;
+				color: white;
+				&:hover{
+					background: darken($light_color, 25);
+					border: none;
+				}
+			}
+		}
+	}
+
+}
+
+
+.more_links.modal{
+	.more_links_body{
+		padding: 30px 0;
+	}
+	a{
+		color: darken($text_color, 10);
+		padding: 10px 0;
+		margin: 0 15px;
+		display: inline-block;
+		&:hover{
+			color: darken($light_color, 20);;
+			text-decoration: underline;
+		}
+	}
+}
+
+// md
+@media screen and (max-width: 64em){
+	.page_h .page_h_body{
+		text-align: center;
+
+		.rl_right{
+			.links{
+				text-align: center;
+			}
+		}
+
+		.title{
+			font-size: 48px;
+		}
+		.description {
+			font-size: 26px;
+		}
+	}
+
+
+}
+
+// sm
+@media screen and (max-width: 35.5em){
+	.page_h .page_h_body{
+		.title{
+			font-size: 36px;
+		}
+		.description{
+			font-size: 24px;
+		}
+
+	}
+
+	.page_cover{
+		.aha{
+			.content{
+				line-height: 1.8;
+			}
+		}
+	}
+}

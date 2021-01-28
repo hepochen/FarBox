@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Markmap Demo</title>
+    <link rel="stylesheet" href="view.mindmap.css">
+    <link rel="stylesheet" href="md.css">
+    <script src="d3.min.js"></script>
+    <script src="d3-flextree.js"></script>
+    <script src="d3-tip.js"></script>
+    <script src="view.mindmap.js"></script>
+</head>
+<body>
+
+<div class="mindmap_container">
+    <svg id="mindmap"></svg>
+</div>
+
+
+<script>
+    var map_data = {
+    "is_root": true,
+    "children": [
+        {
+            "text": "",
+            "html": "",
+            "name": "\u56fd\u9645\u6cd5\u4e0a\u7684\u7ee7\u627f",
+            "background": "#00ff00",
+            "color": "#ffffff",
+            "children": [
+                {
+                    "text": "something else here\n\n\n\nthis is new content\n\ntest list split",
+                    "html": "<p class=\"md_block  md_has_block_below md_has_block_below_ul\">\n   <p> hello world</p><p> hello world</p> <span class=\"md_line md_line_start md_line_end\">something else here</span>\n</p>\n\n\n\n</span></li>\n\n</ul>\n</span></li>\n</ul>\n\n<p class=\"md_block\">\n    <span class=\"md_line md_line_start md_line_end\">&nbsp;&nbsp;&nbsp;&nbsp;</span>\n</p>\n\n\n<p class=\"md_block  md_has_block_below md_has_block_below_ul\">\n    <span class=\"md_line md_line_start\">this is new content<br /></span>\n    <span class=\"md_line md_line_end\">test list split</span>\n</p>\n\n\n\n</span></li>\n</ul>",
+                    "name": "\u7ee7\u627f\u7684\u57fa\u672c\u7279\u5f81",
+                    "children": [
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u4e3b\u4f53\u53ea\u80fd\u662f\u56fd\u9645\u6cd5\u4e3b\u4f53",
+                            "background": "#ff0000"
+                        },
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u8fd9\u662f\u7b2c\u4e8c\u6761",
+                            "children": [
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "\u8fd9\u662fsubitem"
+                                },
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "subitem 3",
+                                    "children": [
+                                        {
+                                            "text": "",
+                                            "html": "",
+                                            "name": "sub sub item"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "subitem 3"
+                                }
+                            ]
+                        },
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u6d4b\u8bd5\u7684"
+                        },
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "item",
+                            "children": [
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "sub item for new"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "text": "",
+                    "html": "",
+                    "name": "\u7ee7\u627f\u7684\u7c7b\u578b",
+                    "children": [
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u6761\u7ea6\u7684\u7ee7\u627f",
+                            "children": [
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "\u5e76\u5165"
+                                },
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "\u5408\u5e76"
+                                }
+                            ]
+                        },
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u8d22\u4ea7\u7684\u7ee7\u627f"
+                        },
+                        {
+                            "text": "",
+                            "html": "",
+                            "name": "\u503a\u52a1\u7684\u7ee7\u627f",
+                            "children": [
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "\u5206\u7c7b"
+                                },
+                                {
+                                    "text": "",
+                                    "html": "",
+                                    "name": "\u65b0\u72ec\u7acb\u56fd\u5bb6\u8bfe\u4e0d\u7ee7\u627f\u503a\u52a1"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "text": "",
+            "html": "",
+            "name": "\u5176\u5b83\u7c7b\u578b",
+            "children": [
+                {
+                    "text": "\u6211\u662f\u4e00\u4e9b\u5185\u5bb9\uff0c\u4ee5\u53ca\u7136\u540e\n\n\u8fd9\u662f\u7b2c\u4e8c\u884c",
+                    "html": "<p class=\"md_block\">\n    <span class=\"md_line md_line_start\">\u6211\u662f\u4e00\u4e9b<strong>\u5185\u5bb9</strong>\uff0c\u4ee5\u53ca\u7136\u540e<br /></span>\n    <span class=\"md_line md_line_end\">\u8fd9\u662f\u7b2c\u4e8c\u884c</span>\n</p>",
+                    "name": "\u8fd9\u662f\u4e00\u70b9\u8865\u5145"
+                },
+                {
+                    "text": "\u4f60\u597d\uff0c\u4e16\u754c",
+                    "html": "<p class=\"md_block\">\n    <span class=\"md_line md_line_start md_line_end\">\u4f60\u597d\uff0c\u4e16\u754c</span>\n</p>\n\n<span class=\"md_repeated_n md_repeated_n_1\"></span>",
+                    "name": "\u8fd9\u662f\u540e\u7eed\u7684\u8865\u5145"
+                },
+                {
+                    "text": "from settings import *\nprint(&quot;hello world&quot;)",
+                    "html": "<div class=\"codehilite code_lang_python  highlight\"><pre><span></span><span class=\"kn\">from</span> <span class=\"nn\">settings</span> <span class=\"kn\">import</span> <span class=\"o\">*</span>\n<span class=\"k\">print</span><span class=\"p\">(</span><span class=\"s2\">&quot;hello world&quot;</span><span class=\"p\">)</span>\n</pre></div>\n\n<!--block_code_end-->",
+                    "name": "\u8fd9\u91cc\u662f\u4ee3\u7801\u7684\u9ad8\u4eae"
+                }
+            ]
+        }
+    ],
+    "name": "MindMap"
+};
+</script>
+
+<script src="run.js"></script>
+
+
+</body>

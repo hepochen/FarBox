@@ -1,0 +1,16 @@
+extends base
+
+block content
+	group_type = 'tags' if request.path.strip('/')=='tags' else '-date:year'
+	entries = d.get_data(type='post',limit=50, sort='desc', status='public').group(group_type)
+	for sub_title, posts in entries: .archive
+		h1= sub_title
+		ul: for post in posts: li
+			a(href=post.url, title=post.title)= post.title
+			span.date= post.date.format("%Y-%m-%d")
+
+	if paginator.has_pre or paginator.has_next: .pager
+		if paginator.has_pre
+			a.round.pre(href=paginator.pre_url) ← Newer
+		if paginator.has_next
+			a.round.next(href=paginator.next_url) Older →

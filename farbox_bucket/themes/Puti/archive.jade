@@ -1,0 +1,15 @@
+extends base.jade
+block content
+	.autopagerize_page_element:.content
+		ul.list_with_title
+			entries = d.get_data(type='post',limit=300, sort='desc').group('-date:year')
+			for year, posts in entries
+				div.listing_title= year
+				ul.listing
+					for post in posts
+						.listing_item
+							.listing_post
+								a(href=post.url, title=post.title)= post.title
+								div.post_time
+									span.date= post.date("%m-%d")
+		+h.paginator(pre_label=_('Prev'), next_label=_('Next'))

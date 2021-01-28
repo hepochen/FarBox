@@ -1,0 +1,35 @@
+html
+	head
+		+h.headers
+		block title
+			title= site.title
+		+h.load('/template/css/reset.scss')
+		+h.load('font', 'pure', 'markdown')
+		+h.load('/template/css/style.scss')
+		+h.load("/template/css/fonts.css")
+	body.page-home
+		#header.mod-header
+			h1.site-title:a(href=h.url('/?status=loaded'))= site.title
+			nav_items = [('Home', '/')]
+			for category in posts.categories
+				+nav_items.append([category.title, category.url])
+			+nav_items.append(['Archive', '/archive'])
+			.mod-nav
+				+h.get_nav(nav_items, toggle_menu=True)
+				
+		block banner
+
+		#main.main
+			.pure-g
+				.pure-u-23-24.pure-u-md-17-24.layout
+					block content
+		footer#footer.mod-footer
+			.contact= site.socials
+			.copyright
+				span Powered by
+				a(href="https://www.farBox.com", target="_blank") FarBox  
+				span Theme by
+				a(href="https://www.sollrei.me") Sollrei
+		+h.load('jquery')
+		+h.load('/template/js/particles.js')
+		+h.load('/template/js/index.js')

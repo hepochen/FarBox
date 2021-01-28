@@ -1,0 +1,27 @@
+.tabs_set{margin-top: 50px;}
+.tabs_set a {
+  text-decoration: none; }
+  .tabs_set .tab_item {
+    display: none; }
+    .tabs_set .tab_item:first-child {
+      display: block; }
+      .tabs_set ul.horizontal {
+        list-style: none;
+        text-align: center;
+        margin-top: 0;
+        padding: 0 0 0 0;
+        border-bottom: 1px solid #eee;
+        line-height: 25px; }
+        .tabs_set ul.horizontal li {
+          display: inline;
+          margin: 0 10px; }
+          .tabs_set ul.horizontal li a {
+            font-size: 14px;
+            padding: 5px 10px;
+            color: #666;
+            bottom: 1px;
+            position: relative;
+            border: 1px solid #eee;
+          }
+            .tabs_set ul.horizontal li.active a, .tabs_set ul.horizontal li a:hover {
+              color: #4296DB; border-bottom: 2px solid white;}

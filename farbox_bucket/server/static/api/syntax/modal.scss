@@ -1,0 +1,86 @@
+.modal_wrap{
+	width: 70%;
+}
+.modal_container{
+	max-height: 550px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	color: #333;
+	font-size: 14px;
+}
+
+
+.modal_wrap{
+	::-webkit-scrollbar {
+        width:4px;
+        margin:0 1px;
+        background: #fdfdfd;
+    }
+    ::-webkit-scrollbar:horizontal{
+        height: 4px;
+    }
+
+    ::-webkit-scrollbar-button{
+        height: 0;
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 2px;
+    }
+    ::-webkit-scrollbar-track-piece {
+        background-color: #fdfdfd;
+        border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb {
+        width:8px;
+        margin: 0 1px;
+        border-radius: 2px;
+        background: #c4c4c4;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #909090;
+    }
+}
+
+
+.modal{
+	font-size: 14px;
+
+
+
+	form{
+		color: #555;
+		h2{
+			color: #111;
+			margin-top: 1em !important;
+		}
+
+		.fields .field {
+    		margin: 0.8em auto 1.2em auto !important;
+		}
+	}
+}
+
+
+@media screen and (min-width: 48em){
+	.modal{
+		.pure-u-md-1-3, .pure-u-md-8-24 {
+			width: 50%;
+		}
+		.pure-u-lg-1-3, .pure-u-lg-8-24{
+			width: 50%;
+		}
+	}
+}
+
+@media screen and (max-width: 48em){
+	.modal{
+		width: auto !important;
+	}
+	form .field {
+    	margin: 0.5em auto !important;
+		padding-right: 0 !important;
+	}
+
+}
+

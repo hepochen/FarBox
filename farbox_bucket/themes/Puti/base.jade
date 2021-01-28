@@ -1,0 +1,38 @@
+html
+
+	head
+		+h.headers
+		block title
+			title= posts.post.title or site.title
+		+h.load('font')
+		+h.load('/template/css/markdown.scss')
+		+h.load('/template/css/animate.3.5.2.min.css')
+		+h.load('/template/css/style.scss')
+	body
+		.main.animated
+			.header.animated.fadeInDown
+				.site_title_container
+					.site_title
+                        if site.title.length > 6
+                            a_class = 'long_long'
+                        elif site.title.length > 4
+                            a_class = 'long'
+                        else
+                            a_class = ''
+                        h1
+                            a(class=a_class, href=h.url('/'))= site.title
+
+					.description
+						p.sub_title= site.sub_title
+						+h.nav(['首页', '/'], ['订阅', '/feed'])
+			block content
+
+		.footer
+
+			.powered_by
+				a(href="https://www.caicai.me") Designed by CaiCai,
+				a(href="https://www.farBox.com", target="_blank") Proudly published with FarBox&#65281;
+
+			.footer_slogan
+				span= site.configs.footer_slogan or '重拾写作的乐趣'
+

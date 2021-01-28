@@ -1,0 +1,237 @@
+body {
+  font-size: 14px;
+  font-family: 'Georgia', "Hiragino Sans GB", serif;
+  width: 100%;
+  overflow: hidden;
+  background: #fbfbfb; }
+
+  #main {
+    height: 100%; }
+    #main #show_controls_button {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 10000;
+      display: none; }
+      #main #show_controls_button a {
+        text-decoration: none;
+        padding: 2px 10px;
+        background: #d42128;
+        color: #fff; }
+        #main #show_controls_button a i {
+          line-height: 15px; }
+    #main #editor_save_button {
+      position: fixed;
+      top: 6px;
+      right: 2px;
+      z-index: 10000; }
+      #main #editor_save_button a {
+        text-decoration: none;
+        padding: 5px 20px;
+        background: #b4b4b4;
+        border-radius: 2px;
+        color: #fff; }
+        #main #editor_save_button a:hover {
+          background: #d42128; }
+      #main #editor_save_button .precess {
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        background: #d42128;
+        height: 2px; }
+
+#editor #title {
+  position: absolute;
+  top: 10px;
+  height: 48px;
+  padding: 0 0 5px 0;
+  z-index: 99;
+  background: #fbfbfb;
+  width: 100%;
+  font-size: 30px;
+  border: none;
+  border-bottom: 1px dotted #d9d9d9;
+  resize: none;
+  outline: none;
+  box-shadow: none; }
+  #editor textarea {
+    background: #fbfbfb;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-top: 90px;
+    z-index: 9;
+    height: 100%;
+    width: 780px;
+    font-family: "Hiragino Sans GB", "Microsoft Yahei", Verdana, Arial, sans-serif;
+    font-size: 13pt;
+    line-height: 1.8em;
+    resize: none;
+    outline: none;
+    display: block;
+    border: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    box-sizing: border-box; }
+
+#controls {
+  position: fixed;
+  z-index: 999;
+  width: 250px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #eee;
+  border-right: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); }
+  #controls .cmds {
+    position: relative;
+    height: 40px;
+    border-bottom: 1px solid #c8c8c8; }
+    #controls .cmds a {
+      text-decoration: none;
+      color: #333;
+      width: 50%;
+      float: left;
+      padding: 0;
+      line-height: 40px;
+      text-align: center;
+      font-size: 12px; }
+      #controls .cmds a i {
+        padding-right: 5px; }
+        #controls .cmds a:hover {
+          color: #ffffff;
+          background: #555; }
+    #controls .cmds #hide_controls {
+      width: 90px;
+      border-right: 1px solid #c8c8c8; }
+      #controls .cmds #create_post {
+        width: 159px; }
+  #controls #posts {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+    #controls #posts li a {
+      display: block;
+      position: relative;
+      text-decoration: none;
+      color: #333;
+      padding: 15px 15px;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #e5e5e5; }
+      #controls #posts li a .path {
+        color: #aaaaaa;
+        font-size: 60%;
+        font-weight: normal;
+        padding-left: 3px;
+        font-family: arial, helvetica, sans-serif; }
+        #controls #posts li a .remove {
+          position: absolute;
+          text-align: center;
+          width: 14px;
+          height: 14px;
+          font-size: 12px;
+          color: #999;
+          top: 5px;
+          right: 8px;
+          display: none; }
+          #controls #posts li a.current .remove {
+            display: inherit; }
+    @media screen {
+      #controls #posts a:hover, #controls #posts .current {
+        background: #fafafa;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;   }
+        #controls #posts a:hover .remove {
+          display: inherit;   }
+      #controls #posts li .remove:hover {
+        background: #db635d;
+        color: #fff;   }
+}
+
+#new_window {
+  z-index: 9999;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+  #new_window #window_bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    background: rgba(0, 0, 0, 0.6); }
+    #new_window .main {
+      z-index: 999;
+      width: 450px;
+      margin: 0 auto;
+      position: relative;
+      top: 25%; }
+      #new_window .main #new_window_body {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #fff;
+        padding: 50px 50px 30px 50px;
+        height: 165px;
+        width: 350px; }
+        #new_window .main #new_window_body .close {
+          position: absolute;
+          right: 8px;
+          top: 5px; }
+          #new_window .main #new_window_body .close a {
+            color: #666;
+            font-size: 12px;
+            text-decoration: none; }
+            #new_window .main #new_window_body .close a i {
+              margin-right: 1px; }
+              #new_window .main #new_window_body .close a:hover {
+                color: indianred; }
+        #new_window .main #new_window_body label {
+          font-size: 14px;
+          margin-right: 3px; }
+          #new_window .main #new_window_body input {
+            padding: 5px 10px;
+            color: #508fff;
+            font-size: 14px;
+            width: 260px;
+            letter-spacing: 1px; }
+            #new_window .main #new_window_body .button {
+              margin: 35px auto;
+              text-align: center; }
+              #new_window .main #new_window_body .button a {
+                letter-spacing: 1px;
+                font-family: Arial;
+                font-size: 16px;
+                text-decoration: none;
+                color: #fff;
+                padding: 7px 30px;
+                background: #e7645c;
+                border: 1px solid #ddd;
+                border-radius: 3px; }
+                #new_window .main #new_window_body .button a:hover {
+                  background: #e03a30; }
+        #new_window .main #new_window_body p.new_window_note {
+          font-size: 12px;
+          color: #999;
+          text-align: center; }
+          #new_window .main #new_window_body p.new_window_note a {
+            text-decoration: underline;
+            color: #555; }
+            #new_window .main #new_window_body p.new_window_note a:hover {
+              color: indianred; }
+
+@media (max-width: 450px) {
+  #new_window .main {
+    width: 100%;   }
+    #new_window .main #new_window_body {
+      padding: 20px 3% 30px 3%;
+      width: 94%;   }
+}

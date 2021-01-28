@@ -1,0 +1,18 @@
+extends base.jade
+
+block content
+	.autopagerize_page_element: .content: .post_page
+		.post.animated.fadeInDown
+			.post_title.post_detail_title
+				h2: a= post.title
+				span.date= post.date("%Y.%m.%d %H:%M")
+
+			.post_content.markdown= post.content
+
+			.post_footer:.meta: .info
+				if post.tags: span.field.tags
+					i.fa.fa-flask
+					for tag in post.tags
+						a.tag(href=posts.get_tag_url(tag))= tag
+		+post.comments_as_html()
+	+h.back_to_top()

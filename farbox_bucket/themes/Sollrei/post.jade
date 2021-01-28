@@ -1,0 +1,25 @@
+extends base.jade
+block title
+	title= post.title
+block content
+	.detail-page
+		.mod-article.mod-post
+			.post-meta
+				time.post-date(datetime=post.date('%B %d, %Y'), pubdate="pubdate")
+					span.post-m= post.date('%b')
+					span.post-d= post.date('%d')
+					span.post-y= post.date('%Y')
+			.post-main
+				h2.article-title= post.title
+				.post-metas
+					if post.tags: span
+						i.fa.fa-tags
+						for tag in post.tags
+							a.tag(href="/tag/{{tag}}")  {{tag}}
+					span.count
+						i.fa.fa-book
+						span= post.visits or 0
+				.entry.markdown= post.content
+
+
+	+post.comments_as_html()

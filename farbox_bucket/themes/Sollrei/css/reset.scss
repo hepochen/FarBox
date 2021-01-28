@@ -1,0 +1,240 @@
+//*********************************************************************//
+//                              settings                               //
+//*********************************************************************//
+
+// value settings
+$font_color: #191919;
+$bg1: #fff;
+$primary: #58b798;
+$theme: #f0f4f7;
+
+// related colors
+$font_color2: lighten($font_color, 45%);
+$bg2: darken($bg1, 3.6%);
+$line_color: lighten($font_color, 80%);
+$line_color2: lighten($font_color, 82%);
+
+// fixed colors
+$shadow_color: rgba(110, 110, 110, 0.1);
+$easing1: cubic-bezier(0.15, 0.95, 0.41, 0.95);
+
+// responsive break points
+$phone_landscape-min: 534px;
+$phone_landscape-max: 767px;
+
+.border_container {
+    box-shadow: 0 1px 5px $shadow_color;
+    border: 1px solid #eee;
+    border-radius: 0.2em;
+}
+
+// functions
+@mixin box-sizing($value) {
+    box-sizing: $value;
+    -webkit-box-sizing: $value;
+}
+
+@mixin transform($value) {
+    transform: $value;
+    -webkit-transform: $value;
+}
+
+@mixin aColor($value) {
+    color: $value;
+    &:active {
+        color: $value;
+    }
+    &:visited {
+        color: $value;
+    }
+    &:hover {
+        color: lighten($value, 5%);
+        border-bottom: 1px solid lighten($value, 5%);
+    }
+}
+
+
+* {
+    @include box-sizing (content-box);
+}
+
+html, body {
+    height: 100%;
+    background: $theme;
+}
+
+body {
+    line-height: 1.6;
+    font-family: "Roboto", "Xin Gothic", "Hiragino Sans GB", "Droid Sans Fallback", "Microsoft YaHei", sans-serif;
+    font-size: 1em;
+    color: $font_color;
+    overflow-x: hidden;
+}
+
+::selection {
+    background: $primary;
+    color: #fff;
+}
+
+::-moz-selection {
+    background: $primary;
+    color: #fff;
+}
+
+.layout {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    margin: 0;
+    padding: 0
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block
+}
+
+input, select, textarea {
+    font-size: 100%
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+th {
+    text-align: inherit
+}
+
+fieldset, img {
+    border: 0
+}
+
+iframe {
+    display: block
+}
+
+abbr, acronym {
+    border: 0;
+    font-variant: normal
+}
+
+del {
+    text-decoration: line-through
+}
+
+address, caption, cite, code, dfn, em, th, var {
+    font-style: normal;
+    font-weight: 500
+}
+
+ol, ul {
+    list-style: none
+}
+
+caption, th {
+    text-align: left
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: 500
+}
+
+q:before, q:after {
+    content: ''
+}
+
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline
+}
+
+sup {
+    top: -.5em
+}
+
+sub {
+    bottom: -.25em
+}
+
+a {
+    color: #333;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #58b798;
+    text-decoration: none;
+}
+
+code, kbd, pre, samp {
+    font-family: monospace, serif;
+    font-size: 14px;
+}
+
+pre {
+    margin-bottom: 10px;
+}
+
+.clearfix:after, .layout:after, .clf:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: '.';
+    clear: both;
+    height: 0
+}
+
+.clearfix, .layout, .clf {
+    zoom: 1
+}
+
+.clear {
+    font-size: 0;
+    line-height: 0;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+    overflow: hidden
+}
+
+.fn-hide {
+    display: none
+}
+
+.fl, .fr {
+    display: inline
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.fn-rmb {
+    font-family: arial, sans-serif;
+    font-style: normal;
+    padding-right: 4px
+}
+
+.fn-webkit-adjust {
+    -webkit-text-size-adjust: none
+}
+
+.hidden {
+    display: none;
+}
+
+#on_loading {
+    height: 3em;
+    line-height: 3em;
+    text-align: center;
+}

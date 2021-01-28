@@ -1,0 +1,18 @@
+html
+	head
+		+h.headers
+
+		block title
+			title= request.args.s or site.title
+		+h.load('markdown')
+		+h.load('pure')
+		+h.load('/template/css/style.scss')
+	body
+		#header
+		    nav_data = (['首页', '/'], ['归档', '/archive'],['订阅', '/feed'])
+			+h.get_nav(nav_data, toggle_menu=True)
+
+		#layout
+			block content
+
+		#footer= site.footer

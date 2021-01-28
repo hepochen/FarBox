@@ -1,0 +1,232 @@
+form, .form {
+  width: 98%;
+  margin: 0 auto; }
+  form img, .form img {
+    max-width: 100%; }
+    form label, .form label {
+      max-height: 2.1em;
+      overflow: hidden;
+      word-break: break-all; }
+      form hr, .form hr {
+        height: 1px;
+        border: none;
+        border-top: 1px dashed #ddd;
+        margin: 20px 0; }
+        form input[type=text], form input[type=email], form input[type=password],
+        form select, .form input[type=text], .form input[type=email],
+        .form input[type=password], .form select {
+          font-size: 1.1em; }
+          form select, .form select {
+            font-size: 1em;
+            color: #333;
+            height: 2.5em; }
+            form textarea, .form textarea {
+              width: 100%;
+              height: 80px;
+              line-height: 1.3em;
+              color: #333; }
+              form fieldset, .form fieldset {
+                margin-top: 20px; }
+                form fieldset legend, .form fieldset legend {
+                  border-bottom-style: dashed;
+                  padding: 0;
+                  margin-bottom: 0; }
+  form input[type=text], form input[type=password], form textarea, form select,
+  .form input[type=text], .form input[type=password], .form textarea, .form select {
+    padding: 0.5em 0.6em;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 3px #ddd;
+    border-radius: 4px;
+    vertical-align: middle;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box; }
+    form button, form input, form optgroup, form select, form textarea, .form button,
+    .form input, .form optgroup, .form select, .form textarea {
+      color: inherit;
+      font: inherit;
+      margin: 0; }
+      form input, form textarea, form keygen, form select, form button, .form input,
+      .form textarea, .form keygen, .form select, .form button {
+        text-rendering: auto;
+        color: initial;
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: start;
+        margin: 0em 0em 0em 0em;
+        font: 11px BlinkMacSystemFont; }
+        form select, .form select {
+          font-size: 1em;
+          color: #333;
+          height: 2.5em;
+          display: block;
+          margin: 0.25em 0;
+          border: 1px solid #ccc;
+          background-color: #fff; }
+          form input:focus, form select:focus, form textarea:focus, .form input:focus,
+          .form select:focus, .form textarea:focus {
+            outline: 0;
+            border-color: #129FEA; }
+            form .action_button, form .button, .form .action_button, .form .button {
+              text-decoration: none;
+              margin: 0 10px;
+              padding: 3px 8px;
+              font-size: 12px;
+              line-height: 1.3;
+              letter-spacing: 1px;
+              border-radius: 3px;
+              background: #4aa1ff;
+              color: white;
+              text-align: center; }
+              form .action_button:hover, form .button:hover, .form .action_button:hover,
+              .form .button:hover {
+                background: #e7645c;
+                color: white;
+                text-decoration: none; }
+                form .action_button:disabled, form .button:disabled, .form .action_button:disabled,
+                .form .button:disabled {
+                  background: #ccc; }
+  form .field, .form .field {
+    margin: 0.5em auto;
+    position: relative;
+    width: 100%; }
+    form .field .caption, .form .field .caption {
+      font-size: 1.2em;
+      margin-bottom: -28px;
+      color: #3895f9; }
+      form .field .caption small, .form .field .caption small {
+        font-size: 0.75em; }
+    form .field label, form .field select, form .field input, .form .field label,
+    .form .field select, .form .field input {
+      width: 100%; }
+      form .field label.with_tip, .form .field label.with_tip {
+        display: inline;
+        width: auto; }
+        form .field .tip, form .field .tip_link a, .form .field .tip,
+        .form .field .tip_link a {
+          margin-left: 5px;
+          width: 16px;
+          height: 16px;
+          line-height: 16px;
+          text-align: center;
+          font-size: 12px;
+          border-radius: 10px;
+          border: 1px solid #e0e0e0;
+          color: #666;
+          cursor: pointer; }
+          form .field .tip_link a, .form .field .tip_link a {
+            text-decoration: none;
+            display: inline-block; }
+            form .field .icon, .form .field .icon {
+              height: 3.5em;
+              line-height: 4.5em; }
+              form .field .icon i, .form .field .icon i {
+                font-size: 2.2em;
+                color: #454545;
+                margin-right: 10px; }
+  form .image_block, .form .image_block {
+    position: relative;
+    display: block !important;
+    margin: 10px auto 5px auto; }
+    form .image_block .upload_image_action, .form .image_block .upload_image_action {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      margin-right: 0;
+      color: white;
+      width: 54px; }
+      form .image_block .upload_image_action:hover,
+      .form .image_block .upload_image_action:hover {
+        background: indianred;
+        color: white; }
+    form .image_block .clear_image_filepath_action,
+    .form .image_block .clear_image_filepath_action {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      width: 42px; }
+      form .image_block .clear_image_filepath_action:hover,
+      .form .image_block .clear_image_filepath_action:hover {
+        background: indianred;
+        color: white; }
+    form .image_block .webuploader-element-invisible,
+    .form .image_block .webuploader-element-invisible {
+      opacity: 0.01;
+      display: block !important; }
+      form .image_block .percent_bar, .form .image_block .percent_bar {
+        height: 3px;
+        width: 100%;
+        background: #ddd; }
+        form .image_block .percent_bar .percent, .form .image_block .percent_bar .percent {
+          display: block !important;
+          height: 100%;
+          width: 2%;
+          background: green; }
+  form .color_input, .form .color_input {
+    margin-left: 30px !important;
+    height: auto !important;
+    width: 80px !important; }
+    form .minicolors-slider, .form .minicolors-slider {
+      width: 20px !important; }
+      form .container_for_type_hidden, .form .container_for_type_hidden {
+        display: none; }
+
+.dom_list {
+  border: 1px dashed #eaeaea;
+  padding: 10px;
+  margin: 20px 0;
+  overflow-x: hidden; }
+  .dom_list h3 {
+    margin-top: 0; }
+    .dom_list .dom_list_actions {
+      text-align: right;
+      margin-top: -3.5em;
+      margin-bottom: 1em; }
+      .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element {
+        display: block; }
+        .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element label,
+        .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element input,
+        .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element select,
+        .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element textarea {
+          display: block;
+          width: 100% !important; }
+  .dom_list .dom_list_item {
+    width: auto !important;
+    margin: 10px 0;
+    position: relative;
+    padding-left: 5px; }
+    .dom_list .dom_list_item:nth-child(3n+1) {
+      border-left: 1px solid #EFD547; }
+      .dom_list .dom_list_item:nth-child(3n+2) {
+        border-left: 1px solid #A5C675; }
+        .dom_list .dom_list_item:nth-child(3n+0) {
+          border-left: 1px solid #f8a6a8; }
+          .dom_list .dom_list_item .dom_list_item_element {
+            display: inline; }
+            .dom_list .dom_list_item .dom_list_item_element div,
+            .dom_list .dom_list_item .dom_list_item_element label,
+            .dom_list .dom_list_item .dom_list_item_element input {
+              display: inline; }
+              .dom_list .dom_list_item .dom_list_item_element label {
+                padding-right: 10px; }
+    .dom_list .dom_list_item .dom_list_delete_action {
+      position: absolute;
+      height: 18px;
+      right: -10px;
+      top: 5px;
+      overflow: hidden;
+      z-index: 9;
+      padding: 1px 3px 1px 4px;
+      width: 20px;
+      background: #ddd; }
+      .dom_list .dom_list_item .dom_list_delete_action:hover {
+        background: #4296DB; }
+  .dom_list .dom_list_only_one .dom_list_item {
+    border-left: none; }

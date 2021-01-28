@@ -1,0 +1,33 @@
+@font-face {
+    font-family: 'Josefin Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fb_static/gfonts/Josefin+Sans_400_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: local('☺'),
+        url(/fb_static/gfonts/Josefin+Sans_400_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(/fb_static/gfonts/Josefin+Sans_400_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/josefinsans/v11/xgzbb53t8j-Mo-vYa23n5nhCUOGz7vYGh680lGh-uXM.woff */
+        url(/fb_static/gfonts/Josefin+Sans_400_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/josefinsans/v11/xgzbb53t8j-Mo-vYa23n5pS3E-kSBmtLoNJPDtbj2Pk.ttf */
+        url(/fb_static/gfonts/Josefin+Sans_400_normal.svg#Josefin+Sans_400_normal) format('svg'); /* http://fonts.gstatic.com/l/font?kit=xgzbb53t8j-Mo-vYa23n5llIn5tFQcqMuf-jhyJP0ps&skey=22ddf758bcf1d5cd&v=v11#JosefinSans */
+}
+@font-face {
+    font-family: 'Julius Sans One';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fb_static/gfonts/Julius+Sans+One_400_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: local('☺'),
+        url(/fb_static/gfonts/Julius+Sans+One_400_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(/fb_static/gfonts/Julius+Sans+One_400_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/juliussansone/v5/iU65JP9acQHPDLkdalCF7q3fkYX5z1QtDUdIWoaaD_k.woff */
+        url(/fb_static/gfonts/Julius+Sans+One_400_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/juliussansone/v5/iU65JP9acQHPDLkdalCF7kjUsJ8ndY93Y9G4efelJ7g.ttf */
+        url(/fb_static/gfonts/Julius+Sans+One_400_normal.svg#Julius+Sans+One_400_normal) format('svg'); /* http://fonts.gstatic.com/l/font?kit=iU65JP9acQHPDLkdalCF7uUK-EeIygXe5LAOHXDZOMs&skey=11a1a6d9a3450da&v=v5#JuliusSansOne */
+}
+@font-face {
+    font-family: 'Lato';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/fb_static/gfonts/Lato_400_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: local('☺'),
+        url(/fb_static/gfonts/Lato_400_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(/fb_static/gfonts/Lato_400_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/lato/v13/9k-RPmcnxYEPm8CNFsH2gg.woff */
+        url(/fb_static/gfonts/Lato_400_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/lato/v13/1EqTbJWOZQBfhZ0e3RL9uvesZW2xOQ-xsNqO47m55DA.ttf */
+        url(/fb_static/gfonts/Lato_400_normal.svg#Lato_400_normal) format('svg'); /* http://fonts.gstatic.com/l/font?kit=hLECvlEj3pKlnS4NFs8NQw&skey=2d58b92a99e1c086&v=v13#Lato */
+}

@@ -1,0 +1,25 @@
+extends base
+
+block content
+	newest_posts = d.get_data(type='post', limit=10, with_page=False, status='public')
+	if newest_posts
+	    newest_post = newest_posts[0]
+	if newest_post: .newest_post
+		h2
+			a(href=newest_post.url)= newest_post.title
+		a.summary(href=newest_post.url)
+			.content.markdown
+				if newest_post.metadata.refer
+					refer_doc = d.get_doc(newest_post.metadata.refer)
+					if refer_doc and refer_doc.type == 'post'
+						blockquote.refer= refer_doc.content.limit(180)
+				div= newest_post.content.opening or newest_post.content.limit(180)
+
+	.pure-g#categories
+	    categories = d.get_data(type='folder', limit=100, level=1, sort='position')
+		for category in  categories
+			.pure-u-1.pure-u-sm-1-2.pure-u-lg-1-3.pure-u-lg-1-4: .category
+				a(href=h.url('/category/%s'%category.path))
+					h3= category.title
+					posts_count = site.count_folder(category.path, 'posts')
+					span {{ posts_count }} posts

@@ -1,0 +1,82 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  font-family: 'PT Sans', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, Hiragino Sans GB,
+    Microsoft YaHei, sans-serif;
+  -webkit-text-size-adjust: none;
+  font-size: 14px; }
+
+  .core {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-bottom: 50px; }
+    .core h1 {
+      text-align: center;
+      margin-top: 50px;
+      color: #111;
+      font-weight: normal; }
+
+a {
+  text-decoration: none;
+  color: #2482e7; }
+  a:hover {
+    color: indianred; }
+
+.buttons a {
+  position: relative;
+  top: -2px;
+  left: 0;
+  text-decoration: none;
+  display: inline-block;
+  line-height: 1.6;
+  margin: 0 10px 5px 0;
+  font-size: 12px;
+  border-radius: 3px;
+  padding: 2px 10px;
+  background: #39f;
+  color: white; }
+  .buttons a:hover {
+    background: #ff3243;
+    color: white; }
+
+.buttons.right {
+  text-align: right; }
+
+  .buttons.left {
+    text-align: left; }
+
+    .table {
+      margin: -70px auto 100px auto;
+      line-height: 2.1em; }
+      .table h2 {
+        margin-top: 100px; }
+        .table table {
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          margin: 1em 0;
+          width: 100%;
+          max-width: 100%;
+          border-width: 1px;
+          border-style: solid;
+          background-color: transparent; }
+          .table table img {
+            max-width: 100%; }
+      .table table, .table table tr, .table table tr td, .table table tr th {
+        border-color: #e5e5e5; }
+        .table table th {
+          color: #666666;
+          background-color: #fdfdfd; }
+          .table tr th {
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
+            text-align: left; }
+            .table tr th, .table tr td {
+              padding: 5px 20px;
+              border-right: 1px solid;
+              font-size: 1rem; }
+              .table tr th:last-child, .table tr td:last-child {
+                border-right: 0px; }
+                .table table th {
+                  font-weight: bold; }
+                  .table table tbody > tr:nth-child(odd) > td,
+                  .table table tbody > tr:nth-child(odd) > th {
+                    background-color: #f9f9f9; }

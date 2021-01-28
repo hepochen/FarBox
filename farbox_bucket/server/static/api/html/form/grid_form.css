@@ -1,0 +1,87 @@
+.complex_form .form_title {
+  text-align: center; }
+
+.complex_form_page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 10px;
+  font-size: 14px; }
+  .complex_form_page .form_title {
+    margin-top: 1.5em; }
+    .complex_form_page label {
+      margin-bottom: 5px; }
+      .complex_form_page .fields {
+        letter-spacing: normal;
+        word-spacing: normal;
+        vertical-align: top;
+        text-rendering: auto; }
+        .complex_form_page .fields .field {
+          margin: 1.5em auto;
+          padding-right: 30px; }
+          .complex_form_page .fields .field img {
+            width: auto; }
+  .complex_form_page .submit {
+    margin: 50px 0;
+    margin-left: -5%;
+    text-align: center; }
+    .complex_form_page .submit .pure-button {
+      font-size: 1.3em;
+      padding: 0.5em; }
+
+.fields {
+  letter-spacing: normal;
+  word-spacing: normal;
+  vertical-align: top;
+  text-rendering: auto; }
+  .fields .field {
+    margin: 1.5em auto;
+    padding-right: 30px;
+    width: auto; }
+    .fields .field img {
+      width: auto; }
+
+.pure-form-stacked {
+  line-height: 2.1; }
+  .pure-form-stacked label {
+    max-height: 2.1em;
+    overflow: hidden;
+    word-break: break-all; }
+    .pure-form-stacked hr {
+      height: 1px;
+      border: none;
+      border-top: 1px dashed #ddd;
+      margin: 20px 0; }
+      .pure-form-stacked input[type=text], .pure-form-stacked input[type=email],
+      .pure-form-stacked input[type=password], .pure-form-stacked select {
+        font-size: 1.1em; }
+        .pure-form-stacked select {
+          font-size: 1em;
+          color: #333;
+          height: 2.5em; }
+          .pure-form-stacked .submit {
+            margin: 50px 0;
+            margin-left: -5%;
+            text-align: center; }
+            .pure-form-stacked .submit .pure-button {
+              font-size: 1.3em;
+              padding: 0.5em; }
+              .pure-form-stacked .submit:disabled {
+                background: #ccc; }
+  .pure-form-stacked textarea {
+    height: 80px;
+    line-height: 1.3em;
+    font-size: 14px;
+    color: #333; }
+    .pure-form-stacked fieldset {
+      margin-top: 20px; }
+      .pure-form-stacked fieldset legend {
+        border-bottom-style: dashed;
+        padding: 0;
+        margin-bottom: 0; }
+
+@media screen and (max-width: 35.5em) {
+  .pure-form-stacked .submit .pure-button {
+    font-size: 1.2em;   }
+    .fields .field {
+      padding-right: 0;   }
+}

@@ -1,0 +1,73 @@
+.bitcron_nav {
+  width: 100%;
+  text-align: right;
+  position: relative;
+  -webkit-font-smoothing: antialiased; }
+  .bitcron_nav a {
+    text-decoration: none; }
+
+.menu_btn .menu_btn_icon, .menu_btn .menu_btn_icon:before,
+.menu_btn .menu_btn_icon:after {
+  background: #555; }
+
+.site_nav a {
+  padding: 12px 20px;
+  color: #333;
+  font-size: 14px;
+  border: 1px solid transparent; }
+  .site_nav a:hover {
+    color: #d23600; }
+    .site_nav a.current:before {
+      content: ">";
+      font-size: 9px;
+      margin-right: 2px;
+      opacity: 0.7; }
+  .site_nav a span.sub-arrow {
+    background: rgba(238, 238, 238, 0.5);
+    border-color: #4d4d4d transparent transparent transparent; }
+.site_nav ul {
+  padding: 5px 0;
+  background: rgba(238, 238, 238, 0.5); }
+  .site_nav ul li {
+    border-top: 1px solid rgba(0, 0, 0, 0.05); }
+    .site_nav ul a {
+      margin-left: 0;
+      margin-right: 0;
+      color: #333;
+      font-size: 13px; }
+      .site_nav ul a:hover, .site_nav ul a:focus, .site_nav ul a:active,
+      .site_nav ul a.highlighted {
+        background: rgba(221, 221, 221, 0.1);
+        color: #111; }
+
+@media (min-width: 768px) {
+  .site_nav {
+    float: right;   }
+    .site_nav a {
+      padding: 12px;   }
+      .site_nav a.current {
+        color: #262626;   }
+        .site_nav a.current:before {
+          display: none;   }
+      .site_nav a span.sub-arrow {
+        background: transparent;   }
+    .site_nav > li > ul:before, .site_nav > li > ul:after {
+      border-color: transparent transparent #bbb transparent;   }
+      .site_nav > li > ul:after {
+        border-color: transparent transparent rgba(238, 238, 238, 0.85) transparent;   }
+        .site_nav span.scroll-up, .site_nav span.scroll-down {
+          background: rgba(238, 238, 238, 0.85);   }
+          .site_nav span.scroll-up-arrow {
+            border-color: transparent transparent #666 transparent;   }
+            .site_nav span.scroll-down-arrow {
+              border-color: #666 transparent transparent transparent;   }
+              .site_nav ul {
+                border: 1px solid #bbb;
+                background: rgba(238, 238, 238, 0.85);   }
+                .site_nav ul span.sub-arrow {
+                  border-color: transparent transparent transparent #666;   }
+                  .site_nav ul a:hover, .site_nav ul a:focus, .site_nav ul a:active,
+                  .site_nav ul a.highlighted {
+                    background: #ddd;
+                    color: #111;   }
+}

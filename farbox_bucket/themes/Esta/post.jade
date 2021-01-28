@@ -1,0 +1,6 @@
+from mixins import make_post
+
+extends base.jade
+block content
+	.content: .post-page
+		+make_post(post, is_detail=True)

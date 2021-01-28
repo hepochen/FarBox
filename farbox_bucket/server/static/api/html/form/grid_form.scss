@@ -1,0 +1,149 @@
+
+.complex_form{
+	.form_title{
+		text-align: center;
+	}
+}
+
+
+
+.complex_form_page{
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 0 10px;
+	font-size: 14px;
+
+	.form_title{
+		margin-top: 1.5em;
+	}
+
+	label{
+		margin-bottom: 5px;
+	}
+
+	.fields {
+		letter-spacing: normal;
+		word-spacing: normal;
+		vertical-align: top;
+		text-rendering: auto;
+
+		.field{
+			margin: 1.5em auto;
+			padding-right: 30px;
+
+			img{
+				width: auto;
+			}
+
+		}
+
+
+
+	}
+
+	.submit {
+		margin: 50px 0;
+		margin-left: -5%;
+		text-align: center;
+
+		.pure-button {
+			font-size: 1.3em;
+			padding: 0.5em;
+		}
+	}
+
+}
+
+
+.fields {
+	letter-spacing: normal;
+	word-spacing: normal;
+	vertical-align: top;
+	text-rendering: auto;
+
+	.field{
+		margin: 1.5em auto;
+		padding-right: 30px;
+		width: auto;
+
+		img{
+			width: auto;
+		}
+
+	}
+}
+
+
+
+.pure-form-stacked {
+	line-height: 2.1;
+
+	label {
+		max-height: 2.1em;
+		overflow: hidden;
+		word-break: break-all;
+	}
+
+	hr {
+		height: 1px;
+		border: none;
+		border-top: 1px dashed #ddd;
+		margin: 20px 0;
+	}
+
+	input[type=text], input[type=email], input[type=password], select {
+		font-size: 1.1em;
+
+	}
+
+	select {
+		font-size: 1em;
+		color: #333;
+		height: 2.5em;
+	}
+
+	.submit {
+		margin: 50px 0;
+		margin-left: -5%;
+		text-align: center;
+
+		.pure-button {
+			font-size: 1.3em;
+			padding: 0.5em;
+		}
+
+		&:disabled{
+			background: #ccc;
+		}
+	}
+
+	textarea {
+		height: 80px;
+		line-height: 1.3em;
+		font-size: 14px;
+		color: #333;
+	}
+
+	fieldset {
+		margin-top: 20px;
+
+		legend {
+			border-bottom-style: dashed;
+			padding: 0;
+			margin-bottom: 0;
+		}
+	}
+
+}
+
+@media screen and (max-width: 35.5em) {
+	.pure-form-stacked .submit .pure-button {
+		font-size: 1.2em;
+	}
+
+	.fields{
+		.field{
+			padding-right: 0;
+		}
+	}
+}

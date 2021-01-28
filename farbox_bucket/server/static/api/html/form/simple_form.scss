@@ -1,0 +1,165 @@
+$high_color: #e7645c;
+$high_color2: #4296DB;
+
+* {
+	outline: none;
+}
+
+body {
+	//margin: 0 auto;
+	font-size: 14px;
+	font-family: 'PT Sans', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+html {
+	font-size: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+html, html a {
+	-webkit-font-smoothing: antialiased;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+}
+
+.clear{
+	clear: both;
+	height: 0;
+}
+
+.simple_form {
+	margin: 0 auto;
+	padding: 20px 0;
+	max-width: 680px;
+	h2 {
+		text-align: center;
+		margin: 2em 0;
+
+		a {
+			color: #4296DB;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+	}
+
+	.info {
+		text-align: center;
+		color: indianred;
+		font-size: 12px;
+		margin: 20px auto;
+		height: 30px;
+
+	}
+
+	.buttons {
+		margin: 30px auto 15px auto;
+		text-align: center;
+
+		button {
+			text-align: center;
+			display: inline-block;
+			min-width: 200px;
+			margin: 0 10px 0 22%;
+
+			padding: 10px;
+			font-size: 15px;
+			letter-spacing: 1px;
+
+			border: 1px solid #eee;
+			border-radius: 5px;
+			background: $high_color2;
+			color: white;
+
+			&:hover {
+
+			}
+
+			&:disabled, &.disabled {
+				background: #ccc;
+			}
+		}
+	}
+
+	.simple_field {
+		display: block;
+		padding: 0 20px;
+		min-height: 60px;
+		line-height: 60px;
+		position: relative;
+
+		label {
+			float: left;
+			width: 22%;
+			color: #555;
+			font-size: 14px;
+			max-height: none !important;
+
+		}
+		.display_field {
+			float: right;
+			width: 78%;
+		}
+
+		select.display_field {
+			margin-top: 15px;
+		}
+
+		input, .file_field {
+			color: $high_color2;
+			padding: 12px 10px;
+			width: 60%;
+			font-size: 16px;
+			letter-spacing: 1px;
+			border: 1px solid #ccc;
+		}
+
+		.span_field {
+			color: #333;
+			font-size: 16px;
+			letter-spacing: 1px;
+			text-align: center;
+		}
+
+		textarea {
+			padding: 12px 10px;
+			width: 60%;
+			height: 100px;
+			font-size: 16px;
+			letter-spacing: 1px;
+			border: 1px solid #ccc;
+			color: #353535;
+		}
+	}
+}
+
+@media (max-width: 640px) {
+	.simple_form {
+		.simple_field{
+			label{
+				width: 30%;
+			}
+			.display_field{
+				width: 70%;
+			}
+		}
+	}
+}
+
+
+
+/*
+a {
+				color: #333;
+				padding: 0 5px;
+				text-decoration: none;
+				border-bottom: 1px dotted #666;
+				&:hover {
+					color: indianred;
+					border-bottom-color: indianred;
+				}
+			}
+*/

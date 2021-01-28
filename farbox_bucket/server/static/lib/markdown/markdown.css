@@ -1,0 +1,444 @@
+.plain_content .p_part {
+  margin: 1em 0 2.5em 0; }
+
+  .markdown {
+    line-height: 1.8em;
+    word-wrap: break-word;
+    word-break: normal;
+    overflow-wrap: break-word; }
+    .markdown .md_line_dom_embed {
+      text-indent: 0 !important; }
+      .markdown .md_video, .markdown .md_audio {
+        max-width: 100%; }
+        .markdown .md_line {
+          margin-top: 0;
+          margin-bottom: 0.85em; }
+          .markdown a {
+            color: #499eff;
+            text-decoration: none; }
+            .markdown a:hover {
+              text-decoration: underline; }
+    .markdown pre code {
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0; }
+      .markdown .md_block {
+        margin-bottom: 2.2em; }
+        .markdown .md_video, .markdown .md_audio {
+          max-width: 100%; }
+          .markdown .x2_image {
+            zoom: 50%; }
+            .markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6 {
+              text-rendering: optimizeLegibility;
+              line-height: 1; }
+              .markdown h1 {
+                font-size: 2em;
+                line-height: 1.2em;
+                margin: 1em 0; }
+                .markdown h2 {
+                  font-size: 1.65em;
+                  line-height: 1.2em;
+                  margin: 1em 0 1em 0; }
+                  .markdown h3 {
+                    font-size: 1.35em;
+                    margin: 1em 0 1em 0; }
+                    .markdown h4 {
+                      font-size: 1.2em; }
+                      .markdown h5 {
+                        font-size: 1.1em;
+                        font-weight: bold; }
+                        .markdown h6 {
+                          font-size: 1em;
+                          font-weight: bold; }
+                          .markdown h4, .markdown h5, .markdown h6 {
+                            margin: 0.8em 0 0.5em 0; }
+                            .markdown img {
+                              max-width: 100%;
+                              height: auto; }
+                              .markdown p, .markdown ul, .markdown ol, .markdown dl {
+                                margin: 0.8em 0; }
+                                .markdown ol ol, .markdown ul ul, .markdown ul ol, .markdown ol ul {
+                                  margin: 0.4em 0; }
+                                  .markdown ul p, .markdown ol p, .markdown li p {
+                                    margin: 0;
+                                    overflow: visible; }
+                                    .markdown a img {
+                                      border: none; }
+    .markdown dl dt {
+      float: left;
+      width: 180px;
+      overflow: hidden;
+      clear: left;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: bold;
+      margin-bottom: 1em; }
+      .markdown dl dd {
+        margin-left: 200px;
+        margin-bottom: 1em; }
+        .markdown hr {
+          display: block;
+          height: 1px;
+          border: 0;
+          border-top: 1px solid #efefef;
+          margin: 3.2em 0;
+          padding: 0; }
+          .markdown blockquote {
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 1.6em 0;
+            padding: 0 0 0 1.2em;
+            border-left: 0.4em solid #ddd;
+            color: #555;
+            min-height: 20px; }
+            .markdown blockquote p {
+              margin: 0.8em 0; }
+              .markdown blockquote span.md_line {
+                margin-bottom: 0.25em;
+                margin-top: 0.25em; }
+                .markdown blockquote ul {
+                  padding: 0 15px; }
+                  .markdown blockquote small {
+                    display: inline-block;
+                    margin: 0.8em 0 0.8em 1.5em;
+                    font-size: 0.9em;
+                    color: #ccc; }
+    .markdown .flow-graphic {
+      text-align: center; }
+      .markdown .footnotes .md_line {
+        display: inline !important; }
+        .markdown .img_rt_90 {
+          transform: rotate(90deg);
+          -ms-transform: rotate(90deg);
+          -moz-transform: rotate(90deg);
+          -webkit-transform: rotate(90deg);
+          -o-transform: rotate(90deg); }
+          .markdown .img_rt_180 {
+            transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            -o-transform: rotate(180deg); }
+            .markdown .img_rt_270 {
+              transform: rotate(270deg);
+              -ms-transform: rotate(270deg);
+              -moz-transform: rotate(270deg);
+              -webkit-transform: rotate(270deg);
+              -o-transform: rotate(270deg); }
+              .markdown .md_has_block_below {
+                margin-bottom: 0.2em; }
+                .markdown .md_has_block_below_img {
+                  margin-bottom: 1.5em; }
+                  .markdown mark {
+                    background-color: #ffc336; }
+                    .markdown code, .markdown tt {
+                      padding: 1px 3px;
+                      font-family: Inconsolata, monospace, sans-serif;
+                      white-space: pre-wrap;
+                      border: 1px solid #E3EDF3;
+                      background: #f7f7f9;
+                      color: #222;
+                      border-radius: 2px; }
+                      .markdown code {
+                        word-wrap: break-word; }
+                        .markdown pre {
+                          -moz-box-sizing: border-box;
+                          box-sizing: border-box;
+                          margin: 1.6em 0;
+                          border: 1px solid #E3EDF3;
+                          width: 100%;
+                          padding: 10px;
+                          font-family: Inconsolata, monospace, sans-serif;
+                          font-size: 0.9em;
+                          white-space: pre;
+                          overflow: auto;
+                          background: #F7FAFB;
+                          border-radius: 3px; }
+                          .markdown pre::-webkit-scrollbar {
+                            height: 10px; }
+                            .markdown pre::-webkit-scrollbar-button {
+                              display: none; }
+                              .markdown pre::-webkit-scrollbar-track {
+                                background: white; }
+                                .markdown pre::-webkit-scrollbar-thumb {
+                                  min-height: 1rem;
+                                  background-color: #ccc;
+                                  background-clip: padding-box;
+                                  border: 3px solid #fdfdfd;
+                                  border-radius: 5px; }
+                                  .markdown pre::-webkit-scrollbar-thumb:active {
+                                    background-color: #999;
+                                    border-width: 2px; }
+                                    .markdown pre code, .markdown tt {
+                                      font-size: inherit;
+                                      white-space: -moz-pre-wrap;
+                                      white-space: pre-wrap;
+                                      background: transparent;
+                                      border: none;
+                                      color: #333;
+                                      padding: 0;
+                                      margin: 0; }
+                                      .markdown kbd {
+                                        display: inline-block;
+                                        margin-bottom: 0.4em;
+                                        padding: 1px 8px;
+                                        border: #ccc 1px solid;
+                                        color: #666;
+                                        text-shadow: #fff 0 1px 0;
+                                        font-size: 0.9em;
+                                        font-weight: bold;
+                                        background: #f4f4f4;
+                                        border-radius: 4px;
+                                        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 1px 0 0 white inset; }
+                                        .markdown table {
+                                          line-height: 1.7;
+                                          -moz-box-sizing: border-box;
+                                          box-sizing: border-box;
+                                          margin: 1em 0;
+                                          width: 100%;
+                                          max-width: 100%;
+                                          border-width: 1px;
+                                          border-style: solid;
+                                          background-color: transparent;
+                                          border-spacing: 0;
+                                          word-break: normal; }
+                                          .markdown table, .markdown table tr, .markdown table tr td, .markdown table tr th {
+                                            border-color: #E6E6E6; }
+                                            .markdown table th {
+                                              font-weight: bold;
+                                              background-color: #FDFDFD; }
+                                              .markdown tr th {
+                                                border-bottom-width: 1px;
+                                                border-bottom-style: solid;
+                                                text-align: left; }
+                                                .markdown tr th, .markdown tr td {
+                                                  padding: 10px 20px;
+                                                  border-right: 1px solid;
+                                                  border-bottom: 1px solid #E6E6E6; }
+                                                  .markdown tbody tr:last-child td {
+                                                    border-bottom: 0; }
+                                                    .markdown tr th:last-child, .markdown tr td:last-child {
+                                                      border-right: 0; }
+                                                      .markdown table tbody > tr:nth-child(odd) > td,
+                                                      .markdown table tbody > tr:nth-child(odd) > th {
+                                                        background-color: #F9F9F9; }
+                                                        .markdown .gist {
+                                                          font-size: 12px; }
+                                                          .markdown .gist table {
+                                                            margin: 0;
+                                                            width: auto; }
+                                                            .markdown .gist table pre {
+                                                              font-size: 12px; }
+                                                              .markdown .gist table .line-numbers {
+                                                                font-size: 12px; }
+    .markdown .toc {
+      background: #fdfdfd;
+      border-radius: 5px;
+      border: 1px solid #e6e6e6;
+      margin: 27px 0 47px 0;
+      padding: 0 15px; }
+      .markdown .toc ul {
+        padding: 5px 42px; }
+        .markdown .toc ul li {
+          padding: 0;
+          margin: 0; }
+          .markdown .toc ul li ul {
+            padding-top: 0;
+            margin-top: 0; }
+      .markdown .toc a {
+        text-decoration: none;
+        color: #3c3c3c; }
+    .markdown .with_lines pre {
+      border: none;
+      margin-top: 0.2em;
+      margin-bottom: 0.2em; }
+      .markdown .todo_item {
+        list-style: none;
+        margin-left: -1.5em; }
+        .markdown .todo_item input {
+          margin-right: 0.5em; }
+    .markdown .todo_item .todo_item {
+      margin-left: auto; }
+      .markdown .todo_done_item {
+        color: #999999; }
+        .markdown .todo_undone_item {
+          color: #c85a57; }
+          .markdown .linenos {
+            padding: 0 10px 0 10px; }
+            .markdown .linenos pre {
+              background: transparent;
+              border: none;
+              padding: 0; }
+    .markdown .highlighttable {
+      width: auto !important;
+      background: transparent !important; }
+      .markdown .highlighttable pre, .markdown .highlighttable .codehilite,
+      .markdown .highlighttable td {
+        background: transparent !important; }
+        .markdown .highlighttable td.code {
+          padding: 0; }
+    .markdown .flow-graphic {
+      text-align: center; }
+      .markdown span.md_line {
+        margin-bottom: 0.6em;
+        display: block;
+        line-height: 1.75; }
+        .markdown .md_line br {
+          display: none; }
+          .markdown .codehilite .hll {
+            background-color: #ffffcc; }
+            .markdown .codehilite {
+              background: #eeeedd; }
+              .markdown .codehilite .c {
+                color: #999999; }
+                .markdown .codehilite .err {
+                  color: #a61717;
+                  background-color: #e3d2d2; }
+                  .markdown .codehilite .k {
+                    color: #8B008B;
+                    font-weight: bold; }
+                    .markdown .codehilite .n {
+                      color: #555555; }
+                      .markdown .codehilite .o {
+                        color: #555555; }
+                        .markdown .codehilite .p {
+                          color: #555555; }
+                          .markdown .codehilite .cm {
+                            color: #999999; }
+                            .markdown .codehilite .cp {
+                              color: #1e889b; }
+                              .markdown .codehilite .c1 {
+                                color: #999999; }
+                                .markdown .codehilite .cs {
+                                  color: #8B008B;
+                                  font-weight: bold; }
+                                  .markdown .codehilite .gd {
+                                    color: #aa0000; }
+                                    .markdown .codehilite .ge {
+                                      font-style: italic; }
+                                      .markdown .codehilite .gr {
+                                        color: #aa0000; }
+                                        .markdown .codehilite .gh {
+                                          color: #000080;
+                                          font-weight: bold; }
+                                          .markdown .codehilite .gi {
+                                            color: #00aa00; }
+                                            .markdown .codehilite .go {
+                                              color: #888888; }
+                                              .markdown .codehilite .gp {
+                                                color: #555555; }
+                                                .markdown .codehilite .gs {
+                                                  font-weight: bold; }
+                                                  .markdown .codehilite .gu {
+                                                    color: #800080;
+                                                    font-weight: bold; }
+                                                    .markdown .codehilite .gt {
+                                                      color: #aa0000; }
+                                                      .markdown .codehilite .kc {
+                                                        color: #8B008B;
+                                                        font-weight: bold; }
+                                                        .markdown .codehilite .kd {
+                                                          color: #8B008B;
+                                                          font-weight: bold; }
+                                                          .markdown .codehilite .kn {
+                                                            color: #8B008B;
+                                                            font-weight: bold; }
+                                                            .markdown .codehilite .kp {
+                                                              color: #8B008B;
+                                                              font-weight: bold; }
+                                                              .markdown .codehilite .kr {
+                                                                color: #8B008B;
+                                                                font-weight: bold; }
+                                                                .markdown .codehilite .kt {
+                                                                  color: #a7a7a7;
+                                                                  font-weight: bold; }
+                                                                  .markdown .codehilite .m {
+                                                                    color: #B452CD; }
+                                                                    .markdown .codehilite .s {
+                                                                      color: #CD5555; }
+                                                                      .markdown .codehilite .na {
+                                                                        color: #658b00; }
+                                                                        .markdown .codehilite .nb {
+                                                                          color: #658b00; }
+                                                                          .markdown .codehilite .nc {
+                                                                            color: #008b45;
+                                                                            font-weight: bold; }
+                                                                            .markdown .codehilite .no {
+                                                                              color: #00688B; }
+                                                                              .markdown .codehilite .nd {
+                                                                                color: #707a7c; }
+                                                                                .markdown .codehilite .ni {
+                                                                                  color: #555555; }
+                                                                                  .markdown .codehilite .ne {
+                                                                                    color: #008b45;
+                                                                                    font-weight: bold; }
+                                                                                    .markdown .codehilite .nf {
+                                                                                      color: #008b45; }
+                                                                                      .markdown .codehilite .nl {
+                                                                                        color: #555555; }
+                                                                                        .markdown .codehilite .nn {
+                                                                                          color: #008b45;
+                                                                                          text-decoration: underline; }
+                                                                                          .markdown .codehilite .nx {
+                                                                                            color: #555555; }
+                                                                                            .markdown .codehilite .py {
+                                                                                              color: #555555; }
+                                                                                              .markdown .codehilite .nt {
+                                                                                                color: #8B008B;
+                                                                                                font-weight: bold; }
+                                                                                                .markdown .codehilite .nv {
+                                                                                                  color: #00688B; }
+                                                                                                  .markdown .codehilite .ow {
+                                                                                                    color: #8B008B; }
+                                                                                                    .markdown .codehilite .w {
+                                                                                                      color: #bbbbbb; }
+                                                                                                      .markdown .codehilite .mb {
+                                                                                                        color: #B452CD; }
+                                                                                                        .markdown .codehilite .mf {
+                                                                                                          color: #B452CD; }
+                                                                                                          .markdown .codehilite .mh {
+                                                                                                            color: #B452CD; }
+                                                                                                            .markdown .codehilite .mi {
+                                                                                                              color: #B452CD; }
+                                                                                                              .markdown .codehilite .mo {
+                                                                                                                color: #B452CD; }
+                                                                                                                .markdown .codehilite .sb {
+                                                                                                                  color: #CD5555; }
+                                                                                                                  .markdown .codehilite .sc {
+                                                                                                                    color: #CD5555; }
+                                                                                                                    .markdown .codehilite .sd {
+                                                                                                                      color: #CD5555; }
+                                                                                                                      .markdown .codehilite .s2 {
+                                                                                                                        color: #CD5555; }
+                                                                                                                        .markdown .codehilite .se {
+                                                                                                                          color: #CD5555; }
+                                                                                                                          .markdown .codehilite .sh {
+                                                                                                                            color: #1c7e71;
+                                                                                                                            font-style: italic; }
+                                                                                                                            .markdown .codehilite .si {
+                                                                                                                              color: #CD5555; }
+                                                                                                                              .markdown .codehilite .sx {
+                                                                                                                                color: #cb6c20; }
+                                                                                                                                .markdown .codehilite .sr {
+                                                                                                                                  color: #1c7e71; }
+                                                                                                                                  .markdown .codehilite .s1 {
+                                                                                                                                    color: #CD5555; }
+                                                                                                                                    .markdown .codehilite .ss {
+                                                                                                                                      color: #CD5555; }
+                                                                                                                                      .markdown .codehilite .bp {
+                                                                                                                                        color: #658b00; }
+                                                                                                                                        .markdown .codehilite .vc {
+                                                                                                                                          color: #00688B; }
+                                                                                                                                          .markdown .codehilite .vg {
+                                                                                                                                            color: #00688B; }
+                                                                                                                                            .markdown .codehilite .vi {
+                                                                                                                                              color: #00688B; }
+                                                                                                                                              .markdown .codehilite .il {
+                                                                                                                                                color: #B452CD; }
+                                                                                                                                                @media (max-width: 480px) {
+                                                                                                                                                  .markdown code {
+                                                                                                                                                    padding: 0;
+                                                                                                                                                    margin: 0;   }
+}

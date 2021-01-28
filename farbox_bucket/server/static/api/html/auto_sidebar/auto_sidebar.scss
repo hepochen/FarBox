@@ -1,0 +1,87 @@
+.sidebar_clicker {
+    position: fixed;
+    left: 0;
+    top: 20px;
+    z-index: 9999;
+    font-size: 13px;
+    margin: 0 33px 0;
+    height: 39px;
+    color: #000;
+    border:none;
+    background: transparent;
+    // transition-property: all;
+    // transition-duration: .3s;
+    cursor: pointer;
+    outline: none;
+    width: 26px;
+    padding: 0;
+    &:hover{
+		.bar{
+			background: #000;
+		}
+        .bar:before,.bar:after{
+            background: #000;
+        }
+    }
+
+	.bar{
+		position: relative;
+		display: block;
+		margin-top: 10px;
+		width: 100%;
+	}
+
+	.bar,.bar:before,.bar:after{
+		background: #919BA2;
+		width: 100%;
+		height: 2px;
+		-webkit-transition: all 0.4s;
+		-moz-transition: all 0.4s;
+		-ms-transition: all 0.4s;
+		-o-transition: all 0.4s;
+		transition: all 0.4s;
+	}
+
+	.bar:before,.bar:after {
+		position: absolute;
+		content: " ";
+		left: 0
+	}
+
+	.bar:before{
+		top: -8px;
+	}
+	.bar:after {
+		top: 8px;
+	}
+
+}
+
+
+
+.click_to_close_sidebar_tmp{
+	&:hover{
+		.bar{
+			background: transparent;
+		}
+	}
+    .bar{
+        background: transparent;
+    }
+    .bar:before {
+        top: -7px;
+        -webkit-transform: rotate(45deg) translate(.5em, .4em);
+        -moz-transform: rotate(45deg) translate(.5em, .4em);
+        -ms-transform: rotate(45deg) translate(.5em, .4em);
+        -o-transform: rotate(45deg) translate(.5em, .4em);
+        transform: rotate(45deg) translate(.5em, .4em);
+    }
+    .bar:after {
+        -webkit-transform: rotate(-45deg) translate(.4em, -.3em);
+        -moz-transform: rotate(-45deg) translate(.4em, -.3em);
+        -ms-transform: rotate(-45deg) translate(.4em, -.3em);
+        -o-transform: rotate(-45deg) translate(.4em, -.3em);
+        transform: rotate(-45deg) translate(.4em, -.3em);
+    }
+}
+

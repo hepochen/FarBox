@@ -1,0 +1,14 @@
+extends base
+
+block content
+	h2.archive-title 归档
+	entries = data.get_data(type='post', limit=300, sort='-date', pager_name='archive').group('date:year', reverse=True)
+	.mod-archive:.archive
+		for year, posts in entries
+			.archive-year= year
+			ul.archive-list
+				for post in posts: li.post-item
+					span.date= post.date('%Y-%m-%d')
+					a(href=post.url, title=post.title)= post.title
+
+	+h.paginator()

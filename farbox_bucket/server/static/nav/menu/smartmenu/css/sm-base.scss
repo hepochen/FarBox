@@ -1,0 +1,625 @@
+
+// Usually compass hacks apply to both ie6 & 7 -- set this to false to disable support for both.
+$legacy-support-for-ie: true !default;
+
+// Setting this to false will result in smaller output, but no support for ie6 hacks
+$legacy-support-for-ie6: $legacy-support-for-ie !default;
+
+// Setting this to false will result in smaller output, but no support for ie7 hacks
+$legacy-support-for-ie7: $legacy-support-for-ie !default;
+
+// Setting this to false will result in smaller output, but no support for legacy ie8 hacks
+$legacy-support-for-ie8: $legacy-support-for-ie !default;
+
+// @private
+// The user can simply set $legacy-support-for-ie and 6, 7, and 8 will be set accordingly,
+// But in case the user set each of those explicitly, we need to sync the value of
+// this combined variable.
+$legacy-support-for-ie: $legacy-support-for-ie6 or $legacy-support-for-ie7 or $legacy-support-for-ie8;
+
+// Whether to output legacy support for mozilla.
+// Usually this means hacks to support Firefox 3.6 or earlier.
+$legacy-support-for-mozilla: true;
+
+// Support for mozilla in experimental css3 properties (-moz).
+$experimental-support-for-mozilla      : true !default;
+// Support for webkit in experimental css3 properties (-webkit).
+$experimental-support-for-webkit       : true !default;
+// Support for webkit's original (non-standard) gradient syntax.
+$support-for-original-webkit-gradients : true !default;
+// Support for opera in experimental css3 properties (-o).
+$experimental-support-for-opera        : true !default;
+// Support for microsoft in experimental css3 properties (-ms).
+$experimental-support-for-microsoft    : true !default;
+// Support for khtml in experimental css3 properties (-khtml).
+$experimental-support-for-khtml        : false !default;
+// Support for svg in experimental css3 properties.
+// Setting this to true might add significant size to your
+// generated stylesheets.
+$experimental-support-for-svg          : false !default;
+// Support for CSS PIE in experimental css3 properties (-pie).
+$experimental-support-for-pie          : false !default;
+
+@mixin experimental($property, $value,
+  $moz      : $experimental-support-for-mozilla,
+  $webkit   : $experimental-support-for-webkit,
+  $o        : $experimental-support-for-opera,
+  $ms       : $experimental-support-for-microsoft,
+  $khtml    : $experimental-support-for-khtml,
+  $official : true
+) {
+  @if $webkit  and $experimental-support-for-webkit    { -webkit-#{$property} : $value; }
+  @if $khtml   and $experimental-support-for-khtml     {  -khtml-#{$property} : $value; }
+  @if $moz     and $experimental-support-for-mozilla   {    -moz-#{$property} : $value; }
+  @if $ms      and $experimental-support-for-microsoft {     -ms-#{$property} : $value; }
+  @if $o       and $experimental-support-for-opera     {      -o-#{$property} : $value; }
+  @if $official                                        {         #{$property} : $value; }
+}
+
+// Same as experimental(), but for cases when the property is the same and the value is vendorized
+@mixin experimental-value($property, $value,
+  $moz      : $experimental-support-for-mozilla,
+  $webkit   : $experimental-support-for-webkit,
+  $o        : $experimental-support-for-opera,
+  $ms       : $experimental-support-for-microsoft,
+  $khtml    : $experimental-support-for-khtml,
+  $official : true
+) {
+  @if $webkit  and $experimental-support-for-webkit    { #{$property} : -webkit-#{$value}; }
+  @if $khtml   and $experimental-support-for-khtml     { #{$property} :  -khtml-#{$value}; }
+  @if $moz     and $experimental-support-for-mozilla   { #{$property} :    -moz-#{$value}; }
+  @if $ms      and $experimental-support-for-microsoft { #{$property} :     -ms-#{$value}; }
+  @if $o       and $experimental-support-for-opera     { #{$property} :      -o-#{$value}; }
+  @if $official                                        { #{$property} :         #{$value}; }
+}
+
+
+$default-border-radius: 5px !default;
+
+@mixin border-radius($radius: $default-border-radius, $vertical-radius: false) {
+
+  @if $vertical-radius {
+    // Webkit doesn't understand the official shorthand syntax for specifying
+    // a vertical radius unless so in case there's several we only take the first.
+    @include experimental(border-radius, first-value-of($radius) first-value-of($vertical-radius),
+      not -moz,
+      -webkit,
+      not -o,
+      not -ms,
+      not -khtml,
+      not official
+    );
+    @include experimental("border-radius", $radius unquote("/") $vertical-radius,
+      -moz,
+      not -webkit,
+      not -o,
+      not -ms,
+      -khtml,
+      official
+    );
+  }
+  @else {
+    @include experimental(border-radius, $radius);
+  }
+}
+
+
+// The default color for box shadows
+$default-box-shadow-color: #333333 !default;
+
+// The default horizontal offset. Positive is to the right.
+$default-box-shadow-h-offset: 0px !default;
+
+// The default vertical offset. Positive is down.
+$default-box-shadow-v-offset: 0px !default;
+
+// The default blur length.
+$default-box-shadow-blur: 5px !default;
+
+// The default spread length.
+$default-box-shadow-spread : false !default;
+
+// The default shadow inset: inset or false (for standard shadow).
+$default-box-shadow-inset : false !default;
+
+// Provides cross-browser for Webkit, Gecko, and CSS3 box shadows when one or more box
+// shadows are needed.
+// Each shadow argument should adhere to the standard css3 syntax for the
+// box-shadow property.
+@mixin box-shadow(
+  $shadow-1 : default,
+  $shadow-2 : false,
+  $shadow-3 : false,
+  $shadow-4 : false,
+  $shadow-5 : false,
+  $shadow-6 : false,
+  $shadow-7 : false,
+  $shadow-8 : false,
+  $shadow-9 : false,
+  $shadow-10: false
+) {
+  @if $shadow-1 == default {
+    $shadow-1 : -compass-space-list(compact(if($default-box-shadow-inset, inset, false), $default-box-shadow-h-offset, $default-box-shadow-v-offset, $default-box-shadow-blur, $default-box-shadow-spread, $default-box-shadow-color));
+  }
+  $shadow : compact($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10);
+  @include experimental(box-shadow, $shadow,
+    -moz, -webkit, not -o, not -ms, not -khtml, official
+  );
+}
+
+
+
+
+
+// This file is best viewed with Tab size 4 code indentation
+
+
+// -----------------------------------------------------------------------------------------------------------------
+// 1. Theme Quick Settings (Variables)
+// (for further control, you will need to dig into the actual CSS in 2.)
+// -----------------------------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------
+// :: 1.1. Colors
+// ----------------------------------------------------------
+
+$site_nav__white:										#fff !default;
+$site_nav__gray:										darken($site_nav__white, 6.5%) !default;
+$site_nav__gray-dark:									darken($site_nav__white, 26.5%) !default;
+$site_nav__gray-darker:									darken($site_nav__white, 66.5%) !default;
+$site_nav__red:											#D23600 !default;
+
+$site_nav__box-shadow:									rgba(0, 0, 0, 0.2) !default;
+
+
+
+// ----------------------------------------------------------
+// :: 1.3. Typography
+// ----------------------------------------------------------
+
+$site_nav__font-size-small:								16px !default;
+$site_nav__line-height:									17px !default;
+
+
+// ----------------------------------------------------------
+// :: 1.4. Borders
+// ----------------------------------------------------------
+
+$site_nav__border-width:								1px !default;
+$site_nav__border-radius:								5px !default;
+
+
+// ----------------------------------------------------------
+// :: 1.5. Collapsible main menu
+// ----------------------------------------------------------
+
+// Menu box
+$site_nav__collapsible-bg:								$site_nav__gray !default;
+$site_nav__collapsible-border-radius:					$site_nav__border-radius !default;
+
+// Items
+$site_nav__collapsible-item-color:						$site_nav__gray-darker !default;
+$site_nav__collapsible-item-current-color:				$site_nav__red !default;
+$site_nav__collapsible-item-disabled-color:				darken($site_nav__gray, 20%) !default;
+$site_nav__collapsible-item-padding-vertical:			13px !default;
+$site_nav__collapsible-item-padding-horizontal:			20px !default;
+
+// Items separators
+$site_nav__collapsible-separators-color:				rgba(0, 0, 0, 0.05) !default;
+
+
+
+// ----------------------------------------------------------
+// :: 1.6. Collapsible sub menus
+// ----------------------------------------------------------
+
+// Menu box
+$site_nav__collapsible-sub-bg:							rgba(darken($site_nav__collapsible-bg, 30%), 0.1) !default;
+
+// Items text indentation for deeper levels
+$site_nav__collapsible-sub-item-indentation:			8px !default;
+
+
+// ----------------------------------------------------------
+// :: 1.7. Desktop main menu
+// ----------------------------------------------------------
+
+
+// Items
+$site_nav__desktop-item-padding-horizontal:				12px !default;
+
+// Sub menu indicators
+$site_nav__desktop-arrow-size:							4px !default;		// border-width
+$site_nav__desktop-arrow-color:							$site_nav__gray-darker !default;
+$site_nav__desktop-arrow-spacing:						4px !default;
+
+
+// ----------------------------------------------------------
+// :: 1.8. Desktop sub menus
+// ----------------------------------------------------------
+
+// Menu box
+$site_nav__desktop-sub-bg:								$site_nav__white !default;
+$site_nav__desktop-sub-border-color:					$site_nav__gray-dark !default;
+$site_nav__desktop-sub-border-radius:					$site_nav__border-radius !default;
+$site_nav__desktop-sub-box-shadow:						0 5px 9px $site_nav__box-shadow !default;
+
+
+// Sub menu indicators
+$site_nav__desktop-sub-arrow-size:						5px !default;		// border-width
+
+// Sub menu carets
+$site_nav__desktop-sub-caret-size:						8px !default;		// border-width
+$site_nav__desktop-sub-caret-left:						30px !default;
+
+
+// ----------------------------------------------------------
+// :: 2.1. Collapsible mode (mobile first)
+// ----------------------------------------------------------
+
+// calc item height and sub menus toggle button size
+$site_nav__item-height: $site_nav__line-height + $site_nav__collapsible-item-padding-vertical * 2;
+// set toggle button size to 80% of item height
+$site_nav__toggle-size: floor($site_nav__item-height * 0.8);
+$site_nav__toggle-spacing: floor($site_nav__item-height * 0.1);
+
+
+
+
+
+// Generate rules to indent sub menus text
+//
+// We'll use left border to avoid messing with the padding.
+
+@mixin site_nav__sub-items-indentation($amount, $chainable: 'ul ', $level: 4, $chain: '') {
+	@for $i from 1 through $level {
+		$chain: $chain + $chainable;
+		#{$chain} a,
+		#{$chain} a:hover,
+		#{$chain} a:focus,
+		#{$chain} a:active {
+			border-left: ($amount * ($i + 1)) solid transparent;
+		}
+	}
+}
+
+
+
+// Generate rules to round the corners of the last collapsible item
+
+@mixin site_nav__round-corners-last-item($amount, $chainable: 'ul > li:last-child > ', $level: 4, $chain_prefix: '> li:last-child > ', $chain: '', $selector: '') {
+	$chain: $chain_prefix;
+	$selector: $chain + 'a, ' + $chain + '*:not(ul) a, ' + $chain + 'ul';
+	@for $i from 1 through $level {
+		$chain: $chain + $chainable;
+		$selector: $selector + ',
+' + $chain + ' a, ' + $chain + '*:not(ul) a, ' + $chain + ' ul';
+	}
+	#{$selector} {
+		@include border-radius(0 0 $amount $amount);
+	}
+	// highlighted items, don't need rounding since their sub is open
+	$chain: $chain_prefix;
+	$selector: $chain + 'a.highlighted, ' + $chain + '*:not(ul) a.highlighted';
+	@for $i from 1 through $level {
+		$chain: $chain + $chainable;
+		$selector: $selector + ',
+' + $chain + ' a.highlighted, ' + $chain + '*:not(ul) a.highlighted';
+	}
+	#{$selector} {
+		@include border-radius(0);
+	}
+}
+
+
+
+
+.clear{
+	clear:both;
+	height:0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// Main menu box
+.site_nav {
+	// background: $site_nav__collapsible-bg;
+	@include border-radius($site_nav__collapsible-border-radius);
+
+	// Main menu items
+	a {
+
+		// Toggle buttons (sub menu indicators)
+		span.sub-arrow {
+			position: absolute;
+			top: 50%;
+			margin-top: -(ceil($site_nav__toggle-size / 2));
+			left: auto;
+			right: $site_nav__toggle-spacing;
+			width: $site_nav__toggle-size;
+			height: $site_nav__toggle-size;
+			overflow: hidden;
+			font: bold #{$site_nav__font-size-small}/#{$site_nav__toggle-size} monospace !important;
+			text-align: center;
+			text-shadow: none;
+			@include border-radius($site_nav__border-radius);
+		}
+		// Change + to - on sub menu expand
+		&.highlighted span.sub-arrow:before {
+			display: block;
+			content: '-';
+		}
+	}
+
+	// round the corners of the first item
+	> li:first-child > a, > li:first-child > :not(ul) a {
+		@include border-radius($site_nav__collapsible-border-radius $site_nav__collapsible-border-radius 0 0);
+	}
+	// round the corners of the last item
+	@include site_nav__round-corners-last-item($site_nav__collapsible-border-radius);
+
+	// Main menu items separators
+	li {
+
+	}
+	> li:first-child {
+		border-top: 0;
+	}
+
+	// Sub menus box
+	ul {
+
+	}
+}
+
+
+// ----------------------------------------------------------
+// :: 2.2. Desktop mode
+// ----------------------------------------------------------
+
+@media (min-width: 768px) {
+
+	.bitcron_nav{
+		display: block;
+	}
+
+	/* Switch to desktop layout
+	-----------------------------------------------
+	   These transform the menu tree from
+	   collapsible to desktop (navbar + dropdowns)
+	-----------------------------------------------*/
+	/* start... (it's not recommended editing these rules) */
+	.site_nav ul{position:absolute;width:12em;}
+	.site_nav li{float:left;}
+	.site_nav ul li,.site_nav.sm-rtl ul li,.site_nav.sm-vertical li{float:none;}
+	.site_nav a{white-space:nowrap;}
+	.site_nav ul a,.site_nav.sm-vertical a{white-space:normal;}
+	.site_nav .sm-nowrap > li > a,.site_nav .sm-nowrap > li > :not(ul) a{white-space:nowrap;}
+	/* ...end */
+
+	// Main menu box
+	.site_nav {
+
+
+		// Main menu items
+		a {
+
+			// Make room for the sub arrows
+			&.has-submenu {
+				padding-right: $site_nav__desktop-item-padding-horizontal + $site_nav__desktop-arrow-size * 2 + $site_nav__desktop-arrow-spacing;
+			}
+
+			// Sub menu indicators
+			span.sub-arrow {
+				top: 50%;
+				margin-top: -(ceil($site_nav__desktop-arrow-size / 2));
+				right: $site_nav__desktop-item-padding-horizontal;
+				width: 0;
+				height: 0;
+				border-width: $site_nav__desktop-arrow-size;
+				border-style: solid dashed dashed dashed;
+				background: transparent;
+				@include border-radius(0);
+			}
+			// reset mobile first style
+			&.highlighted span.sub-arrow:before {
+				display: none;
+			}
+		}
+
+		// No main menu items separators
+		li {
+			border-top: 0;
+		}
+
+		// First sub level carets
+		> li > ul:before,
+ 		> li > ul:after {
+			content: '';
+			position: absolute;
+			top: -($site_nav__desktop-sub-caret-size * 2 + $site_nav__border-width * 2);
+			left: $site_nav__desktop-sub-caret-left;
+			width: 0;
+			height: 0;
+			overflow: hidden;
+			border-width: ($site_nav__desktop-sub-caret-size + $site_nav__border-width);
+			border-style: dashed dashed solid dashed;
+			// 连接区域箭头边框颜色
+			// border-color: transparent transparent $site_nav__desktop-sub-border-color transparent;
+		}
+		> li > ul:after {
+			top: -($site_nav__desktop-sub-caret-size * 2);
+			left: ($site_nav__desktop-sub-caret-left + $site_nav__border-width);
+			border-width: $site_nav__desktop-sub-caret-size;
+			// 连接区域箭头的颜色
+			// border-color: transparent transparent #eee transparent;
+		}
+
+
+		// Sub menus box
+		ul {
+
+			// background: $site_nav__desktop-sub-bg;
+			@include border-radius($site_nav__desktop-sub-border-radius !important);
+			@include box-shadow($site_nav__desktop-sub-box-shadow);
+
+			// Sub menus items
+			a {
+				// No need for additional room for the sub arrows
+				&.has-submenu {
+					padding-right: 20px;
+				}
+
+				// Sub menu indicators
+				span.sub-arrow {
+					right: 8px;
+					top: 50%;
+					margin-top: -$site_nav__desktop-sub-arrow-size;
+					border-width: $site_nav__desktop-sub-arrow-size;
+					border-style: dashed dashed dashed solid;
+
+				}
+			}
+		}
+
+
+
+		// Scrolling arrows containers for tall sub menus - test sub menu: "Sub test" -> "more..." in the default download package
+		span.scroll-up, span.scroll-down {
+			position: absolute;
+			display: none;
+			visibility: hidden;
+			overflow: hidden;
+			height: 20px;
+		}
+
+		span.scroll-up-arrow {
+			position: absolute;
+			top: 0;
+			left: 50%;
+			margin-left: -6px;
+			// we will use one-side border to create a triangle so that we don't use a real background image, of course, you can use a real image if you like too
+			width: 0;
+			height: 0;
+			overflow: hidden;
+			border-width: 6px; // tweak size of the arrow
+			border-style: dashed dashed solid dashed;
+
+		}
+		span.scroll-down-arrow {
+			@extend span.scroll-up-arrow;
+			top: 8px;
+			border-style: solid dashed dashed dashed;
+		}
+	}
+}
+
+
+
+
+
+
+
+/* hide menu state checkbox (keep it visible to screen readers) */
+.menu_state {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+/* Mobile menu toggle button */
+.menu_btn {
+	float: right;
+	margin: 5px 10px;
+	position: relative;
+	z-index: 9999;
+	display: inline-block;
+	width: 29px;
+	height: 29px;
+	text-indent: 29px;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+
+/* hamburger icon */
+
+.menu_btn_icon, .menu_btn_icon:before, .menu_btn_icon:after {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  height: 2px;
+  width: 24px;
+  // background: #555;
+  -webkit-transition: all 0.25s;
+  transition: all 0.25s;
+}
+
+.menu_btn_icon:before {
+  content: '';
+  top: -7px;
+  left: 0;
+}
+
+.menu_btn_icon:after {
+  content: '';
+  top: 7px;
+  left: 0;
+}
+
+/* x icon */
+
+.menu_state:checked ~ .menu_btn .menu_btn_icon {
+  height: 0;
+  background: transparent;
+}
+
+.menu_state:checked ~ .menu_btn .menu_btn_icon:before {
+  top: 0;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.menu_state:checked ~ .menu_btn .menu_btn_icon:after {
+  top: 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+
+/* hide the menu in mobile view */
+.menu_state:not(:checked) ~ .bitcron_nav {
+  display: none;
+}
+
+.menu_state:checked ~ .bitcron_nav {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  /* hide the button in desktop view */
+  .menu_btn {
+    position: absolute;
+    top: -99999px;
+  }
+  /* always show the menu in desktop view */
+  .menu_state:not(:checked) ~ #main-menu {
+    display: block;
+  }
+}
+
+
+
+

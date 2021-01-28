@@ -1,0 +1,77 @@
+html
+    if request.web_path.startswith('/post')
+        doc = d.get_doc(path=request.offset_path_1)
+        if not doc
+            +response.raise_404()
+    else
+        doc = d.get_doc('index.md')
+        is_homepage = True
+    head
+        +h.load('/template/static/markdown.css')
+        +h.load('/template/static/style.scss')
+        if not is_homepage and doc
+            title= '%s -- %s' % (doc.title, site.title)
+        else
+            title= site.title or '?'
+        if site.text_indent
+            style
+                span.md_line{text-indent: 28px}
+    body
+        folders = d.get_data(type='folder', limit=300, with_page=False)
+        posts = d.get_data(type='post', limit=1000, with_page=False).filter(status='public')
+        files = folders + posts
+        sorted_files = d.sort_by_position(files)
+        tree_files = d.make_tree(sorted_files)
+        mixin build_item(item)
+            li(class='item_type item_type_%s'%item.type)
+                a_class = ''
+                if doc.path == item.path
+                    a_class = '%s active' % a_class
+                if item.type == 'folder'
+                    a(href='#', class=a_class)
+                        span.iconfont.icon-wenjianjia
+                        span= item.title
+                else
+                    a(href=item.url, class=a_class)
+                        span.iconfont.icon-icon_shiyongwendang
+                        span= item.title
+
+        mixin build_items(items, show_homepage=False)
+            if items: ul
+                if show_homepage and site.index_name: li.item_type
+                    a(href=h.url('/'), class='active' if is_homepage else '')
+                        span.iconfont.icon-icon_shiyongwendang
+                        span= site.index_name
+                for item in items:
+                    +build_item(item)
+                    if item.children
+                        li: +build_items(item.children)
+
+        .tree_nav_container
+            .tree_nav= build_items(tree_files, show_homepage=True)
+        .content_container
+            +pure
+                if doc.toc and doc.metadata.get('toc', True)
+                    +pure(1, 1, 0.7, 0.8)
+                        div.content.markdown
+                            if not is_homepage: .title_container: h1.title= doc.title
+                            div= doc.content
+                    +pure(0, 0, 0.3, 0.2)
+                        +h.auto_toc(doc)
+                else
+                    +pure(1)
+                        div.content.content_without_toc.markdown
+                            if not is_homepage: .title_container: h1.title= doc.title
+                            div= doc.content
+
+        +h.load('jquery')
+        script
+			$(document).ready(function(){
+				var sidebar = $('.tree_nav'); var current = $('.tree_nav .active');
+				if (sidebar.length && current.length){ sidebar.scrollTop(current.offset().top - sidebar.height()/2 + 70);}
+			})
+
+	    +h.load('/template/static/instantclick.js')
+	    script(data-no-instant="data-no-instant")
+	        InstantClick.init()
+

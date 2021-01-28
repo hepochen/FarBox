@@ -1,0 +1,68 @@
+$link_color: #555555;
+$active_color: #000000;
+
+
+.doc_toc{
+	position: static;
+	font-size:12px;
+	// width: 200px;
+
+	a{
+		text-decoration: none;
+		line-height: 1.1;
+		color: $link_color;
+	}
+
+
+	ul {
+		line-height: 1.8em;
+		list-style: none;
+		padding-left: 20px;
+		li {
+			list-style: none;
+		}
+
+		ul{
+			padding-left: 16px;
+		}
+		ul ul{
+			padding-left: 12px;
+		}
+	}
+
+
+	li{
+		margin: 0.5em auto;
+
+		ul{
+			padding: 0 0 0 1em;
+		}
+
+		& > ul{
+			margin-top: -5px;
+			margin-bottom: 6px;
+		}
+	}
+
+	.active{
+		& > a{
+			color: $active_color;
+			font-weight: bold;
+		}
+	}
+
+}
+
+.affix {
+  position: fixed !important;
+}
+
+
+
+/*
+@media screen and (max-width: 680px) {
+	.toc_container{
+		display: none;
+	}
+}
+*/

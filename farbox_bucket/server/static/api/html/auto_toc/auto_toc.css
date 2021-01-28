@@ -1,0 +1,30 @@
+.doc_toc {
+  position: static;
+  font-size: 12px; }
+  .doc_toc a {
+    text-decoration: none;
+    line-height: 1.1;
+    color: #555555; }
+    .doc_toc ul {
+      line-height: 1.8em;
+      list-style: none;
+      padding-left: 20px; }
+      .doc_toc ul li {
+        list-style: none; }
+        .doc_toc ul ul {
+          padding-left: 16px; }
+          .doc_toc ul ul ul {
+            padding-left: 12px; }
+  .doc_toc li {
+    margin: 0.5em auto; }
+    .doc_toc li ul {
+      padding: 0 0 0 1em; }
+      .doc_toc li > ul {
+        margin-top: -5px;
+        margin-bottom: 6px; }
+  .doc_toc .active > a {
+    color: #000000;
+    font-weight: bold; }
+
+.affix {
+  position: fixed !important; }

@@ -1,0 +1,93 @@
+body{
+    font-size: 14px;
+    font-family: 'Georgia', "Hiragino Sans GB", serif;
+    padding-top: 35px;
+}
+
+
+.buttons{
+    position: fixed;
+    width: 100%;
+    text-align: right;
+    padding: 15px 0 20px 0;
+    top: 0;
+    background: rgba(255,255,255,0.8);
+}
+
+.buttons a{
+    margin: 0 10px;
+    padding: 3px 8px;
+    font-size: 12px;
+    text-decoration: none;
+    border-radius: 4px;
+
+    background: #fff;
+    color: #0074d9;
+    border: 1px solid #e5e5e5;
+}
+
+.buttons a:hover{
+    color: #fff;
+    background:  #0074d9;
+    border: 1px solid #0074d9;
+}
+
+.buttons #info{
+    position: absolute;
+    text-align: left;
+    top: 3px;
+    left: 3px;
+    color: #0074d9;
+    font-size: 12px;
+}
+
+
+
+table {
+    border: 1px solid #eee;
+    border-collapse:collapse;
+}
+
+table {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 1em 0;
+    width: 100%;
+    max-width: 100%;
+    border-width: 1px;
+    border-style: solid;
+    background-color: transparent;
+}
+
+table, table tr, table tr td, table tr th {
+    border-color: #e5e5e5;
+}
+
+table th {
+    color: #666666;
+    background-color: #fdfdfd;
+}
+
+tr th {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    text-align: left;
+}
+
+tr th, tr td {
+    padding: 10px 20px;
+    border-right: 1px solid;
+    border-bottom: 1px solid #efefef !important;
+}
+
+tr th:last-child, tr td:last-child {
+    border-right: 0;
+}
+
+table th {
+    font-weight: bold;
+}
+
+table tbody > tr:nth-child(odd) > td, table tbody > tr:nth-child(odd) > th {
+    background-color: #f9f9f9;
+}

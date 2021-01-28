@@ -1,0 +1,21 @@
+extends base
+
+block title
+	title= post.title
+
+block content
+	.post.post_page
+		h1.title= post.title
+		.content
+			.post_content.markdown
+				if post.metadata.refer
+					refer_doc = d.get_doc(post.metadata.refer)
+					if refer_doc and refer_doc.type == 'post'
+						blockquote.refer= refer_doc.content.plain_html
+				div= post.content
+			.info
+				if post.tags: .tags: for tag in post.tags
+				    a(href=posts.get_tag_url(tag))= tag
+				.date @{{post.date}}
+
+        +post.comments_as_html()

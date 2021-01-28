@@ -1,0 +1,50 @@
+body {
+  font-size: 14px;
+  font-family: 'Georgia', "Hiragino Sans GB", serif;
+  width: 100%;
+  overflow: hidden; }
+
+  #main {
+    height: 100%; }
+
+    #save_button {
+      position: fixed;
+      top: 6px;
+      right: 2px;
+      z-index: 10000; }
+      #save_button a {
+        text-decoration: none;
+        padding: 5px 20px;
+        background: #b4b4b4;
+        border-radius: 2px;
+        color: #fff; }
+        #save_button a:hover {
+          background: #d42128; }
+      #save_button .precess {
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        background: #d42128;
+        height: 2px; }
+
+#editor textarea {
+  background: #fbfbfb;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  z-index: 9;
+  height: 100%;
+  width: 100%;
+  font-family: "Hiragino Sans GB", "Microsoft Yahei", Verdana, Arial, sans-serif;
+  font-size: 13pt;
+  line-height: 1.8em;
+  resize: none;
+  outline: none;
+  display: block;
+  border: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  box-sizing: border-box; }

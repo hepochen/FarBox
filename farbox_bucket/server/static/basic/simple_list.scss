@@ -1,0 +1,160 @@
+$high_color: #e7645c;
+$high_color2: #4296DB;
+
+
+body{
+	-webkit-font-smoothing: antialiased;
+	font-family: 'PT Sans', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+	-webkit-text-size-adjust:none;
+	font-size: 14px;
+}
+
+
+
+
+.core{
+	max-width: 960px;
+	margin: 0 auto;
+	padding-bottom: 50px;
+}
+
+
+a{
+	text-decoration: none;
+	color: #2482e7;
+
+	&:hover{
+		color: indianred;
+	}
+}
+
+
+.buttons {
+	a{
+		position: relative;
+		top: -2px;
+		left: 0;
+		text-decoration: none;
+		display: inline-block;
+		line-height: 1.6;
+		margin: 0 10px 5px 0;
+		font-size: 12px;
+		border-radius: 3px;
+		padding: 2px 10px;
+		background: #39f;
+		color: white;
+		&:hover{
+		  background: #ff3243;
+		  color: white;
+		}
+	}
+
+	a.secondary{
+		background: #666;
+		&:hover{
+		  background: #ff3243;
+		  color: white;
+		}
+	}
+}
+
+.buttons.right{
+	text-align: right;
+}
+
+.buttons.left{
+	text-align: left;
+}
+
+.pure-g{
+	.list_item{
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}
+
+
+.simple_list{
+	font-size: 14px;
+
+	.list_item{
+		margin: 20px 0 65px 0;
+		line-height: 2.1;
+
+		h2{
+			margin: 0;
+			line-height: 1.2;
+			word-break: break-all;
+		}
+
+		.actions{
+			font-size: 12px;
+			line-height: 2.9;
+			a, span{
+				margin-right: 15px;
+			}
+			a{
+				display: inline-block;
+			}
+		}
+
+		.info{
+			margin: 10px auto;
+			font-size: 12px;
+
+			span{
+				margin-right: 15px;
+			}
+		}
+
+		.sub_info{
+			color: #999;
+
+			b{
+				color: #000;
+				font-weight: normal;
+			}
+		}
+	}
+
+	.list_item.disable{
+		h2, h2 a{
+			color: #999;
+		}
+	}
+
+}
+
+.modal_actions{
+	font-size: 12px;
+	line-height: 2.9;
+	margin-bottom: 30px;
+	a, span{
+		margin-right: 15px;
+	}
+	a{
+		display: inline-block;
+	}
+}
+
+
+
+
+/*<middle*/
+@media print, screen and (max-width: 48em) {
+	.core{
+		width: 96%;
+	}
+}
+/*small*/
+@media print, screen and (max-width: 35.5em) {
+	.core{
+		width: 94%;
+	}
+}
+
+@media print, screen and (max-width: 1280px) {
+	.simple_list{
+		padding: 0 20px;
+	}
+}

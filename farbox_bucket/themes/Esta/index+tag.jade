@@ -1,0 +1,7 @@
+from mixins import make_post
+extends base.jade
+block content
+	.autopagerize_page_element:.content
+		for post in posts
+			+make_post(post, is_detail=False)
+		+h.paginator(pre_label="Newer Posts", next_label="Older Posts")

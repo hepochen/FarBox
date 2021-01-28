@@ -1,0 +1,26 @@
+extends base.jade
+
+category = d.get_doc(path=request.offset_path1, type='folder')
+
+block title
+    if category
+        title = category.title
+    else
+        +response.raise_404()
+
+	title= title
+
+block content
+    category_posts = d.get_data(type='post', status='public', limit=10, path=request.offset_path1)
+
+	.posts_in_list
+		h1= category.title
+		ul: for post in category_posts: li
+			a(href=post.url)= post.title
+			span.date= post.date('%d %b %Y')
+
+	if paginator.has_pre or paginator.has_next: .pager
+		if paginator.has_pre
+			a.round.pre(href=paginator.pre_url) ← Newer
+		if paginator.has_next
+			a.round.next(href=paginator.next_url) Older →

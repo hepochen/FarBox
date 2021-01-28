@@ -1,0 +1,311 @@
+$border: 1px solid #F2F4F6;
+
+/* ====================
+           global
+   ==================== */
+body {
+    background: #F2F4F6;
+    color: #454034;
+    font: 15px/1.8 'Droid Sans', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    -webkit-text-size-adjust:none;
+}
+
+.layout {
+    margin: 0 auto;
+}
+
+/* ====================
+           header
+   ==================== */
+.mod-header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    padding-top: 10px;
+    .site-title {
+        height: 70px;
+        line-height: 70px;
+        text-align: center;
+        font-weight: 400;
+        margin: 0;
+        font-size: 3em;
+        font-family: 'Josefin Sans', sans-serif;
+    }
+}
+
+
+.mod-nav {
+    padding: 10px 0;
+    border-top: $border;
+    text-align: center;
+
+	.site_nav a {
+        display: inline-block;
+        padding: 10px 20px 5px 20px;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 1.1em;
+        line-height: 1.1em;
+
+        &.selected{
+            color: #d23600;
+        }
+    }
+
+    .site_nav :first-child a{
+        color: #333 !important;
+    }
+}
+
+@media (min-width: 768px){
+	.farBox_nav{
+		.site_nav_wrap{
+			text-align: center;
+		}
+
+		.site_nav{
+			display: inline-block;
+			margin: 0 auto;
+			float: none;
+		}
+	}
+}
+
+
+/* ====================
+           banner
+   ==================== */
+.mod-banner {
+    position: relative;
+    height: 500px;
+    .banner-title {
+        padding-top: 60px;
+        height: 440px;
+        background: rgba(0,0,0,.3);
+        color: #fff;
+        position: absolute;
+        z-index: 10;
+        text-align: center;
+        width: 100%;
+        top: 0;
+        font-weight: 400;
+        font-family: 'Julius Sans One', sans-serif;
+        h3 {
+            font-size: 24px;
+            display: inline-block;
+            padding: 0 5px 20px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #fff;
+        }
+        p {
+            font-size: 16px;
+            span {
+                padding-left: 10px;
+            }
+        }
+    }
+    .banner {
+        height: 500px;
+        width: 100%;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+}
+
+
+#main {
+    position: relative;
+    z-index: 21;
+}
+
+/* ====================
+           posts
+   ==================== */
+.post-list {
+    margin-top: -230px;
+}
+
+.mod-post {
+    padding: 30px;
+    background: #fff;
+    margin-bottom: 30px;
+    .post-title {
+        font-size: 2.3em;
+		line-height: 1.2;
+		margin-top: 0.3em;
+		margin-bottom: 0.8em;
+    }
+    .post-meta {
+        float: left;
+        width: 80px;
+        text-align: center;
+        padding-right: 20px;
+    }
+    .post-date {
+        span {
+            display: block;
+        }
+    }
+    .post-d {
+        font-size: 30px;
+    }
+    .post-main {
+        overflow: hidden;
+    }
+    .post-info {
+        text-align: right;
+        color: #999;
+        font-size: 12px;
+        padding-top: 20px;
+        .fa {
+            margin-right: 6px;
+        }
+	    .tag {
+		    padding: 5px 15px;
+    		display: inline-block;
+    		background: #f4f6f8;
+    		border-radius: 4px;
+		    margin-right: 10px;
+	    }
+    }
+
+}
+
+/* ====================
+           detail
+   ==================== */
+.detail-page {
+    padding-top: 50px;
+}
+
+.mod-article {
+    background: #fff;
+    padding: 30px;
+    .article-title {
+        font-size: 2.8em;
+        margin-bottom: 10px;
+		line-height: 1.2;
+    }
+    .post-metas {
+        margin-bottom: 2em;
+        color: #999;
+        font-size: 12px;
+        span {
+            margin-right: 10px;
+        }
+    }
+}
+
+/* ====================
+           side
+   ==================== */
+.mod-side {
+    padding-left: 20px;
+    .side-box {
+        background: #fff;
+        margin-bottom: 30px;
+    }
+}
+
+
+/* ====================
+           archive
+   ==================== */
+.archive-title {
+    font-size: 28px;
+	margin-top: 50px;
+    height: 90px;
+    line-height: 90px;
+	font-weight: normal;
+	text-align: center;
+}
+
+.mod-archive {
+    background: #fff;
+    padding: 50px 30px 30px 30px;
+	margin-bottom: 35px;
+    .archive-year {
+        font-size: 28px;
+		margin-top: 30px;
+		margin-bottom: 5px;
+    }
+	.archive-list{
+		margin-bottom: 70px;
+	}
+    .post-item {
+        padding: 15px 0;
+        font-size: 16px;
+		border-bottom: 1px dashed #eee;
+		.date{
+			font-size: 13px;
+			color: #777;
+			margin-right: 10px;
+		}
+    }
+}
+/* ====================
+           paginator
+   ==================== */
+.paginator {
+    .pre,
+    .next {
+        display: inline-block;
+        padding: 8px 15px;
+        background: #fff;
+    }
+    .next {
+        float: right;
+    }
+}
+
+/* ====================
+           footer
+   ==================== */
+.mod-footer {
+    text-align: center;
+    padding: 30px 0 10px;
+    background: #fff;
+    margin-top: 30px;
+	font-size: 14px;
+    .fa{
+        font-size: 20px;
+        margin: 0 12px;
+        color: #999;
+        &:hover {
+            color: #58b798;
+        }
+    }
+    .copyright {
+        padding-top: 20px;
+        color: #999;
+        font-family: Lato, sans-serif;
+		a{
+			margin-right: 7px;
+		}
+    }
+    .my_socials {
+        display: inline;
+    }
+}
+
+/*<middle*/
+@media print, screen and (max-width: 48em) {
+
+}
+/*small*/
+@media print, screen and (max-width: 35.5em) {
+	.mod-post{
+		.post-title{
+			font-size: 2.1em;
+		}
+		.post-meta{
+			display: none;
+		}
+	}
+	.mod-article{
+		.article-title{
+			font-size: 2.5em;
+		}
+	}
+}

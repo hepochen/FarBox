@@ -1,0 +1,16 @@
+.idea
+*.pyc
+*.pyd
+*.DS_Store
+test[!s]*
+tmp*
+web/static/unsplash/origin
+draft/*
+configs/debug.txt
+project.dockerfile
+project.packages
+dist/*
+*.egg-info/*
+farbox_bucket/bitcron/*
+PKG-INFO
+*.cfg

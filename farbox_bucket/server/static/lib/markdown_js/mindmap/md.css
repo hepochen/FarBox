@@ -1,0 +1,768 @@
+@charset "UTF-8";
+
+.markdown{
+    font-size: 14px;
+    line-height:1.5;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: normal;
+    color: #222;
+}
+.markdown br {
+	line-height: 1.5;
+}
+
+.markdown .gist {
+	word-break: normal;
+}
+
+.markdown img {
+	max-width: 98%;
+	margin: 0.8em auto 0.8em auto;
+}
+
+.markdown h1 img, .markdown h2 img, .markdown h3 img, .markdown h4 img, .markdown h5 img, .markdown h6 img {
+	margin: auto;
+}
+
+.markdown .x2_image {
+	zoom: 50%;
+}
+
+.markdown .x3_image {
+	zoom: 33.33%;
+}
+
+.markdown .x4_image {
+	zoom: 25%;
+}
+
+.markdown p img {
+	margin: 0 auto;
+}
+
+.markdown p {
+    /*overflow:hidden;*/
+	margin: 1.0em 0 1.8em 0;
+}
+
+.markdown p.md_block_as_opening {
+	margin-bottom: -0.5em !important;
+}
+
+.markdown li p {
+	line-height: 2.07;
+	margin: 0;
+}
+
+.markdown .p_part {
+	margin: 10px 0;
+}
+
+.markdown .p_part p {
+	margin: 0 0 0.6em 0;
+}
+
+.markdown table, .markdown pre, .markdown svg, .markdown .codehilitetable {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.markdown .codehilitetable pre {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.markdown .codehilitetable .codehilite pre {
+	border-left: none;
+}
+
+.markdown blockquote .p_part p, .markdown li .p_part p {
+	text-indent: 0 !important;
+}
+
+.markdown hr {
+	margin: 38px 0;
+	border: none;
+	border-bottom: 1px dashed rgba(205, 205, 205, 0.35);
+	color: rgba(205, 205, 205, 0.35);
+	height: 1px;
+	line-height: 1px;
+	font-size: 1px;
+	overflow-y: hidden;
+}
+
+.markdown h1 {
+	color: #10A3EE;
+	font-size: 1.6em;
+	text-align: left;
+	margin: 0;
+	padding: 0;
+	line-height: 1.6em;
+	margin-top: 0.8em;
+	margin-bottom: 0.6em;
+}
+
+.markdown h1, .markdown h2, .markdown h3, .markdown h4 {
+	color: #10A3EE;
+}
+
+.markdown h2, .markdown h3 {
+	line-height: 1.5em;
+	margin-top: 1.8em;
+	margin-bottom: 0.5em;
+}
+
+.markdown .h16.md_first_h.md_first_part {
+	margin-top: 5px;
+}
+
+.markdown h2 {
+	font-size: 1.35em;
+}
+
+.markdown h3 {
+	font-size: 1.2em;
+}
+
+.markdown h4 {
+	font-size: 1.1em;
+}
+
+.markdown h5 {
+	font-size: 1.15em;
+}
+
+.markdown h6 {
+	font-size: 1em;
+}
+
+.markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6 {
+	font-family: "Heiti SC";
+}
+
+.markdown ol {
+	margin: 0;
+}
+
+.markdown ul {
+	padding: 5px 38px;
+	margin: 0;
+}
+
+.markdown ul li, .markdown li {
+	padding: 0;
+	margin: 0;
+}
+
+.markdown ul p, .markdown ol p {
+	overflow: visible;
+}
+
+.markdown blockquote {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	margin: 1.6em 0;
+	padding: 0 0 0 1.2em;
+	border-left: 0.4em solid #16B0FF;
+	color: #888888;
+	min-height: 20px;
+}
+
+.markdown blockquote p {
+	margin: 0.8em 0;
+}
+
+.markdown blockquote span.md_line {
+	margin-bottom: 0.25em;
+	margin-top: 0.25em;
+}
+
+.markdown blockquote ul {
+	padding: 0 15px;
+}
+
+.markdown blockquote small {
+	display: inline-block;
+	margin: 0.8em 0 0.8em 1.5em;
+	font-size: 0.9em;
+	color: #ccc;
+}
+
+.markdown table {
+	line-height: 1.7;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	margin: 1em 0;
+	width: 100%;
+	max-width: 100%;
+	border-width: 1px;
+	border-style: solid;
+	background-color: transparent;
+	border-spacing: 0;
+	word-break: normal;
+}
+
+.markdown table, .markdown table tr, .markdown table tr td, .markdown table tr th {
+	border-color: rgba(205, 205, 205, 0.35);
+}
+
+.markdown table th {
+	font-weight: bold;
+}
+
+.markdown tr th {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	text-align: left;
+}
+
+.markdown tr th, .markdown tr td {
+	padding: 10px 20px;
+	border-right: 1px solid;
+	border-bottom: 1px solid rgba(205, 205, 205, 0.35);
+}
+
+.markdown tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.markdown tr th:last-child, .markdown tr td:last-child {
+	border-right: 0;
+}
+
+.markdown table tbody > tr:nth-child(odd) > td, .markdown table tbody > tr:nth-child(odd) > th {
+	background-color: rgba(235, 235, 235, 0.2);
+}
+
+.markdown code {
+	background: rgba(235, 235, 235, 0.35);
+	color: #48B456;
+	padding: 0 5px;
+	margin: 0 2px;
+}
+
+.markdown pre {
+	margin-top: 1.2em;
+	margin-bottom: 1.2em;
+	padding: 15px 10px;
+	display: block;
+    /* overflow: auto; */
+	border: 1px solid rgba(205, 205, 205, 0.35);
+    /*background: rgba(235, 235, 235, 0.35);*/
+	font-size: 90%;
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+.markdown .highlighttable td {
+    /*background-color: rgba(235, 235, 235, 0.35) !important;*/;
+}
+
+.markdown .with_lines pre {
+	border: none;
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+	background: transparent;
+}
+
+.markdown .is_code_file pre {
+	border: none;
+	background: transparent;
+}
+
+.markdown .codehilite pre {
+    /*word-wrap: normal;*/
+	font-size: 13px;
+}
+
+.markdown pre code {
+	border: none;
+	background: none;
+	padding: 0;
+	margin: 0;
+}
+
+.markdown pre p {
+	margin: 0;
+	padding: 0;
+}
+
+.markdown .codehilite th, .markdown .codehilite td {
+	line-height: 1.8em;
+}
+
+.markdown a {
+	color: #4083C4;
+	text-decoration: none;
+}
+
+.markdown a:hover {
+	text-decoration: underline;
+}
+
+.markdown strong {
+	color: #000000;
+	font-weight: bold;
+}
+
+.markdown .linenos pre {
+	background: transparent;
+	border: none;
+}
+
+.markdown .linenos {
+	padding: 0 5px 0 5px;
+	width: 0.001%;
+}
+
+.markdown .highlighttable pre {
+	padding: 5px 10px;
+}
+
+.markdown .toc {
+	background: None;
+	border-radius: 5px;
+	border: 1px solid None;
+	margin: 27px 0 47px 0;
+	padding: 10px 0;
+}
+
+.markdown .toc ul li {
+	padding: 0;
+	margin: 0;
+}
+
+.markdown .toc a {
+	color: #3C3C3C;
+}
+
+.markdown .todo_item {
+	list-style: none;
+	margin-left: -1.5em;
+}
+
+.markdown .todo_item .todo_item {
+	margin-left: auto;
+}
+
+.markdown .todo_done_item {
+	color: #999999;
+}
+
+.markdown .todo_undone_item {
+	color: #C85A57;
+}
+
+.markdown ul li.todo_item {
+	list-style-type: none;
+}
+
+.markdown ul li.todo_item:before {
+	content: '☐';
+    /*padding-right: 0.2em;*/
+	font-family: arial;
+}
+
+.markdown ul li.todo_done_item:before {
+	content: '☑';
+    /*padding-right: 0.2em;*/
+	font-family: arial;
+}
+
+.markdown ul li.todo_item input {
+	display: none;
+}
+
+.markdown .codehilite {
+	background: transparent !important;
+}
+
+.markdown table.codehilitetable {
+	border: none;
+}
+
+.markdown .codehilitetable td {
+	border: none;
+	padding: 0;
+}
+
+.markdown .flow-graphic, .markdown .md_block_section_for_flow_graphic {
+	text-align: center;
+}
+
+.markdown .flow-graphic {
+	overflow-x: auto;
+}
+
+.markdown .mermaid, .markdown .md_block_section_for_mermaid {
+	text-align: center;
+}
+
+.markdown table, .markdown tr, .markdown td, .markdown th, .markdown tbody, .markdown thead, .markdown tfoot, .markdown .md_echarts, .markdown blockquote .md_line {
+	page-break-inside: avoid !important;
+}
+
+.markdown .footnotes .md_line {
+	display: inline !important;
+}
+
+.markdown .img_rt_90 {
+	transform: rotate(90deg);
+	-ms-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+}
+
+.markdown .img_rt_180 {
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+}
+
+.markdown .img_rt_270 {
+	transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-webkit-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+}
+
+.markdown .md_has_block_below {
+	margin-bottom: 0.1em !important;
+}
+
+.markdown .md_has_block_below_img {
+	margin-bottom: -0.6em !important;
+}
+
+.markdown .codehilite .err {
+	border: none !important;
+}
+
+.markdown span.md_line {
+	margin-bottom: 0.5em;
+	display: block;
+	line-height: 1.9895;
+}
+
+.markdown .md_line br {
+	display: none;
+}
+
+.markdown .codehilite .hll {
+	background-color: #ffffcc;
+}
+
+.markdown .codehilite {
+	background: #eeeedd;
+}
+
+.markdown .codehilite .c {
+	color: #999999;
+}
+
+.markdown .codehilite .err {
+	color: #a61717;
+	background-color: #e3d2d2;
+}
+
+.markdown .codehilite .k {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .l {
+	color: #ae81ff;
+}
+
+.markdown .codehilite .n {
+	color: #555555;
+}
+
+.markdown .codehilite .o {
+	color: #555555;
+}
+
+.markdown .codehilite .p {
+	color: #555555;
+}
+
+.markdown .codehilite .ch {
+	color: #999999;
+}
+
+.markdown .codehilite .cm {
+	color: #999999;
+}
+
+.markdown .codehilite .cp {
+	color: #1e889b;
+}
+
+.markdown .codehilite .cpf {
+	color: #999999;
+}
+
+.markdown .codehilite .c1 {
+	color: #999999;
+}
+
+.markdown .codehilite .cs {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .gd {
+	color: #aa0000;
+}
+
+.markdown .codehilite .ge {
+	font-style: italic;
+}
+
+.markdown .codehilite .gr {
+	color: #aa0000;
+}
+
+.markdown .codehilite .gh {
+	color: #000080;
+	font-weight: bold;
+}
+
+.markdown .codehilite .gi {
+	color: #00aa00;
+}
+
+.markdown .codehilite .go {
+	color: #888888;
+}
+
+.markdown .codehilite .gp {
+	color: #555555;
+}
+
+.markdown .codehilite .gs {
+	font-weight: bold;
+}
+
+.markdown .codehilite .gu {
+	color: #800080;
+	font-weight: bold;
+}
+
+.markdown .codehilite .gt {
+	color: #aa0000;
+}
+
+.markdown .codehilite .kc {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .kd {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .kn {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .kp {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .kr {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .kt {
+	color: #a7a7a7;
+	font-weight: bold;
+}
+
+.markdown .codehilite .ld {
+	color: #e6db74;
+}
+
+.markdown .codehilite .m {
+	color: #B452CD;
+}
+
+.markdown .codehilite .s {
+	color: #CD5555;
+}
+
+.markdown .codehilite .na {
+	color: #658b00;
+}
+
+.markdown .codehilite .nb {
+	color: #658b00;
+}
+
+.markdown .codehilite .nc {
+	color: #008b45;
+	font-weight: bold;
+}
+
+.markdown .codehilite .no {
+	color: #00688B;
+}
+
+.markdown .codehilite .nd {
+	color: #707a7c;
+}
+
+.markdown .codehilite .ni {
+	color: #555555;
+}
+
+.markdown .codehilite .ne {
+	color: #008b45;
+	font-weight: bold;
+}
+
+.markdown .codehilite .nf {
+	color: #008b45;
+}
+
+.markdown .codehilite .nl {
+	color: #555555;
+}
+
+.markdown .codehilite .nn {
+	color: #008b45;
+}
+
+.markdown .codehilite .nx {
+	color: #555555;
+}
+
+.markdown .codehilite .py {
+	color: #555555;
+}
+
+.markdown .codehilite .nt {
+	color: #8B008B;
+	font-weight: bold;
+}
+
+.markdown .codehilite .nv {
+	color: #00688B;
+}
+
+.markdown .codehilite .ow {
+	color: #8B008B;
+}
+
+.markdown .codehilite .w {
+	color: #bbbbbb;
+}
+
+.markdown .codehilite .mb {
+	color: #B452CD;
+}
+
+.markdown .codehilite .mf {
+	color: #B452CD;
+}
+
+.markdown .codehilite .mh {
+	color: #B452CD;
+}
+
+.markdown .codehilite .mi {
+	color: #B452CD;
+}
+
+.markdown .codehilite .mo {
+	color: #B452CD;
+}
+
+.markdown .codehilite .sa {
+	color: #CD5555;
+}
+
+.markdown .codehilite .sb {
+	color: #CD5555;
+}
+
+.markdown .codehilite .sc {
+	color: #CD5555;
+}
+
+.markdown .codehilite .dl {
+	color: #CD5555;
+}
+
+.markdown .codehilite .sd {
+	color: #CD5555;
+}
+
+.markdown .codehilite .s2 {
+	color: #CD5555;
+}
+
+.markdown .codehilite .se {
+	color: #CD5555;
+}
+
+.markdown .codehilite .sh {
+	color: #1c7e71;
+	font-style: italic;
+}
+
+.markdown .codehilite .si {
+	color: #CD5555;
+}
+
+.markdown .codehilite .sx {
+	color: #cb6c20;
+}
+
+.markdown .codehilite .sr {
+	color: #1c7e71;
+}
+
+.markdown .codehilite .s1 {
+	color: #CD5555;
+}
+
+.markdown .codehilite .ss {
+	color: #CD5555;
+}
+
+.markdown .codehilite .bp {
+	color: #658b00;
+}
+
+.markdown .codehilite .fm {
+	color: #008b45;
+}
+
+.markdown .codehilite .vc {
+	color: #00688B;
+}
+
+.markdown .codehilite .vg {
+	color: #00688B;
+}
+
+.markdown .codehilite .vi {
+	color: #00688B;
+}
+
+.markdown .codehilite .vm {
+	color: #00688B;
+}
+
+.markdown .codehilite .il {
+	color: #B452CD;
+}

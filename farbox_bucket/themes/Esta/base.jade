@@ -1,0 +1,43 @@
+html
+	+h.i18n('Home', '首页', 'zh_cn')
+	+h.i18n('Categories', '分类', 'zh_cn')
+	+h.i18n('Archive', '归档', 'zh_cn')
+	+h.i18n('Tags', '标签', 'zh_cn')
+	+h.i18n('About', '关于', 'zh_cn')
+	+h.i18n('Links', '友链', 'zh_cn')
+	head
+		block title
+			title= post.title or site.title
+		+h.headers
+		+h.load('markdown')
+		+h.load('/template/style.scss')
+
+	body
+		.sidebar
+			.logo_title
+				.title
+				    a(href=h.url('/'))
+					    img(src=site.site_avatar,style="width:127px;")
+					h3(title="")
+						a(href=h.url("/"))= site.title
+					if site.sub_title
+						.sub_title: p=site.sub_title
+
+			+site.socials
+
+			.footer
+				a(target="_blank", href="http://{{request.domain}}")
+					span Designed by 
+					a(href="https://www.caicai.me")  CaiCai
+					.by_farbox
+						a(href="https://www.farBox.com", target="_blank") Proudly published with FarBox&#65281;
+
+		.main
+			.page_top
+				+site.get_nav(align="right", toggle_menu=True)
+
+			block content
+
+		+h.load('font')
+		+h.load('/fb_static/lib/fonts/open_sans.css')
+
