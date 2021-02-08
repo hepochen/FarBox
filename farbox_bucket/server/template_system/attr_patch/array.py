@@ -35,6 +35,7 @@ def all_has(objects, key, check_value=None, opt=None):
 ##### sort_by
 
 def sort(objects, attr='position', ordered_attr=None, ordered_keys=None, match=False):
+    # todo 现在没有 position 这个字段了
     if attr.startswith('-'):
         reverse = True
         attr = attr.lstrip('-')

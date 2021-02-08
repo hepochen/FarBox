@@ -10,6 +10,16 @@ def run_cmd(cmd):
     except:
         return None
 
+
+@run_long_time(wait=6*60*60, sleep_at_end=12*60*60, log='run logrotate')
+def run_logrotate():
+    if not os.path.isfile("/usr/sbin/logrotate"):
+        return
+    if not os.path.isfile("/etc/logrotate.d/farbox_bucket"):
+        return
+    run_cmd("/usr/sbin/logrotate /etc/logrotate.d/farbox_bucket")
+
+
 @run_long_time(wait=10, sleep_at_end=2*60, log='keep watch nginx')
 def keep_watch_nginx():
     cmd_result = run_cmd('ps -C nginx -o pid --no-headers')
@@ -40,7 +50,7 @@ def keep_watch_memcache():
 
 @run_long_time(wait=24*60*60, sleep_at_end=24*60*60, log='restart backend per day')
 def restart_backend_per_day():
-    run_cmd('/usr/local/bin/supervisorctl restart farbox_bucket')
+    run_cmd('/usr/local/bin/supervisorctl restart farbox_bucket_backend')
 
 
 @run_long_time(wait=24*60*60, sleep_at_end=24*60*60, log='restart websocket server per day')

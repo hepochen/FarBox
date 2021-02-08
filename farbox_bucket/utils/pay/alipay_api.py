@@ -10,11 +10,12 @@ import base64
 import ujson as json
 import uuid
 import re
-from flask import request, g
+from flask import request
 from urllib import urlencode
 
 from farbox_bucket.utils import to_float, smart_str, smart_unicode, get_md5
 from farbox_bucket.utils.cache import LimitedSizeDict
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
 
 
 # alipay_partner_public_key = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB'
@@ -86,10 +87,10 @@ class BaseAlipay(object):
         uid = uuid.uuid1().hex[:8]
         no = '%s%s%s' % (prefix, now, uid)
         try:
-            site_id = getattr(g, 'site_id', None)
-            if site_id: # site_id hashed 长度为 32， 总长度为 14+8+1+32=55 < 64
-                hashed_site_id = get_md5(site_id) # 主要用作校验，避免跨站的交易被验证成功
-                no = '%s-%s' % (no, hashed_site_id)
+            bucket = get_bucket_in_request_context()
+            if bucket: # site_id hashed 长度为 32， 总长度为 14+8+1+32=55 < 64
+                hashed_bucket_id = get_md5(bucket) # 主要用作校验，避免跨站的交易被验证成功
+                no = '%s-%s' % (no, hashed_bucket_id)
         except:
             pass
 
@@ -101,13 +102,10 @@ class BaseAlipay(object):
         if '-' not in  out_trade_no:
             # 没有在trade_no 中增加site的信息，ignore掉, return True
             return True
-        try:
-            site_id = getattr(g, 'site_id', None)
-        except:
-            return False
-        if site_id: # site_id hashed 长度为 32， 总长度为 14+8+1+32=55 < 64
-            hashed_site_id = get_md5(site_id) # 主要用作校验，避免跨站的交易被验证成功
-            if out_trade_no and out_trade_no.endswith('-%s' % hashed_site_id):
+        bucket = get_bucket_in_request_context()
+        if bucket: # site_id hashed 长度为 32， 总长度为 14+8+1+32=55 < 64
+            hashed_bucket_id = get_md5(bucket) # 主要用作校验，避免跨站的交易被验证成功
+            if out_trade_no and out_trade_no.endswith('-%s' % hashed_bucket_id):
                 return True
         return False
 

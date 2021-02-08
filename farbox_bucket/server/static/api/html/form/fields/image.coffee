@@ -22,7 +22,7 @@ placeholder_image = '/drop_image_here.png'
 
 	img_dom.addClass('inited')
 
-	post_url = $(dom).attr("data-post-url") or '/service/sync'
+	post_url = $(dom).attr("data-post-url") or '/__file_manager_api'
 
 	filepath = $(dom).attr("data-filepath") or ''
 	image_extensions = 'gif,jpg,jpeg,bmp,png'
@@ -91,7 +91,7 @@ placeholder_image = '/drop_image_here.png'
 	img_dom.attr('src', placeholder_image)
 	if img_dom.attr('data-clear-is-delete') == 'yes' and image_filepath
 		$.ajax
-			url: '/service/sync_update_doc',
+			url: '/__file_manager_api',
 			method: 'post',
 			data: {is_dir: false,  path:image_filepath, is_deleted:true}
 	else

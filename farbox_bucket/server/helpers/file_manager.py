@@ -1,7 +1,7 @@
 # coding: utf8
 import time
 import ujson as json
-from flask import request, g
+from flask import request
 from farbox_bucket.bucket.storage.default import storage
 from farbox_bucket.client.sync.compiler_worker import get_compiler_data_directly
 from farbox_bucket.bucket.utils import set_bucket_configs
@@ -10,8 +10,7 @@ from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get
 from farbox_bucket.bucket.token.utils import is_bucket_login, get_logined_bucket, get_logined_bucket_by_token
 from farbox_bucket.server.utils.response import jsonify, json_if_error
 from farbox_bucket.server.utils.request import get_file_content_in_request
-from farbox_bucket.utils import smart_unicode, smart_str, to_int, string_types, get_md5
-from farbox_markdown.util import is_a_markdown_file
+from farbox_bucket.utils import smart_unicode, to_int, string_types, get_md5, is_a_markdown_file
 
 
 def sync_file_by_server_side(bucket, relative_path, content=None, is_dir=False, is_deleted=False, return_record=False, real_relative_path=None):

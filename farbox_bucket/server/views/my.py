@@ -1,42 +1,59 @@
 #coding: utf8
 # 登录和注册的逻辑
-from flask import request, abort, Response, g
+from flask import request, abort, redirect
 from farbox_bucket.settings import SYSTEM_DOMAINS, BUCKET_PRICE, BUCKET_PRICE2
 from farbox_bucket.server.web_app import app
-from farbox_bucket.utils import to_float, is_email_address
+from farbox_bucket.utils import is_email_address, auto_type
 from farbox_bucket.utils.env import get_env
+from farbox_bucket.utils.data import json_dumps
 from farbox_bucket.utils.ip.utils import get_current_ip
 from farbox_bucket.server.utils.response import p_redirect
+from farbox_bucket.server.utils.cookie import delete_cookies
 from farbox_bucket.server.template_system.api_template_render import render_api_template_as_response
-from farbox_bucket.bucket.helper import create_private_key_on_server_side
+from farbox_bucket.server.utils.request_context_vars import set_not_cache_current_request
+from farbox_bucket.server.template_system.namespace.utils.form_utils import get_data_obj_from_POST
+from farbox_bucket.server.template_system.app_functions.after_request.cache_page import get_response_from_memcache
+from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
+
+from farbox_bucket.bucket.utils import set_bucket_in_request_context
+from farbox_bucket.bucket.record.get.path_related import get_markdown_record_by_path_prefix
+from farbox_bucket.bucket.helper import get_private_key_on_server_side
 from farbox_bucket.bucket.create import create_bucket_by_web_request
 from farbox_bucket.bucket.invite import check_invitation_by_web_request
-from farbox_bucket.bucket.token.utils import get_logined_bucket, get_logined_admin_bucket
+from farbox_bucket.bucket.token.utils import get_logined_bucket
 from farbox_bucket.bucket.domain.utils import get_bucket_from_domain
 from farbox_bucket.bucket.domain.ssl_utils import set_ssl_cert_for_domain_by_user, get_ssl_cert_for_domain
 from farbox_bucket.bucket.service.bucket_service_info import get_bucket_service_info
 from farbox_bucket.bucket.service.yearly_bucket_by_alipay import extend_bucket_expired_date_yearly_by_alipay
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_json_content_by_path
-from farbox_bucket.server.template_system.namespace.utils.form_utils import get_data_obj_from_POST
-from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
-from farbox_bucket.utils.data import json_dumps
-from farbox_bucket.server.template_system.app_functions.after_request.cache_page import get_response_from_memcache
 from farbox_bucket.bucket.private_configs import get_bucket_owner_email, set_owner_email_to_bucket
 from farbox_bucket.bucket.usage.bucket_usage_utils import get_bucket_usage
+from farbox_bucket.bucket.domain.web_utils import get_bucket_from_request
 
-from .utils import get_bucket_from_request
+from farbox_bucket.clouds.wechat.wechat_handler import is_wechat_server_valid
 
+
+
+@app.route("/logout")
+def logout():
+    delete_cookies("utoken", "visitor_password")
+    return redirect("/")
 
 @app.route("/login", methods=["POST","GET"])
 @app.route("/admin", methods=["POST","GET"])
 def login():
-    g.cache_strategy = "no"
+    set_not_cache_current_request()
     bucket = get_logined_bucket(check=True)
     if bucket:
         email = get_bucket_owner_email(bucket)
     else:
         email = ""
-    return render_api_template_as_response("page_user_admin.jade", email=email)
+    show_donation = auto_type(get_env("show_donation"))
+    response = render_api_template_as_response("page_user_admin.jade",
+                                           email=email,
+                                           show_donation=show_donation,
+                                           is_wechat_server_valid=is_wechat_server_valid)
+    return response
 
 
 
@@ -53,6 +70,14 @@ def setting_settings_view():
 
     return render_api_template_as_response("page_user_site_settings.jade", data_obj=data_obj)
 
+
+@app.route("/__site_json_settings", methods=["POST", "GET"])
+def site_json_settings_view():
+    bucket = get_logined_bucket(check=True)
+    if not bucket:
+        return abort(410)
+    set_bucket_in_request_context(bucket)
+    return render_api_template_as_response("page_user_json_settings_ui.jade")
 
 
 @app.route("/__bucket_usage")
@@ -88,7 +113,7 @@ def create_new_bucket_for_user_step_1():
 def create_new_bucket_for_user_step_2():
     # 这个也负责初次的安装，还没有 bucket 的时候
     register_note = get_env("register_note") or ""
-    private_key = request.values.get("private_key") or create_private_key_on_server_side()
+    private_key = request.values.get("private_key") or get_private_key_on_server_side()
     info = ""
     invitation_code = request.values.get("invitation_code") or request.values.get("code")
     if request.method == "POST":
@@ -188,15 +213,27 @@ def extend_bucket_yearly():
                                            service_info=service_info, price=price, price2=price2, price_note=price_note)
 
 
+@app.route("/__donate")
+def donate_to_farbox():
+    return render_api_template_as_response("page_donate.jade")
 
 @app.route("/__page/<path:path>")
 def render_markdown_page(path=""):
     # cache it
-    g.bucket = get_bucket_from_request(try_referrer=True)
+    bucket = get_bucket_from_request()
+    set_bucket_in_request_context(bucket)
     try: # memcache 的获取，也可能会出错, 概率很低
         cached_response = get_response_from_memcache()
         if cached_response:
             return cached_response
     except:
         pass
-    return render_api_template_as_response("page_user_markdown_page.jade")
+
+    if path in ["about", "links"]:
+        md_doc = get_markdown_record_by_path_prefix(bucket, path)
+        show_site_nav = True
+    else:
+        md_doc = None
+        show_site_nav = False
+
+    return render_api_template_as_response("page_user_markdown_page.jade", md_doc=md_doc, show_site_nav=show_site_nav)

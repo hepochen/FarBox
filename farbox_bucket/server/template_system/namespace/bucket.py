@@ -1,11 +1,9 @@
 # coding: utf8
 from __future__ import absolute_import
-from flask import request, g
-import requests
+from flask import request
 from farbox_bucket.utils import smart_unicode, string_types
 from farbox_bucket.utils.data import json_b64_dumps, json_dumps
-from farbox_bucket.settings import MAX_RECORD_SIZE_FOR_CONFIG
-from farbox_bucket.bucket.utils import set_bucket_configs, get_bucket_configs, has_bucket
+from farbox_bucket.bucket.utils import set_bucket_configs, get_bucket_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.private_configs import update_bucket_private_configs, get_bucket_private_config
 from farbox_bucket.bucket.token.utils import get_logined_bucket,  mark_bucket_login_by_private_key, mark_bucket_logout,\
     refresh_bucket_client_api_token, refresh_bucket_login_key, get_bucket_client_api_token, get_logined_admin_bucket
@@ -16,9 +14,9 @@ from farbox_bucket.bucket.domain.utils import get_bucket_domains
 from farbox_bucket.bucket.domain.info import get_is_system_domain
 from farbox_bucket.bucket.service.bucket_service_info import get_bucket_service_info
 from farbox_bucket.bucket.template_related.load_theme_from_template_folder import load_theme_from_template_folder_for_bucket
-from farbox_bucket.bucket.template_related.bucket_template_web_api import get_sign_for_bucket_template_api, set_bucket_pages_configs_by_web_api
-
-from farbox_bucket.bucket.utils import get_bucket_by_private_key, get_bucket_secret_site_configs
+from farbox_bucket.bucket.template_related.bucket_template_web_api import set_bucket_pages_configs_by_web_api
+from farbox_bucket.bucket.token.bucket_signature_and_check import get_signature_for_bucket
+from farbox_bucket.bucket.utils import get_bucket_by_private_key
 from farbox_bucket.themes import themes as builtin_themes
 from farbox_bucket.settings import NODE
 
@@ -106,7 +104,7 @@ class Bucket(object):
 
     @cached_property
     def current_bucket(self):
-        return getattr(g, 'bucket', '') or ''
+        return get_bucket_in_request_context() or ""
 
 
     @cache_result
@@ -165,7 +163,7 @@ class Bucket(object):
         if not self.logined_bucket:
             return ""
         else:
-            sign = get_sign_for_bucket_template_api(self.logined_bucket)
+            sign = get_signature_for_bucket(self.logined_bucket)
             url_path = "__theme?bucket=%s&sign=%s" % (self.logined_bucket, sign)
             api_url = request.url_root.rstrip("/") + "/" + url_path
             return api_url

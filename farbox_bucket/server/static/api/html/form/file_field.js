@@ -6,7 +6,7 @@
     var hover_border_style, old_border_style;
     dom = $(dom);
     filepath = filepath || 'data.zip';
-    post_url = post_url || '/service/sync';
+    post_url = post_url || '/__file_manager_api';
     old_border_style = dom.css('border');
     hover_border_style = '1px solid indianred';
     if (typeof auto_reload === "undefined") {

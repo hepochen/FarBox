@@ -3,7 +3,6 @@ from __future__ import absolute_import
 from farbox_bucket.utils import to_int, to_float, get_value_from_data, smart_str, smart_unicode
 from farbox_bucket.server.utils.site_resource import just_get_site_config
 import datetime
-from flask import g
 
 
 class Date(object):

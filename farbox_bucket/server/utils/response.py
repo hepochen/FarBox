@@ -1,11 +1,14 @@
 # coding: utf8
-import os
+import os, re
 import ujson as json
-from farbox_bucket.utils import smart_str, smart_unicode, get_md5, is_str
-from flask import request, g, redirect, Response, abort, send_file, make_response
+from flask import request, redirect, Response, abort, send_file, make_response
+from farbox_bucket.settings import DEBUG
+from farbox_bucket.utils import smart_str, smart_unicode, string_types, get_md5, is_str
 from farbox_bucket.utils.data import json_dumps
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.url import join_url, get_get_var
+from farbox_bucket.server.utils.request_context_vars import pre_handle_force_response_in_context
+from farbox_bucket.utils.convert.jade2jinja import jade_to_template
 
 
 def _handle_redirect_url(url, keep_site_id=True):
@@ -56,7 +59,7 @@ def p_redirect(url, *args, **kwargs):
 
 
 def force_redirect(url, *args, **kwargs):
-    if not isinstance(url, (str, unicode)):
+    if not isinstance(url, string_types):
         return ''
     keep_site_id = kwargs.pop('keep_site_id', True)
     url = _handle_redirect_url(url, keep_site_id)
@@ -80,19 +83,17 @@ def force_response(content, mime_type='text/html'):
             content = smart_unicode(content)
     else:
         content = smart_unicode(content)
-        force_response_pre_handler = getattr(g, 'force_response_pre_handler', None)
-        if force_response_pre_handler and hasattr(force_response_pre_handler, '__call__'):
-            content = force_response_pre_handler(content)
-    if isinstance(content, (str, unicode)):
+        content = pre_handle_force_response_in_context(content)
+    if isinstance(content, string_types):
         content = make_response(content)
-    if isinstance(content, Response) and isinstance(mime_type, (str, unicode)):
+    if isinstance(content, Response) and isinstance(mime_type, string_types):
         content.content_type = mime_type
     abort(422, content)
 
 
 def force_redirect_error_handler_callback(error):  # 做跳转使用
     # 410 状态, 永久性不可用
-    if isinstance(error.description, (str, unicode)):
+    if isinstance(error.description, string_types):
         url = error.description
         if url.startswith('{'):
             try:
@@ -199,7 +200,126 @@ def send_file_with_304(filepath, mimetype=None):
 
 
 def add_response_header(k, v):
-    if not hasattr(g, 'more_headers'):
-        g.more_headers = {}
-    g.more_headers[k] = v
+    if not hasattr(request, 'more_headers'):
+        request.more_headers = {}
+    request.more_headers[k] = v
 
+
+
+def set_more_headers_for_response(response):
+    more_headers = getattr(request, 'more_headers', None) or {}
+    if not isinstance(more_headers, dict):
+        return
+    for k, v in more_headers.items():
+        if isinstance(k, string_types) and isinstance(v, string_types) and k not in response.headers:
+            k = smart_str(k)
+            v = smart_str(v)
+            response.headers[k] = v
+
+
+
+def get_user_response_headers():
+    headers = getattr(request, 'user_response_headers', {})
+    if not isinstance(headers, dict):
+        headers = {}
+    return headers
+
+def set_user_response_headers(user_headers=None):
+    # 直接赋值的情况
+    if user_headers and isinstance(user_headers, dict):
+        request.user_response_headers = user_headers
+
+
+
+def set_user_headers_for_response(response):
+    # 用户通过模板 API 设定的 headers, 给出到 response
+    user_response_headers = getattr(request, 'user_response_headers', {})
+    if not isinstance(user_response_headers, dict):
+        return
+    for k, v in user_response_headers.items():
+        if isinstance(k, string_types) and isinstance(v, string_types) and k not in response.headers:
+            k = smart_str(k)
+            v = smart_str(v)
+            response.headers[k] = v
+
+
+def set_user_header_for_response(key, value):
+    # 这是设定的逻辑，主要是 template api 中调用
+    if isinstance(key, string_types) and len(key) < 50 and re.match('^[a-z0-9-_]+$', key, flags=re.I):
+        value = smart_unicode(value)
+        if not isinstance(getattr(request, 'user_response_headers', None), dict):
+            request.user_response_headers = {}
+        request.user_response_headers[key] = value
+        return True
+    else:
+        return False
+
+
+
+
+
+local_jade_templates = {}
+def render_jade_template(template_filepath, after_render_func=None, *args, **kwargs):
+    from farbox_bucket.server.template_system.env import farbox_bucket_env
+    # 主要渲染本地的模板文件，可以传入一个env，这样可以确定模板的root
+    global local_jade_templates
+
+    env = kwargs.pop('env', None) or farbox_bucket_env
+
+    if template_filepath in local_jade_templates and not DEBUG:
+        template = local_jade_templates.get(template_filepath)
+    else:
+        if not os.path.isfile(template_filepath):
+            return # 模板文件不存在, ignore
+        with open(template_filepath) as f:
+            source = f.read()
+
+        template = None
+
+        if DEBUG:
+            template_md5 = get_md5(source)
+            if template_md5 in local_jade_templates: # 文件实际上是缓存了的
+                template = local_jade_templates.get(template_md5)
+
+        template = template or jade_to_template(source, env=env)
+
+        #if DEBUG:
+            #print template.source
+
+        local_jade_templates[template_filepath] = template
+
+        if DEBUG:
+            template_md5 = get_md5(source)
+            local_jade_templates[template_md5] = template
+
+    return_html = kwargs.pop('return_html', False)
+    html_source = template.render(*args, **kwargs)
+    if after_render_func:
+        html_source = after_render_func(html_source)
+    if return_html:
+        return '\n'+html_source
+    else:
+        response = make_response(html_source)
+        return response
+
+
+
+
+default_jade_source_cache_space = {}
+def render_jade_source(source, cache_key=None, cache_space=None, env=None, **kwargs):
+    # 返回的是 html 源码, 指定一个 source，直接进行 compile
+    # env 是当前的环境
+    # cache_key 是缓存 key，如果没有指定，则是源码的 md5 值
+    # cache_space 是缓存的存储空间
+    if not cache_key:
+        cache_key = get_md5(source)
+    if cache_space is None or not isinstance(cache_space, dict):
+        cache_space  = default_jade_source_cache_space
+
+    if cache_key in cache_space:
+        template = cache_space[cache_key]
+    else:
+        template = jade_to_template(source, env=env)
+        cache_space[cache_key] = template
+    html = template.render(**kwargs)
+    return html

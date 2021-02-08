@@ -1,55 +1,21 @@
 # coding: utf8
-from __future__ import absolute_import
-from flask import render_template_string, request
-from utils.convert import jade2jinja
+import time
+from jinja2 import Template
+from ._message_template import SEND_MESSAGE_WECHAT_TEMPLATE
 
-SEND_MESSAGE_WECHAT_TEMPLATE = jade2jinja.exchange("""
-xml
-    ToUserName <![CDATA[{{request.xml.FromUserName}}]]>
-    FromUserName <![CDATA[{{request.xml.ToUserName}}]]>
-    CreateTime= now.format('%s')
-    MsgType text
-    Content <![CDATA[{{message}}]]>
-    FuncFlag 0
-""")
+wechat_message_template = None
+def get_wechat_message_template():
+    global wechat_message_template
+    if wechat_message_template is not None:
+        return wechat_message_template
+    wechat_message_template = Template(SEND_MESSAGE_WECHAT_TEMPLATE)
+    return wechat_message_template
 
 
-SEND_POSTS_WECHAT_TEMPLATE = jade2jinja.exchange("""
-xml
-    ToUserName <![CDATA[{{request.xml.FromUserName}}]]>
-    FromUserName <![CDATA[{{request.xml.ToUserName}}]]>
-    CreateTime= now.format('%s')
-    MsgType news
-    ArticleCount= posts.length
-    Articles
-        for post in posts
-            item
-                Title <![CDATA[{{post.title}}]]>
-                Description <![CDATA[{{post.content.limit(80).no_pic_no_html}}]]>
-                img_get_vars = 'width=640&height=640&outbound_link_password='+get_outbound_link_password(days=7)
-                if post.cover
-                    PicUrl <![CDATA[http://{{site._domain}}{{post.cover}}?{{img_get_vars}}]]>
-                elif loop.index==1
-                    PicUrl <![CDATA[http://{{site._domain}}/farbox_free_image.jpg?{{img_get_vars}}]]>
-                Url <![CDATA[http://{{site._domain}}{{post.url}}#main]]>
-""")
-
-
-
-def send_wechat_message(message):
+def send_wechat_message(message, from_user_name="", to_user_name=""):
+    # xml.FromUserName, xml.ToUserName
     # 被动地发送文本信息，即响应微信API的请求
     # set_content_type('application/xml')
-    return render_template_string(SEND_MESSAGE_WECHAT_TEMPLATE, message=message)
-
-
-def send_wechat_posts(posts):
-    try:
-        posts = list(posts)[:5]
-    except:
-        return # ignore
-    if not posts:
-        # 没有日志可以发送
-        return send_wechat_message('Sorry, there is no post for now.')
-
-    #set_content_type('application/xml')
-    return render_template_string(SEND_POSTS_WECHAT_TEMPLATE, posts = posts)
+    timestamp = str(int(time.time()))
+    xml_content = SEND_MESSAGE_WECHAT_TEMPLATE % (from_user_name, to_user_name, timestamp, message)
+    return xml_content

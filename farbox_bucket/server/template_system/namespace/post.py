@@ -1,9 +1,8 @@
 # coding: utf8
-from flask import g, abort
+from flask import abort, request
 
-from farbox_bucket.utils import smart_unicode
+from farbox_bucket.utils import smart_unicode, to_int
 from farbox_bucket.utils.functional import cached_property
-from farbox_bucket.utils import get_value_from_data, to_int
 from farbox_bucket.server.utils.site_resource import get_site_config
 from farbox_bucket.server.utils.record_and_paginator.paginator import auto_pg
 from farbox_bucket.server.utils.cache_for_function import cache_result
@@ -11,7 +10,8 @@ from farbox_bucket.server.utils.request_path import get_request_offset_path_with
 from farbox_bucket.server.utils.request_path import auto_bucket_url_path
 from farbox_bucket.server.template_system.api_template_render import render_api_template
 
-from farbox_bucket.bucket.utils import get_bucket_files_info
+from farbox_bucket.bucket.utils import get_bucket_site_configs, get_bucket_in_request_context
+from farbox_bucket.bucket.record.utils import get_path_from_record, get_type_from_record
 from farbox_bucket.bucket.record.get.mix import mix_get_record_paths
 from farbox_bucket.bucket.record.get.folder import get_folder_records
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_record_by_url, get_records_by_paths, get_next_record
@@ -20,7 +20,14 @@ from farbox_bucket.bucket.record.get.tag_related import get_records_by_tag
 from farbox_bucket.server.utils.record_and_paginator.paginator import get_paginator
 
 from farbox_bucket.server.template_system.model.category import get_record_parent_category, Category
+from farbox_bucket.bucket.record.get.refer_doc_related import get_records_by_post_path_back_referred, \
+    get_records_by_post_path_referred
+from farbox_bucket.server.template_system.helper.post_referred_docs import compute_content_with_referred_docs
+from farbox_bucket.server.template_system.helper.post_compile_url_for_wiki_links import re_get_html_content_for_wiki_links
 
+from farbox_bucket.server.template_system.namespace.data import data as get_data_namespace_object
+
+from farbox_bucket.server.utils.request_context_vars import get_doc_in_request, set_doc_in_request
 
 
 
@@ -29,6 +36,9 @@ class Posts(object):
         self.pager_name = 'posts'
         self.min_per_page = 0
 
+    @cached_property
+    def data_namespace(self):
+        return get_data_namespace_object()
 
     def __iter__(self):
         # 返回一个迭代器，用于 for 的命令
@@ -64,7 +74,7 @@ class Posts(object):
 
     @cached_property
     def bucket(self):
-        return getattr(g, 'bucket', None)
+        return get_bucket_in_request_context()
 
     @property
     def pager(self):
@@ -73,8 +83,18 @@ class Posts(object):
         return get_paginator(self.pager_name, match_name=True)
 
     @cached_property
+    def keywords(self):
+        return request.args.get('s') or ''
+
+    @cached_property
     def list_obj(self):
         pager_name = self.pager_name
+
+        if self.keywords: # 关键词搜索放在最前面
+            under = request.args.get('under') or self.posts_root
+            return self.data_namespace.get_data(type='post', keywords=request.args.get('s'), path=under,
+                            limit=50, pager_name=pager_name, min_limit=self.min_per_page,
+                            sort='-date', status="public")
 
         if self.request_path.startswith('/category/'):  # 指定目录下的
             category_path = get_request_offset_path_without_prefix(1)
@@ -90,23 +110,22 @@ class Posts(object):
 
         # 默认不输出非 public 的日志
         records = auto_pg(bucket=self.bucket, data_type='post', pager_name=pager_name,
-                          ignore_marked_id=True, prefix_to_ignore='_', sort_by='-date', min_limit=self.min_per_page)
+                          path = self.posts_root, ignore_marked_id=True, prefix_to_ignore='_',
+                          sort_by='-date', min_limit=self.min_per_page)
         return records
 
     @cached_property
     def request_path(self):
         return get_request_path_without_prefix()
 
-    @cached_property
-    def bucket(self):
-        bucket = getattr(g, 'bucket', None)
-        return bucket
-
 
     @cached_property
-    def categories(self):
-        # todo 处理 categories 的逻辑
-        return []
+    def posts_root(self):
+        if not self.bucket:
+            return ""
+        site_configs = get_bucket_site_configs(self.bucket)
+        root = smart_unicode(site_configs.get("posts_root", "")).strip()
+        return root
 
 
     def get_post_by_url(self, url=''):
@@ -131,9 +150,9 @@ class Posts(object):
 
     def get_current_post(self, auto_raise_404=False):
         # 在 functions.namespace.shortcut 中，将 post 本身作为一个快捷调用，可以直接调用
-        doc_in_g = getattr(g, 'doc', None)
-        if doc_in_g and isinstance(doc_in_g, dict) and doc_in_g.get('type') == 'post':
-            return doc_in_g
+        doc_in_request = get_doc_in_request()
+        if doc_in_request and isinstance(doc_in_request, dict) and get_type_from_record(doc_in_request) == 'post':
+            return doc_in_request
 
         # 得到当前 url 下对应的 post
         hide_post_prefix = get_site_config('hide_post_prefix', default_value=False)
@@ -148,7 +167,7 @@ class Posts(object):
             post_doc = self.get_post_by_url(url_path)
 
         if post_doc:  # 写入g.doc，作为上下文对象参数来处理
-            g.doc = post_doc
+            set_doc_in_request(post_doc)
         else:
             if auto_raise_404:
                 abort(404, 'can not find the matched post')
@@ -209,6 +228,12 @@ class Posts(object):
             cats.append(Category(record))
         return cats
 
+    # @cached_property
+    #     def categories(self):
+    #         # 取 posts_root 下的第一层的 folder
+    #         folder_list = self.data_namespace.get_data(type='folder', limit=100, level=1, sort='position', path=self.posts_root)
+    #         return folder_list
+
 
     def get_tag_url(self, tag):
         if isinstance(tag, (list, tuple)):
@@ -230,6 +255,42 @@ class Posts(object):
         # 产生搜索的HTML代码片段
         return render_api_template('search_posts.jade', search_base_url=base_url,
                                     search_under=under, just_js=just_js, **kwargs)
+
+
+    def get_content_with_referred_docs(self, doc, for_wiki_link=True, tag_url_prefix=None, show_date=True, url_prefix=None, url_root=None, hit_url_path=True):
+        # tag_url_prefix is for wiki_links only
+        content = compute_content_with_referred_docs(doc, show_date=show_date, url_prefix=url_prefix,
+                                                  url_root=url_root, hit_url_path=hit_url_path)
+        if for_wiki_link:
+            content = re_get_html_content_for_wiki_links(doc, html_content = content,
+                                                         tag_url_prefix = tag_url_prefix,
+                                                         url_prefix = url_prefix,
+                                                         url_root = url_root,
+                                                         hit_url_path = hit_url_path)
+        return content
+
+    def get_content_for_wiki_link(self, doc, tag_url_prefix=None, url_prefix=None, url_root=None, hit_url_path=True,):
+        content = re_get_html_content_for_wiki_links(doc, tag_url_prefix=tag_url_prefix, url_prefix=url_prefix,
+                                           url_root=url_root, hit_url_path=hit_url_path)
+        return content
+
+
+    def get_referred_docs(self, doc=None): # 本文引用的 docs
+        doc = doc or self.get_current_post(auto_raise_404=False)
+        if not doc:
+            return []
+        else:
+            return get_records_by_post_path_referred(self.bucket, get_path_from_record(doc))
+
+
+    def get_referred_back_docs(self, doc=None): # 引用了本文的 docs
+        doc = doc or self.get_current_post(auto_raise_404=False)
+        if not doc:
+            return []
+        else:
+            return get_records_by_post_path_back_referred(self.bucket, get_path_from_record(doc))
+
+
 
 
 @cache_result

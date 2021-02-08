@@ -1,13 +1,12 @@
 # coding: utf8
 import re
 from farbox_bucket.utils import get_value_from_data, str_type, unicode_type, string_types, to_bytes, to_unicode
-from flask import g
-
+from farbox_bucket.server.utils.request_context_vars import get_no_html_inject_in_request
 
 
 def insert_into_footer(to_insert, html, force=False):
     # 插入到 html 页面的尾部
-    if not force and get_value_from_data(g, 'no_html_inject', False):
+    if not force and get_no_html_inject_in_request():
         return html
     if not to_insert:
         return html
@@ -23,7 +22,7 @@ def insert_into_footer(to_insert, html, force=False):
 
 def insert_into_header(to_insert, html, force=False):
     # 插入到 html 页面的头部
-    if not force and get_value_from_data(g, 'no_html_inject', False):
+    if not force and get_no_html_inject_in_request():
         return html
     if not to_insert:
         return html

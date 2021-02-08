@@ -1,17 +1,19 @@
 # coding: utf8
 import os
-from flask import g
 from farbox_bucket.utils import smart_unicode, string_types
 from farbox_bucket.utils.functional import cached_property
+from farbox_bucket.utils.path import get_relative_path, is_sub_path, is_same_path
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.bucket.record.get.folder import get_folder_children_count, get_folder_records
 from farbox_bucket.server.utils.request_path import auto_bucket_url_path
 from farbox_bucket.server.template_system.namespace.data import get_data
 
+
 class Category(object):
     def __init__(self, path_or_record):
         # the record is folder
-        self.bucket = getattr(g, 'bucket', None)
+        self.bucket = get_bucket_in_request_context()
         if isinstance(path_or_record, dict):
             self.raw = path_or_record
             self.path = self.raw.get('path')
@@ -42,6 +44,9 @@ class Category(object):
 
     @cached_property
     def parents(self):
+        return self.parents()
+
+    def get_parents(self, root=None, includes_root=False):
         # 得到所有的上级目录
         ps = []
         if not self.raw:
@@ -53,15 +58,41 @@ class Category(object):
         parent_paths.reverse()  # just reverse it for human
         parent_categories = []
         for parent_path in parent_paths:
+            if root and not is_sub_path(parent_path, root):
+                to_continue = True
+                if includes_root and is_same_path(root, parent_path):
+                    to_continue = False
+                if to_continue:
+                    continue
             parent_category = Category(parent_path)
             if parent_category:
                 parent_categories.append(parent_category)
+        parent_categories.reverse()
         return parent_categories
+
+    @cached_property
+    def children(self):
+        categories = []
+        raw_docs = get_data(path=self.path, type="folder", level=1)
+        for raw_doc in raw_docs:
+            categories.append(Category(raw_doc))
+        return categories
 
     @cached_property
     def url(self):
         v = u'/category/%s' % self.path
         return auto_bucket_url_path(v)
+
+    def get_url(self, prefix, root=None):
+        prefix = prefix.strip("/")
+        if not root or not isinstance(root, string_types):
+            return "/%s/%s" % (prefix, self.path)
+        else:
+            relative_path = get_relative_path(self.path.lower(), root.lower(), return_name_if_fail=False)
+            if not relative_path:
+                return "/%s/%s" % (prefix, self.path)
+            else:
+                return "/%s/%s" % (prefix, relative_path)
 
     @cached_property
     def filename(self):

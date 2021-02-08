@@ -2,8 +2,10 @@
 from __future__ import absolute_import
 from farbox_bucket.utils import smart_unicode, get_md5, string_types
 from farbox_bucket.utils.functional import curry
-from flask import _app_ctx_stack, g
+from flask import _request_ctx_stack, request
 
+
+# treat request as g
 
 class G(object):
     pass
@@ -11,12 +13,12 @@ class G(object):
 local_g = None
 def get_g():
     global local_g
-    if not _app_ctx_stack.top:
+    if not _request_ctx_stack.top:
         # 不是以 app 的形式运行的，可能只是模板的调用
         local_g = local_g or G()
         return local_g
     else:
-        return g
+        return request
 
 def cache_wrapper(func, cache_name):
     # 为了避免冲突，一般cache_name是以'cached_'开头的
@@ -60,7 +62,7 @@ def cache_wrapper(func, cache_name):
 
 
 def cache_result(*args, **kwargs):
-    prefix = 'cached_'
+    prefix = 'cached_by_func_'
 
     # @cache_result这样直接用
     if len(args) == 1 and hasattr(args[0], '__call__'):

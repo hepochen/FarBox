@@ -19,7 +19,7 @@ def get_grid_factor(k, base=24, odd_base=5):
 
     if isinstance(k, (str,unicode)):
         if '-' in k or '/' in k:
-            v1, v2 = re.split(r'-|/', k, maxsplit=1)
+            v1, v2 = re.split(r'[-/]', k, maxsplit=1)
             v1 = to_int(v1)
             v2 = to_int(v2)
             if v1 and v2:
@@ -51,7 +51,6 @@ def get_grid_factor(k, base=24, odd_base=5):
 
 
 # jinja2 2.9+ 之后，就不用写成渲染器的模式
-@cache_result
 def pure(*args, **kwargs): # 对 pure css 的处理
     do_grid = True
     caller = kwargs.pop('caller', None)

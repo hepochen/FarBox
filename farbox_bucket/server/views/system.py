@@ -1,5 +1,5 @@
 # coding: utf8
-from flask import request, abort, Response, g
+from flask import request, abort, Response
 from farbox_bucket.server.web_app import app
 from farbox_bucket.utils.ssdb_utils import hlist, zrscan, hscan
 from farbox_bucket.utils.system_status_recorder import get_system_timed_records

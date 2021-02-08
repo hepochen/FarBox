@@ -1,6 +1,5 @@
 #coding: utf8
 from __future__ import absolute_import
-from flask import g, request
 from farbox_bucket.utils import smart_unicode, get_value_from_data
 from farbox_bucket.server.comments.utils import get_comments
 

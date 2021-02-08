@@ -1,12 +1,13 @@
 #coding:utf8
-from __future__ import absolute_import
 #import re
+import time
+import logging
 from qcloud_cos import CosConfig
 from qcloud_cos import CosS3Client
-#from qcloud_cos import CosServiceError
-#from qcloud_cos import CosClientError
-from farbox_bucket.utils import smart_unicode
-import logging
+from farbox_bucket.settings import server_secret_key
+from farbox_bucket.utils import smart_unicode, get_md5
+from farbox_bucket.utils.url import get_url_path, join_url
+
 
 logger = logging.getLogger("qcloud_cos.cos_client")
 logger.level = logging.ERROR
@@ -57,6 +58,11 @@ def has_file_on_qcloud(url_path, secret_id, secret_key, bucket, region):
     return cos_client.object_exists(Bucket=bucket, Key=url_path)
 
 
+def get_file_meta_on_qcloud(url_path, secret_id, secret_key, bucket, region):
+    cos_client = get_cos_client(secret_id=secret_id, secret_key=secret_key, region=region)
+    return cos_client.head_object(Bucket=bucket, Key=url_path)
+
+
 
 def upload_file_obj_to_qcloud(file_obj, url_path, secret_id, secret_key, bucket, region, content_type="", **headers):
     cos_client = get_cos_client(secret_id=secret_id, secret_key=secret_key, region=region)
@@ -96,3 +102,26 @@ def get_file_content_from_qcloud(url_path, secret_id, secret_key, bucket, region
         file_content += chunk
     return file_content
 
+
+
+def sign_qcloud_url(qcloud_url, qcloud_token, url_path=None, more=None, zero_steps=4):
+    # 默认10000秒的容差, about 3 hours, 相当于 3 个小时左右的跳转 URL 是固定的，方便缓存的逻辑
+    if url_path is None:
+        url_path = get_url_path(qcloud_url)
+        full_url = qcloud_url
+    else:
+        full_url = "%s/%s" % (qcloud_url.rstrip("/"), url_path.lstrip("/"))
+    if not url_path.startswith("/"):
+        url_path = "/%s" % url_path
+    timestamp = str(int(time.time()))[:-zero_steps] + "0"*zero_steps
+    rand = get_md5("%s-%s-%s" % (url_path, timestamp, server_secret_key))
+    string_to_hash = "%s-%s-%s-0-%s" % (url_path, timestamp, rand, qcloud_token)
+    hash_md5 = get_md5(string_to_hash)
+    sign = "%s-%s-0-%s" % (timestamp, rand, hash_md5)
+    if "?" in full_url:
+        url = join_url(full_url, sign=sign)
+    else:
+        url = "%s?sign=%s" % (full_url, sign)
+    if more:
+        url = "%s&%s" % (url, more)
+    return url

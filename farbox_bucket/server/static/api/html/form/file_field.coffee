@@ -3,7 +3,7 @@
 file_field_init = (dom, filepath, post_url, auto_reload) ->
 	dom = $(dom)
 	filepath = filepath or 'data.zip'
-	post_url = post_url or '/service/sync'
+	post_url = post_url or '/__file_manager_api'
 	old_border_style = dom.css('border')
 	hover_border_style = '1px solid indianred'
 	if typeof(auto_reload) == "undefined"

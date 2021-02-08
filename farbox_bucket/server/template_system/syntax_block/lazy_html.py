@@ -3,13 +3,8 @@ import re
 import uuid
 from farbox_bucket.server.utils.cache_for_function import cache_result
 from farbox_bucket.server.template_system.api_template_render import render_api_template
+from farbox_bucket.utils import get_random_html_dom_id
 
-def get_uuid():
-    return uuid.uuid1().hex
-
-
-def get_random_html_dom_id():
-    return 'd_%s' % get_uuid()
 
 
 def tab(keys, active=1, **kwargs):

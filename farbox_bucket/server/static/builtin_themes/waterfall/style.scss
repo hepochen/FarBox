@@ -1,0 +1,113 @@
+html {
+	font-family: 'PingHei', 'PingFang SC', Helvetica Neue, 'Work Sans', 'Hiragino Sans GB', 'Microsoft YaHei', SimSun, sans-serif;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+	background: #fff;
+	color: #353535;
+	-webkit-font-smoothing: antialiased;
+}
+
+* {
+	outline: none;
+}
+
+body {
+	padding: 0;
+	margin: 0 auto;
+}
+
+h1{
+	margin: 1em auto;
+	font-size: 28px;
+	text-align: center;
+	color: #353535;
+	font-weight: normal;
+	letter-spacing: 2px;
+}
+
+.farbox_nav_container{
+	background: #f9f9f9;
+
+	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+
+.item{
+	padding: 10px;
+	border-radius: 6px;
+	margin-bottom: 15px;
+
+	.item_body{
+		position: relative;
+	}
+
+	img{
+		border-radius: 6px;
+		background: #eee;
+		max-width: 100%;
+		border: 1px solid #f0f0f0;
+
+	}
+
+	.description{
+		width: 95%;
+		margin: 3px auto 0 auto;
+		font-size: 12px;
+
+		.date{
+			padding-left: 10px;
+			font-size: 90%;
+			color: #ccc;
+
+		}
+		.images_count{
+			padding-left: 3px;
+			font-size: 90%;
+			color: #999;
+		}
+	}
+
+
+	.album_label{
+		position: absolute;
+		top: -6px;
+		right: 2px;
+		font-size: 24px;
+		color: white;
+		text-shadow: 1px 1px rgba(0,0,0,0.08);
+	}
+
+	&:hover{
+		background: #f6f6f6;
+		.album_label{
+			color: #f84d53;
+		}
+	}
+}
+
+.album_item{
+	.title{
+		font-weight: bold;
+	}
+	.description{
+		text-align: center;
+	}
+	&:hover{
+		img{
+			border: 1px solid #f0cdd3;
+		}
+	}
+}
+
+
+
+.grid:before,.grid:after {
+    content: '';
+    display: table;
+}
+.grid:after {
+    clear: both;
+}
+.wf-column {
+    float: left;
+}

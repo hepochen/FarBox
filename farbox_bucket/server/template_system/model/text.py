@@ -1,25 +1,15 @@
 # coding: utf8
 from __future__ import absolute_import
 import re
+from farbox_markdown.meta import extract_metadata
 from farbox_bucket.utils import smart_unicode, get_value_from_data, to_int, to_float, is_on
 from farbox_bucket.utils.functional import cached_property
-
-
-
-from farbox_markdown.meta import extract_metadata
-
-from flask import g
 from farbox_bucket.utils.html import linebreaks, html_to_text, limit as _limit, html_escape
-
-
-
+from farbox_bucket.bucket.record.utils import get_type_from_record
+from farbox_bucket.bucket.utils import get_bucket_site_configs
 
 import HTMLParser
 unescape = HTMLParser.HTMLParser().unescape
-
-
-
-
 
 HTML_C = re.compile(r'</?[^<]+?>')
 
@@ -32,12 +22,11 @@ class Text(object):
             core = smart_unicode(core)
         self.core = core
 
+        self.is_post_content = False
         # 对 post 类型做的特别处理
-        if self.attr == 'content' and get_value_from_data(self.parent, 'type')=='post':
-            self.is_post_content = True
-        else:
-            self.is_post_content = False
-
+        if self.parent and isinstance(self.parent, dict):
+            if get_type_from_record(self.parent) == "post":
+                self.is_post_content = True
 
     def __nonzero__(self):
         # 判断 boolean 用的
@@ -141,6 +130,11 @@ class Text(object):
 
 
     @cached_property
+    def site_configs(self):
+        return get_bucket_site_configs()
+
+
+    @cached_property
     def _toc_content(self):
         # 主要是 post 的TOC内容
         if not self.parent or not isinstance(self.parent, dict):
@@ -152,11 +146,18 @@ class Text(object):
             return ''
 
     @cached_property
+    def site_is_plain_text_type(self):
+        if self.site_configs.get('post_content_type') == 'plaintext':
+            return True
+        return False
+
+    @cached_property
     def _show_toc(self):
         # 只有post，并且post以markdown格式显示的，才有__show_toc这个属性
-        if self.is_post_content and self.parent and get_value_from_data(g, 'site.configs.post_content_type') != 'plain':
+        if self.is_post_content and self.parent and not self.site_is_plain_text_type:
             # post未设定，走site.configs # post已设定，走post.metadata
-            show_toc = get_value_from_data(self.parent, 'metadata.toc', get_value_from_data(g, 'site.configs.show_toc')) # 默认是post自行定义
+            # 默认是post自行定义
+            show_toc = get_value_from_data(self.parent, 'metadata.toc', default=self.site_configs.get('show_post_toc'))
             return is_on(show_toc)
         # 默认返回None，表示否
         return False
@@ -164,8 +165,7 @@ class Text(object):
 
     @cached_property
     def _content(self):
-        if self.attr in ['content',] and self.is_post_content and self.parent and self.parent.get('raw_content') and \
-                        get_value_from_data(g, 'site.configs.post_content_type')=='plain':
+        if self.attr in ['content',] and self.is_post_content and self.parent and self.parent.get('raw_content') and self.site_is_plain_text_type:
             # post 作为 普通的文本作为解析
             core_content = linebreaks(self.clean_text, post_path=self.post_path, render_markdown_image=True)
             # 增加一个wrap，做一个 class 的外部表示

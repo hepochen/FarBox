@@ -1,7 +1,9 @@
 #coding: utf8
 import datetime
-from farbox_bucket.utils.ssdb_utils import hincr, hlist, hget, hgetall, zincr, zget, zscan, zrscan
 from farbox_bucket.utils import to_int, bytes2human
+from farbox_bucket.utils.ssdb_utils import hincr, hlist, hget, hgetall, zincr, zget, zscan, zrscan
+from farbox_bucket.bucket.record.utils import count_records_by_type_for_bucket
+from farbox_bucket.bucket.record.get.get import  get_records_count
 
 
 
@@ -85,8 +87,18 @@ def get_bucket_usage(bucket):
     usage = {
         "requests": [],
         "bandwidth": [],
-        "file_size": bytes2human(get_bucket_file_size(bucket))
+        "file_size": "",
+        "docs_count": 0
     }
+    if not bucket:
+        return usage
+    usage["file_size"] = bytes2human(get_bucket_file_size(bucket))
+    usage["docs_count"] = get_records_count(bucket)
+    usage["posts_count"] = count_records_by_type_for_bucket(bucket, "post")
+    usage["files_count"] = count_records_by_type_for_bucket(bucket, "file")
+    usage["images_count"] = count_records_by_type_for_bucket(bucket, "image")
+    usage["folders_count"] = count_records_by_type_for_bucket(bucket, "folder")
+    raw_result.reverse()
     for k, v in raw_result:
         v = to_int(v, default_if_fail=0)
         if not v:

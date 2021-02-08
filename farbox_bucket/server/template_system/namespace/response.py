@@ -1,13 +1,11 @@
 # coding: utf8
-from __future__ import absolute_import
-from flask import request, g, abort, Response as FlaskResponse, send_file
 import io
-import re
-
+from flask import request, abort, send_file
 from farbox_bucket.utils import smart_str, smart_unicode, to_int
 from farbox_bucket.server.utils.cache_for_function import cache_result
-
-from farbox_bucket.server.utils.response import force_redirect, force_response
+from farbox_bucket.server.utils.response import force_redirect, force_response, set_user_header_for_response
+from farbox_bucket.server.utils.request_context_vars import set_response_code_in_request, \
+    set_response_content_type_in_request, set_error_description_in_request
 
 
 
@@ -34,7 +32,7 @@ class Response(object):
     def set_content_type(self, content_type):
         if isinstance(content_type, basestring):
             content_type = smart_str(content_type)
-            g.response_content_type = content_type
+            set_response_content_type_in_request(content_type)
             self.__dict__['type'] = content_type
         return ''
 
@@ -47,7 +45,7 @@ class Response(object):
             200, 201, 202, 203, 204, 205, 206,
             300, 301, 302, 303, 304, 305, 306, 307,
             400, 401, 402, 403, 404, 405, 406, 408, 409, 410]:
-            g.response_code = code
+            set_response_code_in_request(code)
             self.__dict__['code'] = code
         return ''
 
@@ -58,13 +56,13 @@ class Response(object):
 
     @staticmethod
     def raise_404(description=''):
-        if getattr(g, 'response', None):
+        if getattr(request, 'response', None):
             return 'not allowed because for other response existing'
         # 触发错误，由 render 这个函数处理错误，从而实现404页面
         if description:
             description = smart_unicode(description)
-            g.error_description = description
-        g.response_code = 404
+            set_error_description_in_request(description)
+        set_response_code_in_request(404)
         abort(404, description)
 
     @classmethod
@@ -72,12 +70,8 @@ class Response(object):
         return cls.raise_404(description)
 
     def set_header(self, key, value):
-        if isinstance(key, (str, unicode)) and len(key) < 50 and re.match('^[a-z0-9-_]+$', key, flags=re.I):
-            value = smart_unicode(value)
-            if not isinstance(getattr(g, 'user_response_headers', None), dict):
-                g.user_response_headers = {}
-            g.user_response_headers[key] = value
-            return ''
+        if set_user_header_for_response(key, value):
+            return ""
         else:
             return 'this key is not allowed'
 

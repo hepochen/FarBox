@@ -1,8 +1,6 @@
 # coding: utf8
-from __future__ import absolute_import
 from flask import request, abort
-from utils import get_sha1
-from utils.lazy import to_int
+from farbox_bucket.utils import get_sha1, to_int
 import time
 
 
@@ -35,5 +33,6 @@ def check_is_from_wechat(token, ttl=120, raise_error=True):
     if raise_error and not status:
         # 需要触发错误，并且 status==False 的情况下，直接400扔出
         abort(400, 'not allowed or expired')
+        return False
     else:
         return status

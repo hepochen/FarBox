@@ -1,12 +1,12 @@
 # coding: utf8
 import time
-import uuid
 from gevent import spawn
-from flask import g, request
-from farbox_bucket.utils import to_float, to_int, string_types
-from farbox_markdown.util import is_a_markdown_file
+from flask import request
+from farbox_bucket.utils import to_float, to_int, string_types, is_a_markdown_file
 from farbox_bucket.utils.data import dump_csv
-from farbox_bucket.utils.ssdb_utils import hincr, hclear, hget, hset, hgetall, hsize, hkeys, hscan, get_path_related_key_start_end
+from farbox_bucket.utils.ssdb_utils import hincr, hclear, hget, hset, hgetall, hsize
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
+from farbox_bucket.server.utils.request_context_vars import get_doc_in_request, get_doc_type_in_request, get_doc_path_in_request
 
 
 one_year_seconds = 365 * 24 * 60 * 60
@@ -23,14 +23,14 @@ def get_visits_key(doc_path, field='visits'):
 
 
 def update_post_visits_for_response(response):
-    doc = getattr(g, 'doc', None)
+    doc = get_doc_in_request()
     if doc:
         doc_type = doc.get('_type')
         doc_path = doc.get('path')
     else:
-        doc_type = getattr(g, 'doc_type', None)
-        doc_path = getattr(g, 'doc_path', None)
-    bucket = getattr(g, 'bucket', None)
+        doc_type = get_doc_type_in_request()
+        doc_path = get_doc_path_in_request()
+    bucket = get_bucket_in_request_context()
     if bucket and doc_type=='post' and doc_path:
         pass
     else:
@@ -67,7 +67,7 @@ def async_update_visits(bucket, visits_key, visitors_key, is_visitor=False):
 
 def get_post_visits_count(doc, field='visits'):
     # field is in ['visits', 'visitors']
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return 0
     visits_db_name = get_visits_db_name_for_bucket(bucket)

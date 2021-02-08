@@ -1,10 +1,11 @@
 # coding: utf8
 import re
 import urllib
-from flask import request, g
-from farbox_bucket.utils import get_value_from_data, string_types
-from farbox_bucket.server.utils.site_resource import get_site_config
+from flask import request
+from farbox_bucket.utils import string_types
 from farbox_bucket.utils.url import get_url_without_prefix
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
+from farbox_bucket.server.utils.request_context_vars import get_context_value_from_request, set_context_value_from_request
 
 def split_path(path):
     # 将一个path转为以/分割的parts，如果有包含~~的，则以~~为第一个split
@@ -56,7 +57,8 @@ def get_request_offset_path_without_prefix(offset=1):
 
 def get_request_path():
     # 去掉/page/<int> 这样分页信息后的path, 并且不以/开头
-    path_got = getattr(g, 'url_path', None)
+    cache_key = "url_path_re_got"
+    path_got = get_context_value_from_request(cache_key)
     if path_got:
         return path_got
     path = get_request_path_for_bucket() # 保留大小写，想获取 tags 的时候，需要区分大小写敏感的
@@ -64,9 +66,9 @@ def get_request_path():
     page_result = page_finder.search(path)
     if page_result:
         path, page = page_result.groups()
-        g.page = int(page) #存在g里面，这样后面供页面使用的函数，可以取这个值
+        set_context_value_from_request("page", int(page)) # 存在 request 里面，这样后面供页面使用的函数，可以取这个值
     path ='/' + path.lstrip('/')
-    g.url_path = path
+    set_context_value_from_request(cache_key, path)
     return path
 
 
@@ -78,7 +80,7 @@ def get_request_path_for_bucket(path=None):
         request_path = request.path
     else:
         request_path = path
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if bucket and bucket in request_path:
         try:
             request_path = re.search('/%s/\w+(/.*|$)'%bucket, request_path).group(1)
@@ -95,7 +97,7 @@ def auto_bucket_url_path(url_path):
     if url_path.startswith('#'):
         return url_path
     request_path = request.path
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if bucket and bucket in request_path:
         p1, p2 = request_path.split(bucket, 1)
         prefix = p1 + bucket + '/' + p2.strip('/').split('/')[0]
@@ -103,30 +105,6 @@ def auto_bucket_url_path(url_path):
             return url_path
         url_path = prefix + '/' + url_path.lstrip('/')
     return url_path
-
-
-
-
-def get_doc_url(doc):
-    if not isinstance(doc, dict):
-        return ''
-    if not doc:
-        return ''
-    url = ''
-    # 主要处理日志的 url 这个属性
-    if 'url_path' in doc and doc.get('_type')=='post':
-        hide_post_prefix = get_site_config('hide_post_prefix', default_value=False)
-        if hide_post_prefix:
-            url = '/' + doc['url_path']
-        else:
-            url = '/post/' + doc['url_path']
-    elif doc.get('_type') in ['file', 'image'] and doc.get('path'):
-        url = '/' + doc['path']
-    if not url: # last
-        url = doc.get('url') or ''
-    if url:
-        url = auto_bucket_url_path(url)
-    return url
 
 
 

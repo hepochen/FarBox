@@ -1,5 +1,6 @@
 #coding: utf8
 import sys, re, os, time, subprocess
+import uuid
 import hashlib
 import datetime
 import urllib
@@ -97,8 +98,10 @@ def string_to_list(value):
         return []
     if isinstance(value, (str, unicode)) and value:
         value = value.strip()
-        value = re.sub("^[\\[(]", "", value)
-        value = re.sub("[\\])]$", "", value)
+        if re.match("\\[.*?\\]$", value):
+            value = value[1:-1]
+        elif re.match("\\(.*?\\)$", value):
+            value = value[1:-1]
         value = value.strip()
         if ',' in value:
             ls = value.split(',')
@@ -238,9 +241,9 @@ def auto_type(value):
         new_value = to_float(value)
         if new_value:
             return new_value
-    if value in ['True', 'true']:
+    if value in ['True', 'true', 'yes']:
         return True
-    if value in ['False', 'false']:
+    if value in ['False', 'false', 'no']:
         return False
     # at last
     return value
@@ -276,6 +279,13 @@ def is_closed(value):
 def to_sha1(content):
     return hashlib.sha1(to_bytes(content)).hexdigest()
 
+
+def get_uuid():
+    return uuid.uuid1().hex
+
+
+def get_random_html_dom_id():
+    return 'd_%s' % get_uuid()
 
 def hash_password(password):
     return to_sha1(to_md5(password))
@@ -402,3 +412,13 @@ def sort_objects_by(objects, attr):
     if reverse:
         new_objects.reverse()
     return new_objects
+
+
+
+MARKDOWN_EXTS = ['.txt', '.md', '.markdown', '.mk']
+
+def is_a_markdown_file(path):
+    if not path:
+        return False
+    ext = os.path.splitext(path)[1].lower()
+    return ext in MARKDOWN_EXTS

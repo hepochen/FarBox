@@ -43,6 +43,25 @@ def create_record_for_a_folder(bucket="", folder_path=""):
     #    create_record_for_a_folder(bucket=bucket, folder_path=parent_path)
 
 
+
+def update_record_order_value_to_related_db(bucket, record_data):
+    # 设定排序, 如果没有排序逻辑的，实际上根据 get_data(type) 的逻辑是无法取出内容的
+    path = get_path_from_record(record_data)
+    if not path:
+        return
+    path = path.strip('/')
+    if not path:
+        return
+    bucket_name_for_order = get_bucket_name_for_order_by_record(bucket, record_data)
+    data_type = get_data_type(record_data)
+    data_order = record_data.get("_order") or record_data.get("order")
+    if not data_order and data_type in ["file", "post", "folder"]:  # 不应该出现的情况
+        data_order = time.time()
+    if data_order is not None:
+        data_order = to_float(data_order, default_if_fail=None)
+    if data_order is not None and bucket_name_for_order:
+        zset(bucket_name_for_order, path, data_order)
+
 def after_path_related_record_created(bucket, record_id, record_data):
     path = get_path_from_record(record_data)
     if not path:
@@ -98,13 +117,7 @@ def after_path_related_record_created(bucket, record_id, record_data):
     hset(bucket_name_for_path, path, value)
 
     # 设定排序, 如果没有排序逻辑的，实际上根据 get_data(type) 的逻辑是无法取出内容的
-    data_order = record_data.get('_order') or record_data.get('order')
-    if not data_order and data_type in ["file", "post", "folder"]: # 不应该出现的情况
-        data_order = time.time()
-    if data_order is not None:
-        data_order = to_float(data_order, default_if_fail=None)
-    if data_order is not None and bucket_name_for_order:
-        zset(bucket_name_for_order, path, data_order)
+    update_record_order_value_to_related_db(bucket, record_data)
 
     # slash number 绑定到 path
     # 指定的类型才能处理 slash

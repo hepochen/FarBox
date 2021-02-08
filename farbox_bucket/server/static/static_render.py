@@ -1,10 +1,10 @@
 # coding: utf8
 import os
 import glob
-from flask import g, abort
-from farbox_bucket.utils.path import get_relative_path
+from flask import abort
+from farbox_bucket.utils.path import get_relative_path, make_sure_path
 from farbox_bucket.server.utils.response import send_file_with_304
-from farbox_bucket.server.utils.request_path import get_request_path_for_bucket
+from farbox_bucket.server.utils.request_path import get_request_path_for_bucket, set_context_value_from_request
 
 static_folder_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -35,11 +35,27 @@ def send_static_file(path):
     # todo 对于后缀有限制
     abs_filepath = os.path.join(static_folder_path, path.strip('/'))
     if os.path.isfile(abs_filepath):
-        g.is_system_static_file = True
+        set_context_value_from_request("is_system_static_file", True)
         return send_file_with_304(abs_filepath)
 
 
-web_static_resources_map = get_static_resources_map()
+web_static_resources_map = get_static_resources_map() # 0.02s，性能没有问题
+
+
+def get_static_raw_content(path):
+    path = path.strip("/")
+    if path.startswith("fb_static/"):
+        path = path.replace("fb_static/", "", 1)
+    abs_filepath = os.path.join(static_folder_path, path.strip('/'))
+    if os.path.isfile(abs_filepath):
+        try:
+            with open(abs_filepath, "rb") as f:
+                return f.read()
+        except:
+            pass
+    return "" # by default
+
+
 
 def send_static_frontend_resource(try_direct_path=False):
     # 泛路径的，以 __ 开头，如果 try_direct_path = True， 则会忽略这个规则
@@ -49,13 +65,13 @@ def send_static_frontend_resource(try_direct_path=False):
         if r_response:
             return r_response
         else:
-            abort(404, 'static file under /fb_statice/ can not be found')
+            abort(404, 'static file under /fb_static/ can not be found')
     if not try_direct_path and not path.startswith('/__'):
         return
     frontend_name = path.replace('/__', '', 1).strip('/')
     if frontend_name not in web_static_resources_map:
         return
     abs_filepath = web_static_resources_map[frontend_name]
-    g.is_system_static_file = True
+    set_context_value_from_request("is_system_static_file", True)
     return send_file_with_304(abs_filepath)
 

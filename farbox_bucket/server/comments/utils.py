@@ -1,11 +1,13 @@
 #coding: utf8
 from __future__ import absolute_import
-from flask import g, request
+from flask import request
 from farbox_bucket.utils import smart_unicode, get_md5, get_value_from_data, is_closed, string_types, to_float
+from farbox_bucket.utils.date import utc_date_parse
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.server.avatar import get_avatar_url
 from farbox_bucket.server.utils.site_resource import get_bucket_site_configs
-from farbox_bucket.utils.date import utc_date_parse
+
 #from dateutil.parser import parse as date_parse
 import os
 
@@ -57,23 +59,20 @@ def get_comments_record(bucket, doc_path): # 已经解密了的
 
 
 def get_comments(parent_doc, bucket=None, as_tree=None):
-    bucket = bucket or getattr(g, 'bucket', None) or request.values.get('bucket')
+    bucket = bucket or get_bucket_in_request_context() or request.values.get('bucket')
     if not bucket:
         return []
     path = to_doc_path(parent_doc)
 
     comments_doc = get_comments_record(bucket, path)
 
-    try:
-        site = getattr(g, 'site', None) or get_bucket_site_configs(bucket)
-    except:
-        site = {}
+    site_configs = get_bucket_site_configs(bucket)
 
-    if not get_value_from_data(site, "comments", default=True):
+    if not get_value_from_data(site_configs, "comments", default=True):
         return []
 
     if as_tree is None: # 自动匹配, 网站设置中对应
-        comments_type = get_value_from_data(site, 'comments_type') or 'tree'
+        comments_type = get_value_from_data(site_configs, 'comments_type') or 'tree'
         if comments_type in ['tree']:
             as_tree = True
         else:

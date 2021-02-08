@@ -5,6 +5,7 @@ from farbox_bucket.utils import string_types
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.path import write_file
 from farbox_bucket.bucket.record.utils import get_file_id_from_record
+from farbox_bucket.bucket.storage.helpers.before_store_image import get_image_info_from_raw_content
 from .base import Storage
 
 
@@ -87,16 +88,11 @@ class LocalStorage(Storage):
                 print("store %s to local" % relative_path)
             write_file(filepath, raw_content)
 
-            kwargs = dict(file_size=len(raw_content))
+            file_size = len(raw_content)
+            image_info = None
             if guess_type(filepath).startswith("image/"):
-                try:
-                    image_width, image_height = self.get_image_size_from_raw_content(raw_content)
-                    if image_width and image_height:
-                        kwargs["image_width"] = image_width
-                        kwargs["image_height"] = image_height
-                except:
-                    pass
-            self.update_record_when_file_stored(bucket, record_data, **kwargs) # update the record
+                image_info = get_image_info_from_raw_content(raw_content)
+            self.update_record_when_file_stored(bucket, record_data, file_size=file_size, image_info=image_info) # update the record
             return "ok"
         else:
             try:

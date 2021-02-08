@@ -1,11 +1,12 @@
 # coding: utf8
-from flask import g, Response
+from flask import Response
 from gevent import spawn
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.usage.bucket_usage_utils import increase_request_for_bucket, increase_bandwidth_for_bucket
 
 
 def update_usage_statistics(response):
-    bucket = getattr(g, "bucket", None)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return
 

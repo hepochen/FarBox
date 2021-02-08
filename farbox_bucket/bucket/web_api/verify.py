@@ -1,6 +1,8 @@
 #coding: utf8
 from __future__ import absolute_import
 from flask import request
+from farbox_bucket.utils.memcache import cache_client
+from farbox_bucket.bucket.utils import is_valid_bucket_name
 from farbox_bucket.settings import MAX_RECORD_SIZE, MAX_RECORD_SIZE_FOR_CONFIG, ADMIN_BUCKET
 from farbox_bucket.bucket import get_public_key_from_bucket
 from farbox_bucket.utils.encrypt.key_encrypt import verify_by_public_key
@@ -86,6 +88,16 @@ def get_verified_message_from_web_request(raw_data=None):
         data = data, # string
         public_key = public_key,
     )
+
+    # patch by helper?
+    helper_bucket = cache_client.get("system_assistant_bucket", zipped=False)
+    if helper_bucket and bucket == helper_bucket:
+        helper_bucket_for_user = cache_client.get("system_assistant_bucket_for_user", zipped=False)
+        if helper_bucket_for_user and is_valid_bucket_name(helper_bucket_for_user):
+            user_public_key = get_public_key_from_bucket(helper_bucket_for_user)
+            if user_public_key:
+                message["bucket"] = bucket
+                message["public_key"] = user_public_key
 
     return message
 

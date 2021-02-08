@@ -11,6 +11,8 @@ def get_folder_children_count(bucket, folder_path, field='posts', direct=False, 
     # posts & images
     if not bucket and not files_info:
         return 0
+    if folder_path is None:
+        return 0
     folder_path = folder_path.strip('/').lower()
     if files_info is None:
         files_info = get_bucket_files_info(bucket) or {}

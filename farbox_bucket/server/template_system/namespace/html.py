@@ -3,10 +3,11 @@ from __future__ import absolute_import
 import os
 import uuid
 import re
-from flask import g, request
-
+from flask import request
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
+from farbox_bucket.i18n import default_i18n_data
 from farbox_bucket.settings import STATIC_FILE_VERSION
-from farbox_bucket.server.utils.site_resource import get_pages_configs, get_site_configs
+
 from farbox_bucket.utils import smart_unicode, get_md5, is_str, to_int, get_value_from_data, string_types
 from farbox_bucket.utils.functional import cached_property
 from farbox_bucket.utils.mime import guess_type
@@ -14,22 +15,32 @@ from farbox_bucket.utils.url import join_url
 from farbox_bucket.utils.data import json_dumps
 from farbox_bucket.utils.html import html_escape, linebreaks as _linebreaks
 from farbox_bucket.utils.path import get_relative_path
+from farbox_bucket.utils.env import get_env
+from farbox_bucket.clouds.qcloud import sign_qcloud_url
+
 from farbox_bucket.server.utils.cache_for_function import cache_result
 from farbox_bucket.server.utils.record_and_paginator.paginator import get_paginator
-from farbox_bucket.server.static.static_render import web_static_resources_map, static_folder_path
 from farbox_bucket.server.utils.request import get_language
-from farbox_bucket.server.template_system.api_template_render import render_api_template
-
-
+from farbox_bucket.server.utils.site_resource import get_pages_configs, get_site_configs
+from farbox_bucket.server.utils.request_context_vars import is_resource_in_loads_in_page_already,\
+    get_i18n_data_from_request, set_i18n_data_to_request
 from farbox_bucket.server.utils.request_path import auto_bucket_url_path, get_request_path_for_bucket
 
+from farbox_bucket.server.static.static_render import web_static_resources_map, static_folder_path
+from farbox_bucket.server.template_system.api_template_render import render_api_template
 from farbox_bucket.server.template_system.namespace.utils.form_utils import create_simple_form, create_grid_form, \
     create_form_dom_by_field as _create_form_dom_by_field, create_form_dom as _create_form_dom, \
     get_data_obj_from_POST as form_get_data_obj_from_POST
 
 from farbox_bucket.server.template_system.namespace.utils.nav_utils import pre_nav_data
+from farbox_bucket.server.helpers.smart_scss import get_smart_scss_url
 
 from farbox_bucket.server.realtime.utils import get_bucket_ws_url
+
+
+static_files_url = (get_env("static_files_url") or "").strip().strip("/")
+qcloud_cdn_token = (get_env("qcloud_cdn_token") or "").strip()
+
 
 
 def get_a_random_dom_id():
@@ -50,6 +61,7 @@ lazy_load_map = {
     'animate': '/fb_static/lib/animate.3.5.2.min.css',
     'animation': '/fb_static/lib/animate.3.5.2.min.css',
     'donghua': '/fb_static/lib/animate.3.5.2.min.css',
+    "post_preview": "/fb_static/basic/post_preview.css",
 
 }
 
@@ -86,7 +98,7 @@ class Html(object):
 
     @classmethod
     def load(cls, *resource, **kwargs):
-        if getattr(g, 'disable_load_func', False): # load函数被禁用了
+        if getattr(request, 'disable_load_func', False): # load函数被禁用了
             return ''
 
         force_load = kwargs.pop('force', False)
@@ -114,16 +126,15 @@ class Html(object):
 
         # 确保进入以下流程的都是单个 resource，这样才能达到去重的效果
 
+        # 处理 smart scss 的问题
+        if kwargs.pop("scss", False):
+            scss_compiled_url = get_smart_scss_url(resource, **kwargs)
+            resource = scss_compiled_url
+
         #相同的 resource，一个页面内，仅允许载入一次
-        loads_in_page = getattr(g, 'loads_in_page', [])
-        if not isinstance(loads_in_page, list):
-            loads_in_page = []
-        if resource in loads_in_page and not force_load:
-             #ignore, 页面内已经载入过一次了
-            return ''
-        else:
-            loads_in_page.append(resource)
-            g.loads_in_page = loads_in_page
+        if is_resource_in_loads_in_page_already(resource) and not force_load:
+            # ignore, 页面内已经载入过一次了
+            return ""
 
         if not isinstance(resource, string_types):
             return resource
@@ -157,6 +168,11 @@ class Html(object):
         ext = os.path.splitext(resource_path)[1].lower()
         if not ext:
             ext = '.%s' % (resource.split('?')[0].split('/')[-1]) # 比如http://fonts.useso.com/css?family=Lato:300
+
+        if static_files_url and resource.startswith("/fb_static/"):
+            static_relative_path = resource.replace("/fb_static/", "", 1)
+            static_url = "%s/%s" % (static_files_url, static_relative_path)
+            resource = static_url
 
         if ext in ['.js', '.coffee'] or ext.startswith('.js?') or resource.split('?')[0].endswith('js'):
             content = '<script type="text/javascript" src="%s"></script>' % resource
@@ -406,7 +422,7 @@ class Html(object):
         # 跟 site.get_nav 接近的逻辑
         # auto_frontend 表示默认载入前端资源
         # scss_vars 是 menu 的 scss 替换
-        html_content = render_api_template('nav', nav_data=nav_data, nav_type=nav_type,
+        html_content = render_api_template('api_namespace_html_nav.jade', nav_data=nav_data, nav_type=nav_type,
                                         load_front_sources=load_front_sources, toggle_menu=toggle_menu, return_html=True,
                                            scss_vars=scss_vars,
                                          )
@@ -433,19 +449,21 @@ class Html(object):
                 return key[1:]
             lang = get_language()
             key1 = '%s-%s' % (key, lang)
-            i18n_data = getattr(g, 'i18n', {})
+            i18n_data = get_i18n_data_from_request()
             matched_value = i18n_data.get(key1) or i18n_data.get(key)
+            if not matched_value:
+                matched_lang_data = default_i18n_data.get(lang) or {}
+                if matched_lang_data:
+                    matched_value = matched_lang_data.get(key)
             return matched_value or key
         elif len(args) <= 2:
-            if not getattr(g, 'i18n', None):
-                g.i18n = {}
             if len(args) == 2:  # 指定了 lang 的
                 value, lang = args
                 lang = smart_unicode(lang).strip().lower()
                 key = '%s-%s' % (key, lang)
             else:  # 没有指定lang，设定默认值
                 value = args[0]
-            g.i18n[key] = value
+            set_i18n_data_to_request(key, value)
             # 设置的
         # at last
         return ''
@@ -479,24 +497,24 @@ class Html(object):
         return html_content
 
     def seo(self, keywords=None, description=None):
-        if getattr(g, 'seo_header_set', False):
+        if getattr(request, 'seo_header_set_already', False):
             # 在一个页面内，仅仅能运行一次, 会被 h.headers 调用，如果要使用seo，确保 seo 在之前运行
             return ''
         site_configs = get_site_configs()
-        keywords = keywords or get_value_from_data(g, 'doc.metadata.keywords')\
+        keywords = keywords or get_value_from_data(request, 'doc.metadata.keywords')\
                    or get_value_from_data(site_configs, 'keywords')
         if isinstance(keywords, (list, tuple)):  # keywords 是一个list
             keywords = [smart_unicode(k) for k in keywords]
             keywords = ', '.join(keywords)
-        description = description or get_value_from_data(g, 'doc.metadata.description') or \
+        description = description or get_value_from_data(request, 'doc.metadata.description') or \
                       get_value_from_data(site_configs,'description')
         html_content = self.set_metas(keywords=keywords, description=description)
-        g.seo_header_set = True
+        request.seo_header_set_already = True
         return html_content
 
 
     def debug(self):
-        bucket = getattr(g, 'bucket', None)
+        bucket = get_bucket_in_request_context()
         if not bucket:
             return ''
         js_script_content = self.load('/__realtime.js') + self.load('/__debug_template.js')
@@ -525,8 +543,7 @@ class Html(object):
         return html_content
 
 
-    def ajax_submit(self, **kwargs):
-        return render_api_template('ajax_submit.jade', **kwargs)
+
 
 
     def show(self, template_path, *args,  **kwargs):
@@ -543,6 +560,9 @@ class Html(object):
 
 
     ########### form starts #########
+    def ajax_submit(self, **kwargs):
+        return render_api_template('ajax_submit.jade', **kwargs)
+
     @staticmethod
     def get_form_data(keys):
         if not isinstance(keys, (list, tuple)):
@@ -555,7 +575,8 @@ class Html(object):
                                   info=info, submit_text=submit_text, **kwargs)
 
     @staticmethod
-    def grid_form(data_obj=None, keys=None, formats=None, callback_func=None, form_id=None, **kwargs):
+    def grid_form(data_obj=None, keys=None, formats=None, callback_func=None, form_id=None, ajax=True, **kwargs):
+        kwargs["ajax"] = ajax
         return create_grid_form(data_obj=data_obj, keys=keys, formats=formats, callback_func=callback_func,
                                 form_id=form_id, **kwargs)
 

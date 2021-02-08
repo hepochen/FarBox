@@ -1,8 +1,11 @@
 #coding: utf8
 from __future__ import absolute_import
-from farbox_bucket.utils import to_md5, to_sha1
 import time
-from farbox_bucket.utils import hash_password, string_types
+import datetime
+from flask import request
+from farbox_bucket.utils import to_md5, to_sha1
+from farbox_bucket.utils import hash_password, string_types, to_float
+from farbox_bucket.utils.objectid import is_object_id
 from farbox_bucket.utils.ssdb_utils import hset, hget, hexists, hsize, hscan, zset, zdel, hdel, hclear, zclear, zget, zsize, ssdb_get
 from farbox_bucket.utils.encrypt.key_encrypt import is_valid_public_key, to_clean_key, get_public_key_from_private_key, get_md5_for_key
 from farbox_bucket.bucket.defaults import bucket_config_doc_id_names, zero_id, config_names_not_allowed_set_by_user, \
@@ -10,7 +13,6 @@ from farbox_bucket.bucket.defaults import bucket_config_doc_id_names, zero_id, c
 from farbox_bucket.bucket.token.simple_encrypt_token import get_normal_data_by_simple_token
 from farbox_bucket.utils.data import json_dumps
 from farbox_bucket.utils.encrypt.simple import simple_encrypt
-from flask import g
 import ujson as json
 
 
@@ -47,6 +49,16 @@ def get_bucket_by_private_key(private_key):
 
 
 
+def get_bucket_in_request_context():
+    try: bucket = getattr(request, "bucket", None)
+    except: bucket = None
+    return bucket
+
+
+def set_bucket_in_request_context(bucket):
+    try: request.bucket = bucket
+    except: pass
+
 
 def get_bucket_configs(bucket, config_type='init'):
     # 'init', 'user', 'pages'
@@ -56,9 +68,9 @@ def get_bucket_configs(bucket, config_type='init'):
     config_doc_id = bucket_config_doc_id_names.get(config_type)
     if not config_doc_id:
         return {}
-    g_var_name = 'bucket_%s_cached_%s_value' % (bucket, config_type)
-    if hasattr(g, g_var_name):
-        return getattr(g, g_var_name)
+    request_var_name = 'bucket_%s_cached_%s_value' % (bucket, config_type)
+    if hasattr(request, request_var_name):
+        return getattr(request, request_var_name)
     info  = hget(bucket, config_doc_id)
     if not info or not isinstance(info, dict):
         info = {}
@@ -77,7 +89,7 @@ def get_bucket_configs(bucket, config_type='init'):
         info = site_configs
 
     try:
-        setattr(g, g_var_name, info)
+        setattr(request, request_var_name, info)
     except:
         pass
     return info
@@ -99,14 +111,12 @@ def get_bucket_orders_configs(bucket):
     return get_bucket_configs(bucket, 'orders')
 
 def get_bucket_site_configs(bucket=None):
-    if bucket is None:
-        bucket = getattr(g, 'bucket', None)
+    bucket = bucket or get_bucket_in_request_context()
     return get_bucket_configs(bucket, 'site')
 
 
 def get_bucket_secret_site_configs(bucket=None):
-    if bucket is None:
-        bucket = getattr(g, 'bucket', None)
+    bucket = bucket or get_bucket_in_request_context()
     return get_bucket_configs(bucket, 'secret')
 
 
@@ -265,6 +275,29 @@ def get_bucket_last_updated_at(bucket):
     return last_updated_at
 
 
+def set_bucket_last_record_id(bucket, record_id):
+    # # path 相关的，因为有 delete 的关系，单独进行 last_record_id 的存储，不然直接 hget_max 就可以了
+    if not is_object_id(record_id):
+        return
+    hset("buckets_file_cursor", bucket, record_id)
+
+def get_bucket_last_record_id(bucket):
+    record_id = hget("buckets_file_cursor", bucket) or None
+    return record_id
+
+
+def set_bucket_last_record_id_computed(bucket, record_id):
+    # 因为 files_info 是需要计算的，只有在需要的时候 （也就是 client 端获取 files 信息的时候），才进行一次计算
+    if not is_object_id(record_id):
+        return
+    hset("buckets_file_cursor_computed", bucket, record_id)
+
+def get_bucket_last_record_id_computed(bucket):
+    record_id = hget("buckets_file_cursor_computed", bucket) or None
+    return record_id
+
+
+
 def set_buckets_cursor_for_remote_node(node, cursor):
     hset('_remote_buckets_cursor', node, cursor)
 
@@ -383,7 +416,7 @@ def get_related_bucket_names(bucket, includes_self=False):
 def clear_related_buckets(bucket):
     related_buckets = get_related_bucket_names(bucket, includes_self=True)
     for related_bucket in related_buckets:
-        if related_bucket.endswith('_order') or related_bucket.endswith('_slash'):
+        if related_bucket.endswith("_order") or related_bucket.endswith('_slash'):
             zclear(related_bucket)
         else:
             hclear(related_bucket)
@@ -399,3 +432,20 @@ def encrypt_configs_for_bucket(configs, private_key_md5):
     return configs
 
 
+
+
+def get_bucket_utc_offset(bucket=None):
+    bucket = bucket or get_bucket_in_request_context()
+    site_configs = get_bucket_site_configs(bucket) or {}
+    utc_offset = to_float(site_configs.get('utc_offset', 8), default_if_fail=8)
+    return utc_offset
+
+
+def get_now_from_bucket(bucket=None, time_format='%Y-%m-%d %H:%M'):
+    utc_offset = get_bucket_utc_offset(bucket)
+    now = datetime.datetime.utcnow()
+    now += datetime.timedelta(0, utc_offset*3600)
+    if time_format:
+        return now.strftime(time_format)
+    else:
+        return now

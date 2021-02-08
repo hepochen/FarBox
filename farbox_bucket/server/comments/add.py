@@ -1,15 +1,15 @@
 #coding: utf8
 from __future__ import absolute_import
 import datetime, re
-from flask import request, g, abort
+from flask import request, abort
 
-from farbox_bucket.utils import smart_unicode, get_md5, get_value_from_data, is_email_address, to_float
+from farbox_bucket.utils import smart_unicode, get_md5, is_email_address, to_float
 from farbox_bucket.utils.memcache import cache_client
 from farbox_bucket.utils.functional import cached_property
 
 from farbox_bucket.bucket.domain.info import is_valid_domain
 
-from farbox_bucket.bucket.utils import get_bucket_site_configs
+from farbox_bucket.bucket.utils import get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.server.utils.verification_code import is_verification_code_correct
 from farbox_bucket.server.utils.request import safe_get, get_visitor_ip
@@ -47,7 +47,7 @@ class NewComment(object):
 
     @cached_property
     def bucket(self):
-        return getattr(g, 'bucket', None) or request.values.get('bucket')
+        return get_bucket_in_request_context() or request.values.get('bucket')
 
     @cached_property
     def id(self): # the comment id

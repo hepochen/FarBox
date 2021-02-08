@@ -18,7 +18,7 @@ class Storage(object):
     def __init__(self):
         pass
 
-    def update_record_when_file_stored(self, bucket, record_data, **kwargs):
+    def update_record_when_file_stored(self, bucket, record_data, file_size=None, image_info=None):
         # 原则上，我们是不允许对 record 进行修改的，因为文件分开了存储，做一个妥协性的对应
         # 主要是 accept_upload_file_from_client 上调用后，要再调用本函数
         if not isinstance(record_data, dict):
@@ -33,9 +33,11 @@ class Storage(object):
 
         # 走 update_record 的逻辑
         kwargs_to_update = {"_file_stored": True}
-        for field in ["image_width", "image_height", "file_size"]:
-            if field in kwargs and field not in record_data:
-                kwargs_to_update[field] = kwargs.get(field)
+        if file_size is not None:
+            kwargs_to_update["file_size"] = file_size
+        if image_info and isinstance(image_info, dict):
+            image_info.pop("_id", None) # in case, try remove _id
+            kwargs_to_update.update(image_info)
         update_record(bucket=bucket, record_id=record_id, **kwargs_to_update)
         file_size = kwargs_to_update.get("file_size")
         increase_file_size_for_bucket(bucket, file_size)

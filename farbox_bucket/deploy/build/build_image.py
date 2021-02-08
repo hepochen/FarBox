@@ -19,8 +19,6 @@ RUN apt-get install -y libjpeg-dev zlib1g-dev libwebp-dev
 RUN apt-get update --fix-missing
 RUN apt-get install -y graphicsmagick  python-pgmagick
 
-RUN pip install https://github.com/hepochen/hoedown_misaka/archive/master.zip
-
 RUN pip install farbox_bucket -U
 
 # mkdir -p /mt/ssdb/data
@@ -28,6 +26,23 @@ RUN pip install farbox_bucket -U
 # rm /usr/local/ssdb/var/ssdb.pid
 # /usr/local/ssdb/ssdb-server -d /usr/local/ssdb/ssdb.conf
 # /usr/local/ssdb/ssdb-cli -h 127.0.0.1 -p 8888
+
+# install elasticsearch
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository -y ppa:openjdk-r/ppa
+RUN apt-get update
+RUN apt install -y openjdk-11-jdk
+RUN echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> /etc/environment
+RUN useradd es -g root
+RUN mkdir -p /downloads
+RUN wget -O /downloads/es.tgz https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.10.2-linux-x86_64.tar.gz
+RUN tar -zxvf /downloads/es.tgz -C /
+RUN mv /elasticsearch-* /elasticsearch
+RUN /elasticsearch/bin/elasticsearch-plugin install -b https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.10.2/elasticsearch-analysis-ik-7.10.2.zip
+RUN echo "network.host: localhost" >> /elasticsearch/config/elasticsearch.yml
+RUN rm -rf /downloads/*
+RUN chmod 775 /elasticsearch -R
 """
 
 

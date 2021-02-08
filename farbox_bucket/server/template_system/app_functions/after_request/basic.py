@@ -2,14 +2,16 @@
 import uuid
 from farbox_bucket.utils import smart_str
 from farbox_bucket.server.utils.cookie import set_cookies, get_cookie, set_cookie
-from flask import g
+from farbox_bucket.server.utils.response import set_more_headers_for_response, set_user_headers_for_response
+from farbox_bucket.server.utils.request_context_vars import get_page_cache_key_in_request,\
+    get_response_code_in_request, get_response_content_type_in_request, get_response_in_request
 
 one_year_seconds = 365 * 24 * 60 * 60
 
 def default_response_handler(response):
-    # 如果有g.response, 则 g.response 是最优先处理的
-    g_response = getattr(g, 'response', None)
-    response = g_response or response
+    # request.response 是最优先处理的
+    response_in_request = get_response_in_request()
+    response = response_in_request or response
 
     # 确保有 vid 这个 cookie
     visitor_id = get_cookie('vid')
@@ -17,30 +19,22 @@ def default_response_handler(response):
         visitor_id = uuid.uuid1().hex
         set_cookie('vid', visitor_id, max_age=5 * one_year_seconds)
 
-    # getattr(g, 'user_response_headers', {})
-    more_headers = getattr(g, 'more_headers', None) or {}
-    for k, v in more_headers.items():
-        if isinstance(k, (str, unicode)) and isinstance(v, (str, unicode)) and k not in response.headers:
-            k = smart_str(k)
-            v = smart_str(v)
-            response.headers[k] = v
+    # 系统中调用产生的 header
+    set_more_headers_for_response(response)
 
     # 用户通过模板 API 设定的 headers
-    user_response_headers = getattr(g, 'user_response_headers', {})
-    for k, v in user_response_headers.items():
-        if isinstance(k, (str, unicode)) and isinstance(v, (str, unicode)) and k not in response.headers:
-            k = smart_str(k)
-            v = smart_str(v)
-            response.headers[k] = v
+    set_user_headers_for_response(response)
 
 
-    if getattr(g, 'response_code', None):
-        response.status_code = g.response_code
+    r_code = get_response_code_in_request()
+    if r_code:
+        response.status_code = r_code
 
-    if getattr(g, 'response_content_type', None):
-        response.content_type = g.response_content_type
+    r_type = get_response_content_type_in_request()
+    if r_type:
+        response.content_type = r_type
 
-    cache_key = getattr(g, 'cache_key', None)
+    cache_key = get_page_cache_key_in_request()
     if cache_key:
         response.headers['x-cache-key'] = smart_str(cache_key)
 

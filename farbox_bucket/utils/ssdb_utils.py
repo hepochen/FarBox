@@ -181,6 +181,11 @@ def hscan(namespace, key_start='', key_end='', limit=1000, reverse_scan=False):
     return result
 
 
+def hscan_for_dict_docs(namespace, key_start='', key_end='', limit=1000, reverse_scan=False):
+    raw_result = hscan(namespace, key_start, key_end, limit=limit, reverse_scan=reverse_scan)
+    return to_py_dict_records_from_ssdb_hscan_records(raw_result)
+
+
 def hgetall(namespace):
     if not db_client:
         return []
@@ -329,9 +334,9 @@ def zrange(namespace, offset=0, limit=100, reverse=False):
 
 
 
-def auto_cache_by_ssdb(key, value_func, ttl=60):
+def auto_cache_by_ssdb(key, value_func, ttl=60, force_update=False):
     cached_value = db_client.get(key)
-    if cached_value is not None:
+    if cached_value is not None and not force_update:
         value = ssdb_data_to_py_data(cached_value, hit_cache=True)
     else:
         value = value_func()
@@ -475,3 +480,20 @@ def get_path_related_key_start_end(path):
         key_start = path + '/'
         key_end = path + '0'
     return key_start, key_end
+
+
+
+
+def to_py_dict_records_from_ssdb_hscan_records(records):
+    # 直接从 ssdb 过来的数据， 第一个是 record_id
+    # record 必须是一个 dict 类型
+    records_to_return = []
+    for record_id, raw_record in records:
+        record = ssdb_data_to_py_data(raw_record)
+        if not record:
+            continue
+        if not isinstance(record, dict):
+            continue
+        record['_id'] = record_id
+        records_to_return.append(record)
+    return records_to_return

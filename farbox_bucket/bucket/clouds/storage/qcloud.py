@@ -1,6 +1,7 @@
 # coding: utf8
 from farbox_bucket.utils.env import get_env
-from farbox_bucket.clouds.qcloud import upload_file_obj_to_qcloud, delete_file_on_qcloud, has_file_on_qcloud, get_file_content_from_qcloud
+from farbox_bucket.clouds.qcloud import upload_file_obj_to_qcloud, delete_file_on_qcloud,\
+    has_file_on_qcloud, get_file_content_from_qcloud
 
 
 raw_qcloud_config = get_env('qcloud')

@@ -1,23 +1,9 @@
 #coding: utf8
 import base64
-from flask import request, escape, g
+from flask import request, escape, abort
 import re, urlparse
 from farbox_bucket.utils import smart_unicode, get_value_from_data
-
-
-
-
-def cache_in_request(func):
-    # 缓存到 g 这个空间中，但是要注意变量名的前缀，不要冲突
-    def _func(*args, **kwargs):
-        attr_name = func.__name__
-        if attr_name.startswith('get_'):
-            attr_name = attr_name.replace('get_', '', 1)
-        if not hasattr(g, attr_name):
-            attr_value = func()
-            setattr(g, attr_name, attr_value)
-        return getattr(g, attr_name, None)
-    return _func
+from farbox_bucket.bucket.token.utils import get_logined_bucket
 
 
 def does_browser_support_webp():
@@ -28,6 +14,18 @@ def does_browser_support_webp():
     else:
         return False
 
+
+
+def need_login(bucket=None, check=True):
+    logined_bucket = get_logined_bucket(check=check)
+    if not logined_bucket:
+        abort(401, 'need login')
+        return False
+    elif bucket and bucket != logined_bucket:
+        abort(401, 'need login')
+        return False
+    else:
+        return True
 
 
 
@@ -43,8 +41,8 @@ def has_file_in_request():
 
 def get_file_content_in_request():
     """提取request的文件内容，常和has_file_in_request配合使用"""
-    if hasattr(g, 'cached_file_content'): # 已经处理过了，不重复处理
-        return g.cached_file_content
+    if hasattr(request, 'cached_file_content'): # 已经处理过了，不重复处理
+        return request.cached_file_content
     if 'file' in request.form:
         # txt会被requests发送的时候，当做POST内的数据处理
         # 也包括中文名的PDF文件.. 因为是一起发送出来的，主要是客户端的上传、同步逻辑的对应
@@ -65,7 +63,7 @@ def get_file_content_in_request():
             file_content = ''
     else:
         file_content = ''
-    g.cached_file_content = file_content
+    request.cached_file_content = file_content
     return file_content
 
 

@@ -1,9 +1,13 @@
 # coding: utf8
 from __future__ import absolute_import
 from farbox_bucket.bucket.defaults import zero_ids
-from farbox_bucket.utils.ssdb_utils import hget_many, hscan, hkeys, hget, hexists
+from farbox_bucket.utils.ssdb_utils import hget_many, hscan, hkeys, hget, hexists, hsize
 
 from .utils import to_py_records_from_raw_ssdb_records
+
+
+def get_records_count(bucket):
+    return hsize(bucket)
 
 
 def get_record(bucket, record_id, zero_ids_allowed=False, force_dict=False):
@@ -17,7 +21,7 @@ def get_record(bucket, record_id, zero_ids_allowed=False, force_dict=False):
 def has_record(bucket, record_id):
     return hexists(bucket, record_id)
 
-def get_all_record_keys(bucket):
+def get_all_record_ids(bucket, ignore_zero_ids=False):
     keys = []
     key_start = ''
     while True:
@@ -26,6 +30,8 @@ def get_all_record_keys(bucket):
         if not loop_keys or len(loop_keys) !=1000:
             break
         key_start = loop_keys[-1]
+    if ignore_zero_ids:
+        return filter(lambda x: x not in zero_ids, keys)
     return keys
 
 

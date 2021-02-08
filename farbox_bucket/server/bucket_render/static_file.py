@@ -1,17 +1,18 @@
 # coding: utf8
 from __future__ import absolute_import
 import os, io
-from flask import send_file, g, request, abort
+from flask import send_file, request, abort
 from farbox_bucket.utils import to_bytes, string_types, get_md5
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.url import get_host_from_url
 from farbox_bucket.bucket.storage.default import storage
-from farbox_bucket.bucket.utils import get_bucket_site_configs
-from farbox_bucket.server.utils.site_resource import get_pages_configs, get_site_config, get_template_static_resource_content
-
-from farbox_bucket.server.utils.response import set_304_response_for_doc, get_304_response, is_doc_modified, p_redirect
+from farbox_bucket.bucket.utils import get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
-from farbox_bucket.utils.gzip_content import ungzip_content
+
+from farbox_bucket.server.utils.site_resource import get_pages_configs, get_template_static_resource_content
+from farbox_bucket.server.utils.response import set_304_response_for_doc, get_304_response, is_doc_modified, p_redirect
+from farbox_bucket.server.utils.request_context_vars import set_context_value_from_request
+
 
 
 
@@ -35,9 +36,9 @@ def render_as_static_resource_in_pages_for_farbox_bucket(template_filename):
     if raw_content:
         raw_content = to_bytes(raw_content)
         mime_type = mime_type or guess_type(template_filename) or 'application/octet-stream'
-        g.is_template_resource = True
+        set_context_value_from_request("is_template_resource", True)
         file_response = send_file(io.BytesIO(raw_content), mimetype=mime_type)
-        bucket = getattr(g, 'bucket', None)
+        bucket = get_bucket_in_request_context()
         if bucket:
             set_304_response_for_doc(response=file_response, doc=pages_configs, date_field='mtime')
         return file_response
@@ -47,11 +48,13 @@ def render_as_static_resource_in_pages_for_farbox_bucket(template_filename):
 def render_as_static_file_for_farbox_bucket(path):
     if not path or path == "/":
         path = "index.html"
-    g.is_static_file = True
-    bucket = getattr(g, 'bucket', None)
+    set_context_value_from_request("is_static_file", True)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return
     record = get_record_by_path(bucket, path)
+    if path == "favicon.ico" and not record:
+        record = get_record_by_path(bucket, "_direct/favicon.ico") # 兼容 Bitcron
     if not record:
         return
     if record.get('compiled_type') and record.get('compiled_content'):

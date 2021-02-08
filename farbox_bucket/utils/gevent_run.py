@@ -1,11 +1,10 @@
 #coding: utf8
 from __future__ import absolute_import
 import gevent
-from gevent.greenlet import Greenlet
+import datetime
 from gevent.pool import Pool
 from gevent.timeout import Timeout
 from functools import partial
-
 from farbox_bucket.utils.logger import get_file_logger
 
 
@@ -20,12 +19,12 @@ def _run_long_time(func, wait=0, sleep_at_start=0, sleep_at_end=30*60, log=''):
         while True:
             if sleep_at_start: # 头部休眠
                 gevent.sleep(sleep_at_start)
-            logger.info('%s starting...'% log)
+            logger.info('%s, %s starting...'% (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), log))
             try:
                 func()
             except: # 避免异常，产生的卡顿问题
-                logger.info('%s failed'% log)
-            logger.info('%s ended'% log)
+                logger.info('%s, %s failed'% (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), log))
+            logger.info('%s, %s ended'% (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), log))
             gevent.sleep(sleep_at_end)
     return _func
 

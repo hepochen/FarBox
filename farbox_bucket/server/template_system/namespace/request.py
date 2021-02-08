@@ -1,25 +1,27 @@
 # coding: utf8
 from __future__ import absolute_import
-from flask import request as _request, g
+from flask import request as _request
 import copy, re, os, time
 from farbox_bucket.utils.functional import cached_property
-from farbox_bucket.utils import to_unicode, to_int
+from farbox_bucket.utils import to_unicode, to_int, string_types
+from farbox_bucket.utils.url import join_url
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.server.utils.cache_for_function import cache_result
 from farbox_bucket.server.utils.request_path import get_request_path, get_request_offset_path
 from farbox_bucket.server.utils.request import get_language
+from farbox_bucket.server.utils.request_context_vars import get_url_prefix_in_request
 
 
 
 def get_url_without_prefix(url, prefix=None):
     # url 去除 prefix 后， 一般以 '/' 开头
-    if not isinstance(url, (str, unicode)):
+    if not isinstance(url, string_types):
         return url # ignore
     url_startswith_dash = url.startswith('/')
     raw_url = url
     if prefix is None:
-        prefix = getattr(g, 'prefix', '')
-    if prefix and isinstance(prefix, (str,unicode)):
+        prefix = get_url_prefix_in_request() or ""
+    if prefix and isinstance(prefix, string_types):
         url = url.lstrip('/')
         prefix = prefix.strip().strip('/')
         if url.startswith(prefix+'/') or url == prefix:
@@ -158,6 +160,13 @@ class Request(object):
         ext = os.path.splitext(path)[-1] or ''
         ext = ext.lstrip('.').lower()
         return ext
+
+    @staticmethod
+    def join(base_url, **kwargs):
+        if isinstance(base_url, (str, unicode)):
+            return join_url(base_url, **kwargs)
+        else:
+            return base_url
 
 
 

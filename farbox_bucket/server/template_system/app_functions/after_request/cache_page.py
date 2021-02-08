@@ -1,16 +1,19 @@
 # coding: utf8
-import datetime
 import pickle
 import re
-from flask import g, request, Response
-from farbox_bucket.server.utils.request import get_language
-from farbox_bucket.utils import get_value_from_data, get_md5
-from farbox_bucket.bucket.utils import get_bucket_last_updated_at, get_bucket_site_configs
+from flask import request, Response
+from farbox_bucket.utils import get_md5
 from farbox_bucket.utils.memcache import get_cache_client
+from farbox_bucket.bucket.utils import get_bucket_last_updated_at, get_bucket_in_request_context
+from farbox_bucket.server.utils.request import get_language
+from farbox_bucket.server.utils.response import get_user_response_headers, set_user_response_headers
+from farbox_bucket.server.utils.request_context_vars import set_doc_path_in_request, set_doc_type_in_request, \
+    set_doc_type_and_path_in_request_by_context_doc, set_page_cache_key_in_request, get_page_is_cached, \
+    set_page_is_cached, get_can_auto_cache_current_request
 
 
 def get_cache_key_for_page():
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return
     bucket_last_updated_at = get_bucket_last_updated_at(bucket)
@@ -31,8 +34,7 @@ def should_hit_cache_in_site():
         return False
     if request.path.startswith("/__") and not request.path.startswith("/__page/"):
         return False
-    cache_strategy = getattr(g, 'cache_strategy', 'yes')
-    if cache_strategy in ['no']:
+    if not get_can_auto_cache_current_request():
         return False
     return True # at last
 
@@ -41,7 +43,7 @@ def response_to_render_data(response):
     # 获得的 render_data 主要是为了缓存的作用
 
     # 先处理一些不用缓存的情况
-    if getattr(g, 'is_cached', False): # 本身就是缓存逻辑
+    if get_page_is_cached(): # 本身就是缓存逻辑
         return
     if response.status_code not in [200]:
         # 不在缓存的范围内
@@ -56,11 +58,8 @@ def response_to_render_data(response):
         content = response.data, # str 类型的数据
     )
 
-    doc = getattr(g, 'doc', None) # 当前的上下文文档
-    if doc and isinstance(doc, dict):
-        g.doc_type = render_data['doc_type'] = doc.get('_type')
-        g.doc_path = render_data['doc_path'] = doc.get('path')
-
+    # 当前的上下文文档, 并且把 doc_type & doc_path 给 render_data
+    set_doc_type_and_path_in_request_by_context_doc(data_to_update=render_data)
 
     if request.path == '/feed': # /feed是application/xml
         content_type = 'application/xml'
@@ -70,7 +69,7 @@ def response_to_render_data(response):
     render_data['content_type'] = content_type
     render_data['url'] = request.url
 
-    render_data['user_response_headers'] = getattr(g, 'user_response_headers', {})
+    render_data['user_response_headers'] = get_user_response_headers()
 
 
     return render_data
@@ -81,7 +80,7 @@ def cache_response_into_memcache(response):
     cache_client = get_cache_client()
     if not cache_client:
         return response
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return response
 
@@ -119,18 +118,18 @@ def get_response_from_memcache():
         if cached_data:
             try:
                 render_data = pickle.loads(cached_data)
-                g.user_response_headers = render_data.get('user_response_headers') or getattr(g, 'user_response_headers', {})
+                set_user_response_headers(render_data.get('user_response_headers'))
                 # 校验一次，保证url一致，避免缓存串了（万一）
                 cached_url = render_data.pop('url', None)
                 if cached_url != request.url:
                     return
-                g.cache_key = cache_key
-                g.doc_type = render_data.get('doc_type')
-                g.doc_path = render_data.get('doc_path')
+
+                set_page_cache_key_in_request(cache_key)
+                set_doc_type_in_request(render_data.get('doc_type'))
+                set_doc_path_in_request(render_data.get('doc_path'))
+                set_page_is_cached(is_cached=True)
+
                 response = Response(render_data.pop('content', None), mimetype=render_data.pop('content_type', None))
-                for k, v in render_data.items():
-                    setattr(g, k, v)
-                g.is_cached = True
                 return response
             except Exception as e:
                 if sentry_client:

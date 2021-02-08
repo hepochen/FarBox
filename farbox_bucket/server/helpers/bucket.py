@@ -1,14 +1,13 @@
 #coding: utf8
 from __future__ import absolute_import
-import io
-from flask import request, g, send_file, abort, Response
-from farbox_bucket.bucket.defaults import zero_id_for_finder
-from farbox_bucket.utils import smart_str
+from flask import request, abort, Response
 from farbox_bucket.utils.web_utils.response import jsonify
 from farbox_bucket.utils.web_utils.request import to_per_page
+from farbox_bucket.bucket.defaults import zero_id_for_finder
+from farbox_bucket.bucket.utils import set_bucket_in_request_context
 from farbox_bucket.bucket.record.get.get import get_record, get_records_for_bucket
 from farbox_bucket.bucket.storage.default import storage
-from farbox_bucket.bucket.token.utils import is_bucket_login, get_logined_bucket, get_logined_bucket_by_token
+from farbox_bucket.bucket.token.utils import get_logined_bucket_by_token
 
 
 def sync_download_file_by_web_request(record_id):
@@ -43,7 +42,7 @@ def show_bucket_records_for_web_request(bucket=None, default_records_per_page=10
     bucket = bucket or get_logined_bucket_by_token()  # by api token
     if not bucket:
         abort(404, "no bucket matched")
-    g.bucket = bucket
+    set_bucket_in_request_context(bucket)
     pre_record_id = request.values.get('cursor')
     if not includes_zero_ids and not pre_record_id: # 不包括 zero ids 相当于
         pre_record_id = zero_id_for_finder

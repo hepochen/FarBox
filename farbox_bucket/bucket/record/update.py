@@ -3,7 +3,7 @@ from farbox_bucket.utils.data import json_dumps, json_loads
 from .get.get import get_record
 from .get.path_related import get_record_id_by_path
 from farbox_bucket.utils.ssdb_utils import hset, ssdb_data_to_py_data, py_data_to_ssdb_data
-
+from farbox_bucket.bucket.record.related.for_created import update_record_order_value_to_related_db
 
 # 如非特殊，不要对一个 record 进行 update
 
@@ -23,6 +23,12 @@ def update_record(bucket, record_id, **kwargs):
         return False
     record.update(kwargs) # update
     hset(bucket, record_id, record)
+
+    order_value_in_kwargs = kwargs.get("_order")
+    if isinstance(order_value_in_kwargs, (float, int)) and record.get("path"):
+        # update path related _order value, specially for image
+        update_record_order_value_to_related_db(bucket, record)
+
     return True
 
 

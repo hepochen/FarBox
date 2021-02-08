@@ -1,0 +1,293 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'PT Sans', "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, Hiragino Sans GB, Microsoft YaHei, sans-serif;
+  font-size: 16px;
+  line-height: 2.1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* {
+  outline: none;
+}
+.keyword1, .keyword2 {
+  color: indianred;
+}
+
+/* link */
+a, a:link, a:visited {
+  color: #137ed1;
+  text-decoration: none;
+}
+a:hover {
+  color: #0b4674;
+  text-decoration: none;
+}
+.header {
+  background-size: cover;
+  background-position: center;
+  height: 130px; /*300px*/
+  position: relative;
+}
+.header .particles-js-canvas-el {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.header #search_bar {
+  z-index: 99;
+  height: 60px;
+  top: 35px; /*100px*/
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+}
+.header #search_bar input {
+  height: 60px;
+  font-size: 18px;
+  width: 100%;
+  padding: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.9);
+}
+.header #search_bar input:focus {
+  background: rgba(255, 255, 255, 0.95);
+}
+.header #search_bar .search_in_html_button {
+  position: absolute;
+  right: -20px;
+  top: 0;
+  background: #137ed1;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-left: -3px;
+  text-align: center;
+  display: inline-block;
+  width: 80px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 24px;
+  color: white;
+}
+.homepage_categories {
+  max-width: 1280px;
+  margin: 5em auto 3em auto;
+}
+.homepage_categories .category {
+  display: block;
+  margin: 25px 15px;
+  font-weight: normal;
+}
+.homepage_categories .category .category_body {
+  border-radius: 5px;
+  border: 1px solid transparent;
+  height: 200px;
+  text-align: center;
+  padding-top: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+.homepage_categories .category .category_body i.icon {
+  font-size: 3.2em;
+  color: #137ed1;
+  display: block;
+  margin: 20px 0 15px 0;
+}
+.homepage_categories .category .category_body h2 {
+  color: #333;
+  line-height: 1.2;
+  margin: 15px 0;
+  font-weight: bold;
+  font-size: 18px;
+}
+.homepage_categories .category .category_body .summary {
+  color: #666;
+  padding: 0 10px;
+  line-height: 1.45;
+}
+.homepage_categories .category:hover .page_body {
+  border: 1px solid #e6e6e6;
+}
+.homepage_categories .category.without_summary .page_body i.icon {
+  margin-top: 40px;
+}
+.common_page_wrap {
+  background: #f2f2f2;
+}
+.common_page_wrap .common_page {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 80px 0;
+}
+.common_page_wrap .common_page .common_page_core {
+  background: white;
+}
+.common_page_wrap .common_page .page_header {
+  border-bottom: 1px solid #eee;
+  padding: 25px 40px;
+  font-weight: bold;
+  font-size: 18px;
+}
+.common_page_wrap .common_page .page_header span {
+  font-weight: normal;
+  color: #666;
+  font-size: 16px;
+}
+.common_page_wrap .common_page .page_header span.split {
+  margin: auto 5px;
+}
+.common_page_wrap .common_page .page_header .sub_categories {
+  margin: 5px auto -10px auto;
+  border: 1px dashed #f0f0f0;
+  padding: 0 10px;
+}
+.common_page_wrap .common_page .page_header .sub_categories span {
+  font-size: 14px;
+}
+.common_page_wrap .common_page .page_header .sub_categories a {
+  margin: 0 10px;
+}
+.common_page_wrap .common_page .page_header .sub_categories a span.title {
+  color: #137ed1;
+}
+.common_page_wrap .common_page .page_header .sub_categories a span.count {
+  color: #666;
+  font-size: 12px;
+}
+.common_page_wrap .common_page .page_header .sub_categories a:hover span.title {
+  color: #0b4674;
+}
+.common_page_wrap .common_page .page_body {
+  padding: 50px 80px 30px 80px;
+}
+.common_page_wrap .common_page .page_body .item {
+  margin-bottom: 60px;
+}
+.common_page_wrap .common_page .page_body h2.title {
+  margin-top: -10px;
+  margin-bottom: 35px;
+  line-height: 1.35;
+  font-size: 2.25em;
+}
+.common_page_wrap .common_page .page_body a h2 {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0.6em 0;
+  line-height: 1.2;
+  position: relative;
+  letter-spacing: 1px;
+}
+.common_page_wrap .common_page .page_body a h2:before {
+  content: ".";
+  font-size: 36px;
+  color: #454545;
+  position: absolute;
+  top: -20px;
+  left: -15px;
+}
+.common_page_wrap .common_page .page_body .summary {
+  line-height: 1.8;
+  font-size: 15px;
+}
+.common_page_wrap .common_page .page_body .meta {
+  font-size: 14px;
+  text-align: right;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-top: 45px;
+  margin-bottom: 35px;
+}
+.common_page_wrap .common_page .page_body .meta .date {
+  color: #666;
+  font-size: 12px;
+}
+.common_page_wrap .common_page .page_body .meta small {
+  color: #888;
+}
+.common_page_wrap .common_page .page_body .meta span.cell {
+  margin-right: 20px;
+}
+.common_page_wrap .common_page .page_body .doc_toc a {
+  color: #137ed1;
+}
+.common_page_wrap .common_page .page_body .doc_toc a:hover {
+  color: #555;
+}
+.common_page_wrap .common_page .page_body .tags {
+  margin-top: 30px;
+}
+.common_page_wrap .common_page .page_body .tags a {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.referred_back_docs {
+  border: 1px dashed #ccc;
+  padding: 10px 10px;
+  margin-top: 3.5em;
+}
+.referred_back_docs h4 {
+  color: #353535;
+  margin-bottom: 0;
+  margin-top: 10px;
+  font-size: 1em;
+}
+.referred_back_docs a {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.footer {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  margin: 0 auto 10px auto;
+}
+.footer a {
+  color: #999;
+}
+.footer a:hover {
+  color: #137ed1;
+}
+.paginator {
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding: 25px 0;
+}
+.paginator a {
+  margin: 0 5px;
+}
+.paginator a.current {
+  color: #353535;
+}
+.paginator.no_pages {
+  display: none;
+}
+.markdown blockquote {
+  border-left: 0.4em solid #5aaef0;
+}
+.markdown h2 {
+  margin-top: 2.5em;
+  color: #137ed1;
+}
+.markdown h3 {
+  color: #cd5c5c;
+  margin-top: 2em;
+}
+.doc_toc_container {
+  background: #fff;
+}
+@media screen and (max-width: 48em) {
+  .common_page_wrap .common_page {
+    padding: 0;
+  }
+  .common_page_wrap .common_page .page_header {
+    padding: 20px 20px 15px 20px;
+  }
+  .common_page_wrap .common_page .page_body {
+    padding: 50px 30px 30px 30px;
+  }
+}

@@ -1,5 +1,4 @@
 # coding: utf8
-
 from farbox_bucket.utils import smart_unicode, to_int, sort_objects_by
 from farbox_bucket.bucket.utils import get_bucket_posts_info
 from .path_related import get_record_by_path, get_records_by_paths
@@ -7,7 +6,7 @@ from .path_related import get_record_by_path, get_records_by_paths
 def get_tags_info(bucket):
     # k:v --> tag: [path1, path2]
     posts = get_bucket_posts_info(bucket) or {}
-    raw_info = posts.get('tags') or {}
+    raw_info = posts.get('tags') or {} # tags.tags
     if not isinstance(raw_info, dict):
         raw_info = {}
     info = raw_info.get('tags') or {}

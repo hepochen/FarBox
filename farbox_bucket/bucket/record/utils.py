@@ -1,10 +1,10 @@
 # coding: utf8
-from __future__ import absolute_import
+from farbox_bucket.settings import sentry_client
+from farbox_bucket.bucket.defaults import BUCKET_RECORD_SORT_TYPES
 from farbox_bucket.utils import to_unicode, string_types, are_letters
 from farbox_bucket.utils.data import json_dumps
-from farbox_bucket.bucket.defaults import BUCKET_RECORD_SORT_TYPES
-from farbox_bucket.utils.ssdb_utils import hset, hget
-from farbox_bucket.settings import sentry_client
+from farbox_bucket.utils.ssdb_utils import hset, hget, zsize
+
 
 
 def get_record_data_error_info(data):
@@ -52,6 +52,13 @@ def get_bucket_name_for_order_by_record(bucket, record_data):
         bucket_name_for_order = None
     return bucket_name_for_order
 
+def count_records_by_type_for_bucket(bucket, doc_type):
+    if doc_type not  in BUCKET_RECORD_SORT_TYPES:
+        # 只有支持排序的 type 才能进行统计
+        return 0
+    bucket_name_for_order = '%s_%s_order' % (bucket, doc_type)
+    return zsize(bucket_name_for_order)
+
 
 def get_data_type(record_data):
     data_type = record_data.get('_type') or record_data.get('type')
@@ -76,6 +83,8 @@ def get_url_path(record_data):
 
 def get_path_from_record(record_data, is_lower=True):
     # 默认全小写处理
+    if not isinstance(record_data, dict):
+        return
     path = (record_data.get('path') or '').strip()
     if is_lower:
         path = path.lower()
@@ -87,4 +96,11 @@ def get_path_from_record(record_data, is_lower=True):
     #### 从某种角度来说， path 相当于是一个 db 中的唯一 id
     return path
 
+
+
+def get_type_from_record(record_data):
+    if isinstance(record_data, dict):
+        return record_data.get("_type") or record_data.get("type")
+    else:
+        return None
 

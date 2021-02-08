@@ -31,6 +31,8 @@ cos-python-sdk-v5 = "==1.9.0"
 itsdangerous = "==1.1.0"
 boto = "==2.38.0"
 farbox-gevent-websocket = "*"
+elasticsearch = "==7.10.1"
+xmltodict = "==0.12.0"
 """
 
 pipfile_packages = []

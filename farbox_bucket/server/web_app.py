@@ -1,8 +1,7 @@
 #coding: utf8
 from __future__ import absolute_import
-import os
-from flask import Flask, g
-
+from flask import Flask
+from farbox_bucket.settings import sentry_client
 from raven.contrib.flask import Sentry
 from farbox_bucket.utils import smart_str, is_str
 from farbox_bucket.server.utils.response import get_status_response
@@ -12,7 +11,8 @@ from farbox_bucket.server.template_system.app_functions.after_request.basic impo
 from farbox_bucket.server.template_system.app_functions.after_request.cache_page import cache_response_into_memcache
 from farbox_bucket.server.template_system.app_functions.before_request.basic import basic_before_request
 from farbox_bucket.server.statistics.after_request import after_request_func_for_statistics
-from farbox_bucket.settings import sentry_client
+from farbox_bucket.server.template_system.app_functions.before_request.site_visitor_password import site_visitor_password_before_request
+from farbox_bucket.server.utils.request_context_vars import get_context_value_from_request
 
 # patch context resolver
 from farbox_bucket.server.template_system.template_system_patch import patch_context; patch_context()
@@ -26,11 +26,11 @@ except:
 
 class FarBoxBucketFlask(Flask):
     def get_send_file_max_age(self, name):
-        if getattr(g, 'is_template_resource', None): # template static resource, 10 minutes
+        if get_context_value_from_request("is_template_resource"): # template static resource, 10 minutes
             return 10*60
-        if getattr(g, 'is_static_file', False): # 3 hours
+        if get_context_value_from_request("is_static_file"): # 3 hours
             return 3 * 60 * 60
-        if getattr(g, 'is_system_static_file', False): # 10 days
+        if get_context_value_from_request("is_system_static_file"): # 10 days
             return 10 * 24 * 60 * 60
         return 60
         #return Flask.get_send_file_max_age(self, name)
@@ -60,6 +60,7 @@ if sentry_client:
     sentry = Sentry(app, sentry_client)
 
 apply_before_request(app, basic_before_request)
+apply_before_request(app, site_visitor_password_before_request)
 apply_before_request(app, time_cost_handler)
 apply_after_request(app, time_cost_handler)
 apply_after_request(app, cache_response_into_memcache)
@@ -84,10 +85,17 @@ from farbox_bucket.server.views.system import *
 from farbox_bucket.server.views.install_ssl import *
 ## other views
 from farbox_bucket.server.views.api import *
-from farbox_bucket.server.views.bucket import *
 from farbox_bucket.server.views.for_admin import *
 from farbox_bucket.server.views.my import *
 from farbox_bucket.server.views.file_manager import *
+
+# 3rd clouds
+from farbox_bucket.clouds.wechat.views import *
+
+from farbox_bucket.server.views.wiki_link_fallback import *
+
+# last one
+from farbox_bucket.server.views.bucket import *
 
 from farbox_bucket.server.utils.verification_code import show_verification_code_by_url
 from farbox_bucket.server.comments.add import add_new_comment_web_view

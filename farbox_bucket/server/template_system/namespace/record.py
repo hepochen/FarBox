@@ -1,26 +1,23 @@
 # coding: utf8
-from __future__ import absolute_import
-from jinja2.runtime import Context
-from flask import g, request
 import re
-
+from flask import request
 from farbox_bucket.bucket.defaults import zero_id_for_finder
-
+from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.get import get_records_for_bucket
 
 
 def get_records_for_request_resolver(key):
-    if not hasattr(g, 'cached_records_for_resolver'):
-        g.cached_records_for_resolver = {}
+    if not hasattr(request, 'cached_records_for_resolver'):
+        request.cached_records_for_resolver = {}
 
     key = key.lower().strip()
-    if key in g.cached_records_for_resolver: # cached value
-        return g.cached_records_for_resolver[key]
+    if key in request.cached_records_for_resolver: # cached value
+        return request.cached_records_for_resolver[key]
 
     if not re.match('r?records(_\d+)?$', key):
         return None
 
-    bucket = getattr(g, 'bucket', None)
+    bucket = get_bucket_in_request_context()
     if not bucket:
         return []
 
@@ -61,6 +58,6 @@ def get_records_for_request_resolver(key):
                                      includes_start_record_id=includes_start_record_id,
                                      )
 
-    g.cached_records_for_resolver[key] = records
+    request.cached_records_for_resolver[key] = records
 
     return records

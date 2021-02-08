@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from gevent.hub import Hub
 import gc, gevent
+from gevent import spawn
 from gevent.greenlet import Greenlet
 from gevent.pool import Pool
 from gevent.timeout import Timeout
@@ -81,4 +82,26 @@ def do_by_gevent_pool(pool_size=100, job_func=None, loop_items=None, timeout=Non
         return True # 表示处理完成
     except:
         return False
+
+
+
+def greenlet_quiet_error_handler(greenlet):
+    pass
+
+
+def get_result_by_gevent_with_timeout_block(function, timeout, fallback_function=None, auto_kill=False, raise_error=True):
+    g_job = spawn(function)
+    if not raise_error:
+        g_job.link_exception(greenlet_quiet_error_handler)
+    try:
+        result = g_job.get(block=True, timeout=timeout)
+        return result
+    except Timeout:
+        if auto_kill:
+            g_job.kill(block=False)
+        if fallback_function:
+            result = fallback_function()
+        else:
+            result = None
+        return result
 

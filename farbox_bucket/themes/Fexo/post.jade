@@ -1,0 +1,26 @@
+extends base.jade
+
++h.i18n("Post TOC", "文章目录", "zh_cn")
+
+block content
+	use_toc = post.toc and post.metadata.get('toc', True)
+	.post: div(class="post_with_toc" if use_toc else "post_without_toc")
+		.header
+			h1.title= post.title
+			.info
+				span.date= post.date('%Y-%m-%d')
+				if post.category
+					a.category(href=post.category.url)= post.category.filename or post.category.title
+
+		if use_toc
+			.post_container: .pure-g
+				.pure-u-1.pure-u-md-2-3.pure-u-lg-4-5
+					.post_content.markdown= post.content
+				.pure-u-1.pure-u-md-1-3.pure-u-lg-1-5: .toc_container
+					toc_header = '<div class=toc_title>%s</div>'%_("Post TOC")
+					+h.auto_toc(post, toc_header=toc_header)
+		else
+			.post_container
+				.post_content.markdown= post.content
+
+		+post.comments_as_html()

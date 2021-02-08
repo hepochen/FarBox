@@ -6,7 +6,7 @@ from farbox_bucket.utils.objectid import ObjectId, is_object_id
 from farbox_bucket.utils.ssdb_utils import hset, ssdb_data_to_py_data, py_data_to_ssdb_data
 
 from farbox_bucket.utils.data import json_loads
-from farbox_bucket.bucket.utils import  has_bucket, set_bucket_into_buckets, get_bucket_max_id, set_bucket_configs
+from farbox_bucket.bucket.utils import  has_bucket, set_bucket_last_record_id, set_bucket_into_buckets, get_bucket_max_id, set_bucket_configs
 from farbox_bucket.bucket.record.utils import  allowed_to_create_record_in_bucket, update_bucket_last_record_md5, get_record_data_error_info
 
 from .related.for_deleted import auto_clean_record_before_handle_path_related_record
@@ -69,6 +69,9 @@ def create_record(bucket, record_data, avoid_repeated=True, auto_id=True, file_c
 
     # 更新 buckets 的信息，表示当前 bucket 刚刚被更新过了
     set_bucket_into_buckets(bucket)
+    if py_record_data.get("path"):
+        # path 相关的，因为有 delete 的关系，单独进行 last_record_id 的存储，不然直接 hget_max 就可以了
+        set_bucket_last_record_id(bucket, object_id)
 
     if file_content and not py_record_data.get("raw_content"):
         # 指定了要存储的 file content，并且 record 中并没有 raw_content 这个字段，进行文件的存储

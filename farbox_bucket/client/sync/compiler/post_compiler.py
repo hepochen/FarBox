@@ -13,6 +13,7 @@ from farbox_bucket.utils.path import get_just_name
 from farbox_bucket.utils.date import timestamp_to_date, date_to_timestamp
 from farbox_bucket.client.sync.compiler.basic_compiler import BasicSyncCompiler
 from farbox_bucket.client.sync.compiler.utils import slugify, get_file_timestamp, string_to_list, get_images_from_html
+from farbox_bucket.utils.md_related.markdown_doc_links import get_linked_docs_from_markdown_content
 
 
 PAGES_TXT_NAMES = ['about', 'links', 'link']
@@ -157,6 +158,14 @@ class PostSyncCompiler(BasicSyncCompiler):
         if not isinstance(tags, (list, tuple)):
             tags = []
         tags = [smart_unicode(tag) for tag in tags] # make sure it's unicode
+
+        # 从 wiki link 语法中提取的 tags
+        post_doc_links, wiki_tags = get_linked_docs_from_markdown_content(self.relative_path, self.raw_content)
+        for wiki_tag in wiki_tags:
+            wiki_tag = smart_unicode(wiki_tag)
+            if wiki_tag not in tags:
+                tags.append(wiki_tag)
+
         return tags
 
 

@@ -1,9 +1,7 @@
 #coding: utf8
 import os
-import re
-from farbox_markdown.util import is_a_markdown_file
 from farbox_bucket.settings import MAX_RECORD_SIZE, DEBUG
-from farbox_bucket.utils import get_md5
+from farbox_bucket.utils import is_a_markdown_file
 from farbox_bucket.utils.data import json_loads, json_dumps
 from farbox_bucket.utils.path import get_relative_path, is_sub_path, get_just_name
 from farbox_bucket.utils.functional import cached_property

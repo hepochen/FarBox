@@ -1,12 +1,15 @@
 #coding: utf8
 import os, time
-import uuid
 from farbox_bucket.settings import DEBUG, server_secret_key
+from farbox_bucket.utils import string_types, smart_str, get_md5
+from farbox_bucket.utils.mime import guess_type
+from farbox_bucket.clouds.qcloud import sign_qcloud_url
+
 from farbox_bucket.bucket.record.utils import get_file_id_from_record
 from farbox_bucket.bucket.clouds.storage.qcloud import delete_file_on_qcloud_for_bucket, has_file_on_qcloud_for_bucket, \
     upload_file_to_qcloud_for_bucket, get_file_on_qcloud_for_bucket, QCLOUD_URL, QCLOUD_CDN_TOKEN
-from farbox_bucket.utils import string_types, smart_str, get_md5
-from farbox_bucket.utils.mime import guess_type
+from farbox_bucket.bucket.storage.helpers.before_store_image import get_image_info_from_raw_content
+
 from .base import Storage
 
 
@@ -67,16 +70,11 @@ class QCloudStorage(Storage):
                 print("upload %s to qcloud" % relative_path)
             uploaded = upload_file_to_qcloud_for_bucket(bucket, filepath, raw_content, content_type=content_type, **headers)
             if uploaded:
-                kwargs = dict(file_size = len(raw_content))
+                file_size = len(raw_content)
+                image_info = {}
                 if guess_type(relative_path).startswith("image/"):
-                    try:
-                        image_width, image_height = self.get_image_size_from_raw_content(raw_content)
-                        if image_width and image_height:
-                            kwargs["image_width"] = image_width
-                            kwargs["image_height"] = image_height
-                    except:
-                        pass
-                self.update_record_when_file_stored(bucket, record_data, **kwargs) # update the record
+                    image_info = get_image_info_from_raw_content(raw_content)
+                self.update_record_when_file_stored(bucket, record_data, file_size=file_size, image_info=image_info)
                 return "ok"
             else:
                 return "failed"
@@ -95,11 +93,7 @@ class QCloudStorage(Storage):
             url_path = "/%s/%s" % (bucket, filepath)
             if QCLOUD_CDN_TOKEN:
                 # 10000秒的容差, about 3 hours, 相当于 3 个小时左右的跳转 URL 是固定的，方便缓存的逻辑
-                timestamp = str(int(time.time()))[:-4] + "0000"
-                rand = get_md5("%s-%s-%s"%(url_path, timestamp, server_secret_key))
-                string_to_hash = "%s-%s-%s-0-%s" % (url_path, timestamp, rand, QCLOUD_CDN_TOKEN)
-                hash_md5 = get_md5(string_to_hash)
-                return "%s%s?sign=%s-%s-0-%s" % (QCLOUD_URL, url_path, timestamp, rand, hash_md5)
+                return sign_qcloud_url(QCLOUD_URL, qcloud_token=QCLOUD_CDN_TOKEN, url_path=url_path)
             else:
                 return "%s%s" % (QCLOUD_URL, url_path)
         else:

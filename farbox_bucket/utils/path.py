@@ -34,8 +34,14 @@ def is_a_hidden_path(path):
 
 
 
-def get_just_name(filepath):
+def get_just_name(filepath, for_folder=False):
+    if not filepath:
+        return ""
+    if not isinstance(filepath, string_types):
+        return ""
     folder, filename = os.path.split(filepath)
+    if for_folder:
+        return filename
     just_name, ext = os.path.splitext(filename)
     return just_name
 
@@ -172,6 +178,12 @@ def same_slash(path):
     path = smart_unicode(path)
     return path
 
+def is_same_path(p1, p2):
+    p1 = p1 or ''
+    p2 = p2 or ''
+    p1 = smart_unicode(p1.strip('/').lower())
+    p2 = smart_unicode(p2.strip('/').lower())
+    return p1 == p2
 
 
 def is_sub_path(filepath, parent_path, direct=False):

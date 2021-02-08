@@ -1,11 +1,10 @@
 # coding: utf8
 from __future__ import absolute_import
-from farbox_bucket.utils import smart_unicode, get_value_from_data
-from flask import g, request
-from farbox_bucket.server.utils.request_path import get_doc_url
-from farbox_bucket.server.template_system.namespace.data import get_data
-from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_json_content_by_path
-from farbox_bucket.bucket.utils import get_bucket_pages_configs
+from farbox_bucket.utils import smart_unicode, get_value_from_data, auto_type
+from flask import request
+from farbox_bucket.bucket.record.get.path_related import has_markdown_record_by_path_prefix
+from farbox_bucket.bucket.record.get.path_related import get_json_content_by_path
+from farbox_bucket.bucket.utils import get_bucket_pages_configs, get_bucket_site_configs
 from farbox_bucket.server.utils.request_path import auto_bucket_url_path
 
 
@@ -68,6 +67,29 @@ def get_auto_nav_items(bucket): # 自动生成的
     homepage_nav_item = dict(name='Home', url=homepage_url)
     nav_items.append(homepage_nav_item)
 
+    site_configs = get_bucket_site_configs(bucket)
+    albums_root = smart_unicode(site_configs.get("albums_root", "")).strip()
+    if albums_root:
+        nav_items.append(dict(
+            name = "Album",
+            url = "/album"
+        ))
+
+    wiki_configs = get_json_content_by_path(bucket, "__wiki.json", force_dict=True)
+    wiki_root = wiki_configs.get("wiki_root")
+    enable_wiki_nodes = auto_type(wiki_configs.get("enable_wiki_nodes", True))
+    if wiki_root:
+        nav_items.append(dict(
+            name="Wiki",
+            url="/wiki"
+        ))
+
+        if enable_wiki_nodes:
+            nav_items.append(dict(
+                name="Wiki Nodes",
+                url="/wiki_nodes"
+            ))
+
 
     if 'categories.jade' in pages_configs:
         # 有 categories.jade 的呈现
@@ -81,18 +103,19 @@ def get_auto_nav_items(bucket): # 自动生成的
             url = '/archive'
         ))
 
+    if has_markdown_record_by_path_prefix(bucket, "links"):
+        nav_items.append(dict(
+            name='Links',
+            url='/__page/links'
+        ))
 
-    # 添加的页面, 位于  _nav 目录下的文章，认为是导航性质的
-    nav_posts = get_data(type='post', path='_nav', with_page=False, limit=10, sort='position') or []
-    for nav_post in nav_posts:
-        if not nav_post.get('title'):
-            continue
-        nav_items.append(
-            dict(
-                name = nav_post.get('title'),
-                url = get_doc_url(nav_post) + '?type=page'
-            )
-        )
+    if has_markdown_record_by_path_prefix(bucket, "about"):
+        nav_items.append(dict(
+            name='About',
+            url='/__page/about'
+        ))
+
+
 
     if 'feed.jade' in pages_configs:
         nav_items.append(dict(

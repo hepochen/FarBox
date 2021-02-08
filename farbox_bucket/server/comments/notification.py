@@ -1,12 +1,12 @@
 #coding: utf8
 from __future__ import absolute_import
 import re
-from flask import g, request
+from flask import request
 from urlparse import urlparse
 from gevent import spawn
 from farbox_bucket.settings import CAN_SEND_SYSTEM_EMAIL
 from farbox_bucket.utils import is_email_address, smart_unicode
-from farbox_bucket.bucket.utils import get_bucket_secret_site_configs
+from farbox_bucket.bucket.utils import get_bucket_secret_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.private_configs import get_bucket_owner_email
 from farbox_bucket.utils.mail.utils import pure_email_address
 from farbox_bucket.utils.mail.system import send_mail_by_system
@@ -100,7 +100,7 @@ def send_notification_emails(new_comment):
         emails.append(admin_email)
 
     # 通知 bucket 的所有者
-    bucket = getattr(g, 'bucket', None) or request.values.get('bucket')
+    bucket = get_bucket_in_request_context() or request.values.get('bucket')
     bucket_owner_email = get_bucket_owner_email(bucket=bucket)
     if bucket_owner_email and bucket_owner_email not in emails:
         emails.append(bucket_owner_email)

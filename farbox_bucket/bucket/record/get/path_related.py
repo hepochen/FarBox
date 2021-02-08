@@ -1,13 +1,15 @@
 # coding: utf8
 from __future__ import absolute_import
 import os
-from farbox_bucket.utils import string_types, smart_unicode, to_date, to_float
+from farbox_bucket.utils import string_types, smart_unicode, to_date, to_float, MARKDOWN_EXTS, is_a_markdown_file
 from farbox_bucket.utils.gzip_content import ungzip_content
 from farbox_bucket.utils.data import json_loads
 from farbox_bucket.utils.date import date_to_timestamp
 from farbox_bucket.utils.ssdb_utils import hscan, hget, hexists, zrange, hget_many, hgetall
 from farbox_bucket.bucket.utils import get_bucket_name_for_path, get_bucket_name_for_order
 from farbox_bucket.bucket import get_bucket_site_configs
+
+from farbox_bucket.server.utils.request_context_vars import get_context_value_from_request, set_context_value_from_request
 
 from .get import get_records_by_ids
 
@@ -66,7 +68,6 @@ def get_record_ids_by_paths(bucket, paths, ignore_marked_id=True):
 
 
 def get_paths_and_ids_under(bucket, under='', max_limit=10000):
-    # todo 应该允许返回 record_id+size+version 的格式？
     path_bucket = get_bucket_name_for_path(bucket)
     path_under = under.lower().strip('/')  # prefix
     if not path_under:
@@ -83,6 +84,17 @@ def get_paths_and_ids_under(bucket, under='', max_limit=10000):
         ids_and_paths.append([path, record_id])
     return ids_and_paths
 
+
+def get_bucket_markdown_record_ids(bucket, under='', max_limit=20000):
+    record_ids = []
+    paths_and_ids = get_paths_and_ids_under(bucket=bucket, under=under, max_limit=max_limit)
+    for (path, record_id) in paths_and_ids:
+        if is_a_markdown_file(path):
+            record_ids.append(record_id)
+    return record_ids
+
+
+
 def get_paths_under(bucket, under='', max_limit=10000):
     paths_and_ids = get_paths_and_ids_under(bucket=bucket, under=under, max_limit=max_limit)
     paths = []
@@ -97,6 +109,10 @@ def get_paths_under(bucket, under='', max_limit=10000):
 def get_record_by_path(bucket, path, force_dict=False):
     if not bucket:
         return None
+    if not path:
+        return None
+    if not isinstance(path, string_types):
+        return None
     record_object_id = get_record_id_by_path(bucket, path)
     if record_object_id:
         record = hget(bucket, record_object_id, force_dict=force_dict)
@@ -106,7 +122,17 @@ def get_record_by_path(bucket, path, force_dict=False):
         record = None
     return record
 
-def has_record_by_path(bucket, path, force_dict=False):
+
+def get_markdown_record_by_path_prefix(bucket, prefix):
+    if not bucket:
+        return
+    for ext in MARKDOWN_EXTS:
+        path = prefix.strip("/") + ext
+        doc = get_record_by_path(bucket, path)
+        if doc:
+            return doc
+
+def has_record_by_path(bucket, path):
     # 是否存在 path 对应的 record
     if not bucket:
         return False
@@ -115,6 +141,16 @@ def has_record_by_path(bucket, path, force_dict=False):
         return  hexists(bucket, record_object_id)
     else:
         return False
+
+def has_markdown_record_by_path_prefix(bucket, prefix):
+    if not bucket:
+        return False
+    for ext in MARKDOWN_EXTS:
+        path = prefix.strip("/") + ext
+        if has_record_by_path(bucket, path):
+            return True
+    return False
+
 
 
 def get_raw_content_by_path(bucket, path):
@@ -133,22 +169,41 @@ def get_raw_content_by_path(bucket, path):
     return raw_content
 
 
-def get_json_content_by_path(bucket, path):
+def get_json_content_by_path(bucket, path, force_dict=False):
     raw_content = get_raw_content_by_path(bucket, path)
     if not raw_content:
         return {}
     try:
-        return json_loads(raw_content)
+        result = json_loads(raw_content)
+        if force_dict and not isinstance(result, dict):
+            return {}
+        return result
     except:
         return {}
 
 
-def get_record_by_url(bucket, url_path):
+def do_get_record_by_url(bucket, url_path):
     url_path = url_path.strip().lower()
     bucket_for_url = '%s_url' % bucket
     path_data_id = hget(bucket_for_url, url_path)
     if path_data_id:
         return get_record_by_path(bucket, path_data_id)
+
+def get_record_by_url(bucket, url_path):
+    if "://" in url_path: # abs url is not allowed
+        return None
+    cache_key = "cache_for_get_record_by_url"
+    cached_in_g = get_context_value_from_request(cache_key, force_dict=True)
+    if url_path in cached_in_g:
+        return cached_in_g.get(url_path)
+    doc = do_get_record_by_url(bucket, url_path)
+    # post 开头的url，是系统默认提供的一般; 去掉这个前缀，继续尝试干净的 url_path
+    if not doc and url_path and url_path.startswith('post/'):
+        url_path = url_path.replace('post/', '', 1)
+        doc = do_get_record_by_url(bucket, url_path=url_path)
+    cached_in_g[url_path] = doc
+    set_context_value_from_request(cache_key, cached_in_g)
+    return doc
 
 
 def get_record_by_url_or_path(bucket, key):

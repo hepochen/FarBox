@@ -1,7 +1,7 @@
 #coding: utf8
 from __future__ import absolute_import
 import time
-from flask import request, g, abort
+from flask import request
 from farbox_bucket.settings import DEBUG, WEBSOCKET
 from farbox_bucket.bucket.storage.default import storage
 from farbox_bucket.utils import force_to_json, string_types
@@ -14,8 +14,8 @@ from farbox_bucket.bucket.record.create import create_record
 from farbox_bucket.bucket.record.get.path_related import get_record_id_by_path, get_record_by_path
 
 from farbox_bucket.bucket.web_api.verify import get_verified_message_from_web_request
-from farbox_bucket.ipfs.server.ipfs_bucket import mark_bucket_to_sync_ipfs
 from farbox_bucket.bucket.utils import get_bucket_configs
+from farbox_bucket.bucket.helper.files_related import auto_update_bucket_and_get_files_info
 
 from farbox_bucket.server.utils.request import get_file_content_in_request
 
@@ -63,11 +63,11 @@ class FarBoxBucketMessageAPIHandler(object):
 
     @property
     def verified_message(self): # auto cached in current request
-        if hasattr(g, 'bucket_verified_message'):
-            return g.bucket_verified_message
+        if hasattr(request, 'bucket_verified_message'):
+            return request.bucket_verified_message
         else:
             verified_message = self.get_verified_message()
-            g.bucket_verified_message = verified_message
+            request.bucket_verified_message = verified_message
             return verified_message
 
     @property
@@ -172,9 +172,11 @@ class FarBoxBucketMessageAPIHandler(object):
         if not updated:
             return json_with_status_code(400, 'configs format error or no bucket matched')
         else:
-            if config_type == 'files':
+            # 先移除 ipfs 相关的逻辑 @2021-2-4
+            # from farbox_bucket.ipfs.server.ipfs_bucket import mark_bucket_to_sync_ipfs
+            #if config_type == 'files':
                 # todo 这里处理是否妥当？？
-                mark_bucket_to_sync_ipfs(self.bucket)
+                #mark_bucket_to_sync_ipfs(self.bucket)
             return json_with_status_code(200, 'ok')
 
 
@@ -256,7 +258,7 @@ class FarBoxBucketMessageAPIHandler(object):
             return json_with_status_code(400, info)
 
     def show_files(self):
-        files = get_bucket_configs(self.bucket, config_type='files') or {}
+        files = auto_update_bucket_and_get_files_info(self.bucket)
         return json_with_status_code(200, files)
 
 
@@ -280,5 +282,8 @@ class FarBoxBucketMessageAPIHandler(object):
 
     def get_configs(self):
         config_type = self.raw_json_data.get('type') or self.raw_json_data.get('config_type') or 'site'
-        configs = get_bucket_configs(self.bucket, config_type=config_type) or {}
+        if config_type == "files":
+            configs = auto_update_bucket_and_get_files_info(self.bucket)
+        else:
+            configs = get_bucket_configs(self.bucket, config_type=config_type)
         return json_with_status_code(200, configs)

@@ -135,7 +135,6 @@
       iframe_src = '/__file_view/' + filepath + location.search;
       if ($('#container iframe').attr('src') !== iframe_src) {
         $('#container iframe').attr('src', iframe_src);
-        setTimeout(focus_iframe, 2000);
       }
       s_file = get_selected_filepath();
       new_hash = '#' + s_file;
@@ -400,7 +399,7 @@
               filepath = folder_path + '/' + filename;
               xhr = new XMLHttpRequest();
               xhr.onreadystatechange = xhr_on_ready_state_changed(xhr, filepath);
-              xhr.open("post", '/service/sync', true);
+              xhr.open("post", '/__file_manager_api', true);
               fd = new FormData();
               fd.append(filepath, f);
               _results.push(xhr.send(fd));

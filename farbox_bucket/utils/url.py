@@ -1,8 +1,8 @@
 #coding: utf8
 import json, urllib
-from flask import g
-from farbox_bucket.utils import smart_str, smart_unicode
+from farbox_bucket.utils import smart_str, smart_unicode, string_types
 from urlparse import urlparse, parse_qs
+from farbox_bucket.server.utils.request_context_vars import get_url_prefix_in_request
 
 def get_base_url(url):
     url = url.strip()
@@ -54,9 +54,9 @@ def get_get_var(url, key):
         qs = parse_qs(query)
         value = qs.get(key)
         if isinstance(value, (list, tuple)) and len(value)==1:
-            return value[0]
+            return unqote_url_path_to_unicode(value[0])
         else:
-            return value
+            return unqote_url_path_to_unicode(value)
 
 def get_GET_dict_data(query_string):
     qs = parse_qs(query_string)
@@ -113,6 +113,17 @@ def decode_url_arg(arg):
         return arg
 
 
+def unqote_url_path_to_unicode(url_path):
+    if not isinstance(url_path, string_types):
+        return url_path
+    if '%' in url_path:
+        # 被编码的url，特别是wordpress转过来的
+        _url_path = urllib.unquote(smart_str(url_path))
+        if url_path != _url_path:
+            url_path = smart_unicode(_url_path)
+            return url_path
+    return smart_unicode(url_path)
+
 
 def get_url_without_prefix(url, prefix=None):
     # url 去除 prefix 后， 一般以 '/' 开头
@@ -121,7 +132,7 @@ def get_url_without_prefix(url, prefix=None):
     url_startswith_dash = url.startswith('/')
     raw_url = url
     if prefix is None:
-        prefix = getattr(g, 'prefix', '')
+        prefix = get_url_prefix_in_request() or ""
     if prefix and isinstance(prefix, (str,unicode)):
         url = url.lstrip('/')
         prefix = prefix.strip().strip('/')

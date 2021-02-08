@@ -1,0 +1,14 @@
+mixin make_timeline(cated_posts)
+	ul.post_list: for category, posts in cated_posts
+		li.item_title
+			dot_class = 'dot dot_%s'%loop.index
+			span(style="background: {{h.get_a_color()}}", class=dot_class)
+			category_title = category or 'UnCategory'
+			span.category_title(id=h.get_dom_id(category_title))= category_title
+		for post in posts
+			li.item_post.item
+				span.dot(style="background: {{h.get_a_color()}}")
+				span.post_date= post.date.format('%m-%d')
+				a.post_title(href=post.url)= post.title
+
+

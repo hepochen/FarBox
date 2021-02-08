@@ -18,6 +18,7 @@ namespace_functions = {
     'paginator': paginator,
     'post': post,
     'posts': posts,
+    'p': posts,
     'site': site,
     'response': response,
     'bucket': bucket,

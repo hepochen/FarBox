@@ -1,0 +1,21 @@
+html
+	head
+		+h.headers
+		block title
+			title= post.title or site.title
+		+h.load('/fb_static/lib/pure.css')
+		+h.load('/fb_static/lib/markdown/basic.css')
+		+h.load("/template/static/style.scss")
+	body
+		block header
+			#nav_header
+				+site.get_nav(align="right", toggle_menu=True)
+
+		block content
+
+
+
+		+h.back_to_top()
+
+		+h.load("/fb_static/lib/jquery.js")
+		+h.load('font')

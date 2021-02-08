@@ -8,6 +8,7 @@ from farbox_bucket.utils.env import get_env
 from farbox_bucket.utils.ssdb_client import SSDB_Client
 from farbox_bucket import version
 from farbox_bucket.utils.encrypt.simple import ServerSerializer
+from farbox_bucket.server.dangerous.start_elasticsearch_server import auto_reset_elasticsearch_memory_config_when_app_started
 
 ssdb_ip = get_env('SSDB_IP')  or '127.0.0.1'
 ssdb_port = get_env('SSDB_PORT') or 8888
@@ -24,6 +25,7 @@ STATIC_FILE_VERSION = version # 静态资源通过 h.load 载入的时候，增�
 
 MAX_RECORD_SIZE = 300 * 1024 # 300Kb
 
+# 这个只是对 verify 时候起作用的，如果是 system 直接写入的，不在受限范围
 MAX_RECORD_SIZE_FOR_CONFIG = 800 * 1024 ## 800Kb
 
 
@@ -54,7 +56,7 @@ if os.path.isdir(bucket_scripts_root):
     sys.path.append(bucket_scripts_root)
 
 
-BUCKET_PRICE = to_float(get_env("bucket_price"), default_if_fail=99) or 0
+BUCKET_PRICE = to_float(get_env("bucket_price"), default_if_fail=128) or 0
 BUCKET_PRICE2 = to_float(get_env("bucket_price2"), default_if_fail=0) or 0
 
 
@@ -120,3 +122,10 @@ CAN_SEND_SYSTEM_EMAIL = bool(SES_ID and SES_KEY)
 BASIC_FORM_FORMATS = {}
 
 # todo DEFAULT_SERVER_NODE ?
+
+# auto set memory for elasticsearch
+auto_reset_elasticsearch_memory_config_when_app_started()
+
+HUMECH_PAGE_VERSION = get_env("HUMECH_PAGE_VERSION") or "0.1"
+
+TMP_BUCKET_FOR_DEBUG = get_env("TMP_BUCKET_FOR_DEBUG")

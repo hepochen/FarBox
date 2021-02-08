@@ -6,12 +6,13 @@ import base64
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from shortuuid import ShortUUID
-from flask import request, Response, g
+from flask import request, Response
 from farbox_bucket.utils import smart_str
 from farbox_bucket.utils.memcache import cache_client
 from farbox_bucket.settings import server_secret_key
 from farbox_bucket.server.utils.cookie import set_cookie, get_cookie
 from farbox_bucket.server.static.static_render import static_folder_path
+from farbox_bucket.server.utils.request_context_vars import set_not_cache_current_request
 from farbox_bucket.server.web_app import app
 
 v_shortuuid = ShortUUID('ABCDEFGHJKMNPQRSTUVWXY345679')
@@ -128,13 +129,13 @@ def is_verification_code_correct():
 # todo 限制访客的请求数，避免被攻击
 @app.route('/service/verification_code', methods=['POST', 'GET'])
 def show_verification_code_by_url():
+    set_not_cache_current_request()
     code_id = uuid.uuid1().hex
     set_cookie('verification_code', code_id)
     vid = get_cookie('vid') or '1'
     cache_client.set('vcode_%s'%code_id, vid, expiration=10*60)
     im = chars_to_image(key=code_id)
     im_content = image_to_bytes(im, im_format='PNG')
-    g.cache_strategy = 'no'
     response = Response(im_content, mimetype='image/png')
     return response
 

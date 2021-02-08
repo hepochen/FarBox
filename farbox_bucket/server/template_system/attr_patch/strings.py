@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from farbox_bucket.utils.html import linebreaks, html_to_text, limit as _limit, html_escape
 from farbox_bucket.utils.date import utc_date_parse as date_parse
-from farbox_bucket.utils import UnicodeWithAttrs, smart_unicode, is_str, count_words
+from farbox_bucket.utils import UnicodeWithAttrs, smart_unicode, is_str, count_words, to_int
 from farbox_bucket.server.template_system.model.date import Date
 
 
@@ -26,6 +26,11 @@ def words(obj):
         return count_words(obj)
     else:
         return 0
+
+
+def small_thumbnail(obj):
+    # todo 还没有处理小型的图片缩略图
+    return obj
 
 
 def escaped(obj):
@@ -56,6 +61,13 @@ def plain(obj):
 def limit(obj, length=None, mark='......', keep_images=True, words=None, remove_a=False, keep_a_html=False, ignore_first_tag_name='blockquote'):
     return _limit(obj, length, mark, keep_images, words, remove_a=remove_a, keep_a_html=keep_a_html, ignore_first_tag_name=ignore_first_tag_name)
 
+def resize(obj, *args, **kwargs):
+    # compatibility for Bitcron
+    width = to_int(kwargs.get("width", None), default_if_fail=None)
+    if width is not None:
+        if width <= 800 and width > 300:
+            return obj + "?size=m"
+    return obj
 
 def has(obj, to_check, just_in=False):
     if isinstance(to_check, (tuple, list)): # 给的是一个list，只要其中一个元素满足就可以了

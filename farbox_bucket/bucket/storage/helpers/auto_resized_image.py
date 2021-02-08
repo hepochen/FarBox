@@ -40,6 +40,11 @@ def get_response_for_resized_image(bucket, record, storage):
         return
     site_settings = get_bucket_site_configs(bucket)
     image_max_width = to_int(site_settings.get('image_max_width'), default_if_fail=None)
+
+    size_from_request = request.values.get("size")
+    if size_from_request == "m":
+        image_max_width = 600
+
     if not isinstance(image_max_width, int) or image_max_width<100:
         image_max_width = None
     image_max_height = to_int(site_settings.get('image_max_height'), default_if_fail=None)
@@ -101,16 +106,17 @@ def get_response_for_resized_image(bucket, record, storage):
             # 标识，下次就不会尝试了
             update_record(bucket, record_id=record.get("_id"), _get_im_failed=True)
             return
+        degrees = to_int(record.get("degrees"), default_if_fail=0)
         if image_max_type == 'webp-jpg':
             #resized_jpg_content = resize_image(im, width=image_max_width, height=image_max_height, image_type='jpg')
             #resized_jpg_im = get_im(resized_jpg_content)
-            resized_im_content = resize_image(im, width=image_max_width, height=image_max_height, image_type='webp')
+            resized_im_content = resize_image(im, width=image_max_width, height=image_max_height, image_type='webp', degrees=degrees)
             if not resized_im_content:
                 update_record(bucket, record_id=record.get("_id"), _get_im_failed=True)
                 return
             #del im, resized_im_content # resized_jpg_im,
         else:
-            resized_im_content = resize_image(im, width=image_max_width, height=image_max_height, image_type=image_max_type)
+            resized_im_content = resize_image(im, width=image_max_width, height=image_max_height, image_type=image_max_type, degrees=degrees)
         cache_image_record = sync_file_by_server_side(
             bucket = bucket,
             relative_path = cache_image_filepath,

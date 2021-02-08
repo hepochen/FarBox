@@ -1,0 +1,20 @@
+from mixins import make_timeline
+extends base.jade
+block content
+	.content
+		.page-header
+			.box-blog-info
+				a.avatar(href='/')
+					img(src=site.site_avatar)
+				.info
+					h3.name= site.title
+					.slogan= site.sub_title
+
+		if posts.category
+			all_posts = posts.list_obj
+		else
+			all_posts = get_data(type='post',limit=300, sort='desc')
+		entries = all_posts.group('path:parent_path')
+		+make_timeline(entries)
+
+		+h.paginator()

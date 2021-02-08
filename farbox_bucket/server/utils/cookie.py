@@ -1,6 +1,6 @@
 #coding: utf8
 from __future__ import absolute_import
-from flask import g, request
+from flask import request
 from farbox_bucket.settings import signer
 from itsdangerous import BadTimeSignature, BadSignature
 import time, re
@@ -13,8 +13,8 @@ from farbox_bucket.settings import sentry_client
 
 def save_cookie(k, v, max_age=10*60): # 一般10分钟过期(客户端的)
     raw_max_age = max_age
-    if not hasattr(g, 'safe_cookies'):
-        g.safe_cookies = {}
+    if not hasattr(request, 'safe_cookies_to_set'):
+        request.safe_cookies_to_set = {}
     if isinstance(raw_max_age, (str, unicode)):
         int_c = re.search(r'\d+', raw_max_age)
         if int_c:
@@ -33,7 +33,7 @@ def save_cookie(k, v, max_age=10*60): # 一般10分钟过期(客户端的)
             max_age = 10*60
     else:
         max_age = None
-    g.safe_cookies[k] = dict(value=signer.dumps(v), max_age=max_age)
+    request.safe_cookies_to_set[k] = dict(value=signer.dumps(v), max_age=max_age)
 
 
 def set_cookie(k, v, max_age=10*60):
@@ -58,16 +58,16 @@ def get_cookie(k, max_age=None, is_pure=False): # 这里的max_age是服务端�
             return
 
 def delete_cookies(*keys):
-    if not hasattr(g, 'cookies_to_delete'):
-        g.cookies_to_delete = []
+    if not hasattr(request, 'cookies_to_delete'):
+        request.cookies_to_delete = []
     for key in keys:
-        g.cookies_to_delete.append(key)
+        request.cookies_to_delete.append(key)
 
 
 def set_cookies(response):
     # the value must dumps by singer
     # 在website.core中调用，after_request，可以处理安全性cookie的读写删除
-    cookies_to_set = getattr(g, 'safe_cookies', {})
+    cookies_to_set = getattr(request, 'safe_cookies_to_set', {})
     for k, data in cookies_to_set.items():
         # 用expires, 而非max_age，这样可以重复set_cookie, 即使nano在proxy的情况下
         if 'max_age' in data and data['max_age'] is None: # 浏览器关闭时，失效
@@ -76,7 +76,7 @@ def set_cookies(response):
             response.set_cookie(k, data.get('value'), expires=time.time()+data.get('max_age', 10*60))
 
     # delete the cookies
-    cookies_to_delete = getattr(g, 'cookies_to_delete', [])
+    cookies_to_delete = getattr(request, 'cookies_to_delete', [])
     for key in cookies_to_delete:
         if key not in cookies_to_set and key in request.cookies:
             response.delete_cookie(key)

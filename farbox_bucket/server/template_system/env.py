@@ -1,6 +1,5 @@
 #coding: utf8
 from __future__ import absolute_import
-from farbox_bucket.bucket import get_bucket_pages_configs
 from farbox_bucket.utils import to_unicode, to_md5, smart_unicode, string_types
 
 from jinja2.loaders import  BaseLoader
@@ -9,20 +8,17 @@ from jinja2.utils import internalcode
 from jinja2.exceptions import TemplateNotFound, UndefinedError
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2.runtime import Undefined
-from flask import g, abort
+from flask import abort, request
 import datetime
 import types
 
 from farbox_bucket.server.template_system.model.text import Text
 from farbox_bucket.server.template_system.model.date import Date
 
-
 from farbox_bucket.server.template_system.template_system_patch import SafeUndefined, return_error_message
 from farbox_bucket.server.utils.site_resource import get_template_source
-from farbox_bucket.server.utils.request_path import get_doc_url
 
 from farbox_bucket.server.template_system.attr_patch import render_attr_func_without_call, patch_attr_func_for_obj
-from farbox_bucket.server.template_system.attr_patch.fake_fields import get_value_for_fake_field_for_doc
 
 
 
@@ -98,16 +94,16 @@ class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
                 self.cache[template_md5_key] = template
 
             if parent:
-                templates_tree = getattr(g, "templates_tree", {})
+                templates_tree = getattr(request, "templates_tree", {})
                 if not isinstance(templates_tree, dict):
                     templates_tree = {}
                 templates_tree[template.name] = parent # 记录 parent 的关系
                 if is_child_parent_repeated(template.name, parent, templates_tree):
                     raise TemplateNotFound(name + "@repeated in a templates-loop!!!!!!")
-                g.templates_tree = templates_tree
+                request.templates_tree = templates_tree
 
             if not parent:
-                g.template_path = template.name
+                request.template_path = template.name
 
             return template
         else:
@@ -219,9 +215,6 @@ class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
             else:
                 try_Text = False
 
-        if not value and isinstance(obj, dict):
-            if attribute == 'url':
-                return get_doc_url(obj)
         if isinstance(value, datetime.datetime):
             return Date(value)
         elif isinstance(value, string_types) and try_Text:
@@ -229,6 +222,11 @@ class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
 
         # 必须被 patch 的一些属性
         if not try_patch and isinstance(obj, (Text, Date)) and not hasattr(obj, attribute):
+            try_patch = True
+
+        if value is None and attribute in ["cover"]:
+            try_patch = True
+        if not value and attribute in ["url"]:
             try_patch = True
 
         if try_patch:

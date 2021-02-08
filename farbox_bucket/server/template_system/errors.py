@@ -1,11 +1,10 @@
 # coding: utf8
 import re
-from flask import g
 from farbox_bucket.utils import smart_unicode, string_types
 from farbox_bucket.utils.url import encode_url_arg
 from farbox_bucket.server.utils.response import p_redirect, force_redirect_error_handler_callback
 from farbox_bucket.server.web_app import app
-from farbox_bucket.server.bucket_render.render import render_404_for_farbox_bucket
+from farbox_bucket.server.utils.request_context_vars import set_not_cache_current_request
 from flask import make_response, request
 from jinja2.environment import Template, TemplateSyntaxError
 
@@ -140,11 +139,17 @@ def auth_failed(error):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    g.is_404 = False  # 避免由raise_404产生的404再次被死循环调用
+    from farbox_bucket.server.bucket_render.render import render_404_for_farbox_bucket
+    can_render_user_404_page = True
+    if getattr(request, "is_404", False):
+        can_render_user_404_page = False
+    request.is_404 = True  # 避免由raise_404产生的404再次被死循环调用
     # 404 页面不缓存
-    g.cache_strategy = 'no'
+    set_not_cache_current_request()
     error = getattr(error, 'description', '')
-    not_found_html_for_bucket = render_404_for_farbox_bucket()
+    not_found_html_for_bucket = "" # empty first
+    if can_render_user_404_page:
+        not_found_html_for_bucket = render_404_for_farbox_bucket()
     if not not_found_html_for_bucket:
         not_found_html_for_bucket = """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">

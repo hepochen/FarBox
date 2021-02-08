@@ -6,6 +6,7 @@ from farbox_bucket.utils.memcache import get_cache_client
 from farbox_bucket.utils.pay.alipay import alipay
 from farbox_bucket.bucket.utils import is_valid_bucket_name
 from farbox_bucket.server.utils.response import force_redirect, force_response
+from farbox_bucket.server.utils.request_context_vars import set_response_in_request
 from farbox_bucket.bucket.service.bucket_service_info import change_bucket_expired_date, get_bucket_service_info
 
 
@@ -17,12 +18,12 @@ def extend_bucket_expired_date_yearly_by_alipay(bucket, try_price2=False):
     if try_price2:
         price = BUCKET_PRICE2
     if price <= 0 :
-        price = 99
+        price = 128
     if request.method == 'POST':
         # # notify 过来的，要告诉 alipay 已经成功了
         cache_client = get_cache_client()
         cache_client.set('alipay_notify', json_dumps(alipay.payment_doc), zipped=True, expiration=24*60*60)
-        # g.response = alipay.success_response
+        set_response_in_request(alipay.success_response)
     current_url = request.url.split('?')[0]  # 不处理 GET 参数
     if bucket and not is_valid_bucket_name(bucket):
         return 'not a valid bucket name'

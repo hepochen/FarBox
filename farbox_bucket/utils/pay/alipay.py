@@ -1,6 +1,6 @@
 # coding: utf8
 import re
-from flask import request, Response, g
+from flask import request, Response
 from farbox_bucket.utils import to_float
 from farbox_bucket.utils.functional import cached_property
 from farbox_bucket.utils.env import get_env

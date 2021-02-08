@@ -19,7 +19,7 @@
     percent_bar_dom = image_block_dom.find('.percent_bar');
     percent_dom = image_block_dom.find('.percent');
     img_dom.addClass('inited');
-    post_url = $(dom).attr("data-post-url") || '/service/sync';
+    post_url = $(dom).attr("data-post-url") || '/__file_manager_api';
     filepath = $(dom).attr("data-filepath") || '';
     image_extensions = 'gif,jpg,jpeg,bmp,png';
     if (filepath.indexOf('.ico') !== -1) {
@@ -91,7 +91,7 @@
     img_dom.attr('src', placeholder_image);
     if (img_dom.attr('data-clear-is-delete') === 'yes' && image_filepath) {
       return $.ajax({
-        url: '/service/sync_update_doc',
+        url: '/__file_manager_api',
         method: 'post',
         data: {
           is_dir: false,

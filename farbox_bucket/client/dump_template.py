@@ -1,13 +1,12 @@
 # coding: utf8
 from __future__ import absolute_import
 import os
-from farbox_bucket.utils import smart_unicode
+from farbox_bucket.utils import smart_unicode, is_a_markdown_file
 from farbox_bucket.utils.convert.coffee2js import compile_coffee
 from farbox_bucket.utils.convert.css import compile_css
 from farbox_bucket.utils.convert.jade2jinja import convert_jade_to_html
 from farbox_bucket.utils.path import get_relative_path, is_real, is_a_hidden_path, get_all_sub_files
 from farbox_markdown.compile_md import compile_markdown
-from farbox_markdown.util import is_a_markdown_file
 
 
 template_resource_compilers = {
