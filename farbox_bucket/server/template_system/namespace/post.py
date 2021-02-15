@@ -259,15 +259,19 @@ class Posts(object):
 
     def get_content_with_referred_docs(self, doc, for_wiki_link=True, tag_url_prefix=None, show_date=True, url_prefix=None, url_root=None, hit_url_path=True):
         # tag_url_prefix is for wiki_links only
-        content = compute_content_with_referred_docs(doc, show_date=show_date, url_prefix=url_prefix,
-                                                  url_root=url_root, hit_url_path=hit_url_path)
-        if for_wiki_link:
-            content = re_get_html_content_for_wiki_links(doc, html_content = content,
+        # 不替换 doc["content"] 避免后续这个内容会在其它地方用到而出问题
+        if not isinstance(doc, dict):
+            return ""
+        html_content = doc.get("content") or ""
+        if for_wiki_link: # 这个先处理
+            html_content = re_get_html_content_for_wiki_links(doc, html_content=html_content,
                                                          tag_url_prefix = tag_url_prefix,
                                                          url_prefix = url_prefix,
                                                          url_root = url_root,
                                                          hit_url_path = hit_url_path)
-        return content
+        html_content = compute_content_with_referred_docs(doc, html_content=html_content, show_date=show_date, url_prefix=url_prefix,
+                                                     url_root=url_root, hit_url_path=hit_url_path)
+        return html_content
 
     def get_content_for_wiki_link(self, doc, tag_url_prefix=None, url_prefix=None, url_root=None, hit_url_path=True,):
         content = re_get_html_content_for_wiki_links(doc, tag_url_prefix=tag_url_prefix, url_prefix=url_prefix,

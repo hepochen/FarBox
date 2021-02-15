@@ -2,6 +2,7 @@
 import time
 import ujson as json
 from flask import request
+from farbox_bucket.settings import MAX_FILE_SIZE
 from farbox_bucket.bucket.storage.default import storage
 from farbox_bucket.client.sync.compiler_worker import get_compiler_data_directly
 from farbox_bucket.bucket.utils import set_bucket_configs
@@ -54,6 +55,8 @@ def sync_file_by_web_request():
         error_info  = 'bucket is not login'
     elif is_deleted and is_dir and get_paths_under(bucket=bucket, under=relative_path):
         error_info = 'a non-empty folder is not allowed to delete on web file manager'
+    elif content and len(content) > MAX_FILE_SIZE:
+        error_info = "max file size is %s" % MAX_FILE_SIZE
     else:
         # 处理 .configs/sorts.json -> orders
         content_handled = False

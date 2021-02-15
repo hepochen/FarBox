@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import re, os, sys, uuid
 from raven import Client
-from farbox_bucket.utils import to_float
+from farbox_bucket.utils import to_float, to_int
 from farbox_bucket.utils.path import read_file, write_file
 from farbox_bucket.utils.env import get_env
 from farbox_bucket.utils.ssdb_client import SSDB_Client
@@ -27,6 +27,8 @@ MAX_RECORD_SIZE = 300 * 1024 # 300Kb
 
 # 这个只是对 verify 时候起作用的，如果是 system 直接写入的，不在受限范围
 MAX_RECORD_SIZE_FOR_CONFIG = 800 * 1024 ## 800Kb
+
+MAX_FILE_SIZE =  to_int(get_env("MAX_FILE_SIZE")) or  50 * 1024 * 1024 # 最大文件 50 Mb
 
 
 
@@ -101,7 +103,10 @@ else:
 server_secret_key = get_env('SERVER_SECRET_KEY')
 if not server_secret_key:
     server_secret_key_filepath = "/tmp/farbox_server_secret_key"
-    server_secret_key = read_file(server_secret_key_filepath)
+    try:
+        server_secret_key = read_file(server_secret_key_filepath)
+    except:
+        server_secret_key = ""
     if not server_secret_key:
         server_secret_key =  uuid.uuid1().hex
         try: write_file(server_secret_key_filepath, server_secret_key)

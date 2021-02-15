@@ -27,6 +27,9 @@
         margin-bottom: 2.2em; }
         .markdown .md_video, .markdown .md_audio {
           max-width: 100%; }
+        .markdown .md_block.md_block_as_opening {
+      margin-bottom:-0.5em;
+    }
           .markdown .x2_image {
             zoom: 50%; }
             .markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6 {

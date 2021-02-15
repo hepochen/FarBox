@@ -1,8 +1,9 @@
 # coding: utf8
-import time, os
+from functools import partial
 from farbox_bucket.utils import to_int, smart_unicode, is_a_markdown_file
-from farbox_bucket.bucket.utils import get_bucket_posts_info, set_bucket_configs, get_bucket_name_for_path
+from farbox_bucket.bucket.utils import get_bucket_posts_info, set_bucket_configs
 from farbox_bucket.bucket.record.utils import get_path_from_record
+from farbox_bucket.bucket.record.get.path_related import has_record_by_path
 from farbox_bucket.utils.md_related.markdown_doc_links import get_linked_docs_from_markdown_content
 
 
@@ -41,7 +42,8 @@ def update_post_tags_words_info(bucket, record_data):
     if not isinstance(post_tags, (list, tuple)):
         post_tags = []
 
-    post_doc_links, wiki_tags = get_linked_docs_from_markdown_content(path, record_data.get("raw_content"))
+    post_doc_links, wiki_tags = get_linked_docs_from_markdown_content(path, record_data.get("raw_content"),
+                                                                      md_link_abs_check_func=partial(has_record_by_path, bucket))
     if not isinstance(post_doc_links, (list, tuple)):
         post_doc_links = []
 

@@ -1,12 +1,10 @@
 # coding: utf8
-from __future__ import absolute_import
 import re
 from flask import abort, Response
-from flask.globals import _app_ctx_stack, _request_ctx_stack
+from flask.globals import _request_ctx_stack
 from jinja2.exceptions import TemplateNotFound
-from farbox_bucket.settings import STATIC_FILE_VERSION
+from farbox_bucket.settings import STATIC_FILE_VERSION, DEBUG
 
-from farbox_bucket.utils import get_value_from_data
 from farbox_bucket.bucket.utils import get_admin_bucket, set_bucket_in_request_context, get_bucket_in_request_context
 from farbox_bucket.utils.functional import curry
 
@@ -23,6 +21,7 @@ from farbox_bucket.server.static.static_render import send_static_frontend_resou
 
 from farbox_bucket.server.bucket_render.builtin_theme._render import show_builtin_theme_as_sub_site
 from farbox_bucket.server.utils.request_context_vars import reset_loads_in_page_in_request, set_not_cache_current_request
+from farbox_bucket.server.template_system.namespace.html import Html
 
 from .static_file import render_as_static_resource_in_pages_for_farbox_bucket, render_as_static_file_for_farbox_bucket
 
@@ -75,7 +74,7 @@ def render_template_for_farbox_bucket(**kwargs):
         # 尝试走一些 builtin themes
         sub_site_html = show_builtin_theme_as_sub_site()
         if sub_site_html:
-            return sub_site_html
+            return after_render_template_for_farbox_bucket(sub_site_html)
         bucket = get_bucket_in_request_context()
         hide_post_prefix = get_site_config('hide_post_prefix', default_value=False)
         if bucket and hide_post_prefix: # 不带 /post 前缀的
@@ -86,7 +85,10 @@ def render_template_for_farbox_bucket(**kwargs):
                 if post_template:
                     html = post_template.render(**kwargs)
                     return after_render_template_for_farbox_bucket(html)
-        abort(404, 'not found for %s' % e.name)
+        if e.name == "index":
+            abort(404, Html.i18n("please custom your template or choose a theme for site first, no homepage found."))
+        else:
+            abort(404, 'not found for %s' % e.name)
     except Exception as e:
         raise e
 
@@ -138,6 +140,9 @@ def render_bucket(bucket, web_path=""):
             static_response_from_system = send_static_frontend_resource(try_direct_path=True)
             if static_response_from_system:
                 return static_response_from_system
+
+        #if DEBUG: return render_template_for_farbox_bucket()
+
         return render_template_for_farbox_bucket_by_gevent()
         #return render_template_for_farbox_bucket()
 

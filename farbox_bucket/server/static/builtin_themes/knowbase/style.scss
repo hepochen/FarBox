@@ -1,3 +1,4 @@
+$header_color: #137ed1;
 $main_color: #137ed1;
 $secondary_color: #cd5c5c;
 
@@ -114,7 +115,7 @@ a:hover {
 
 			i.icon{
 				font-size: 3.2em;
-				color: $main_color;
+				color: $header_color;
 				display: block;
 				margin: 20px 0 15px 0;
 			}
@@ -218,7 +219,6 @@ a:hover {
 			a{
 				h2{
 					font-size: 18px;
-					font-weight: normal;
 					margin: 0.6em 0;
 					line-height: 1.2;
 					position: relative;
@@ -341,7 +341,7 @@ a:hover {
 
 	h2{
 		margin-top: 2.5em;
-		color: $main_color;
+		color: $header_color;
 	}
 
 	h3{

@@ -213,7 +213,7 @@ class FarBoxSyncCompilerWorker(object):
         if py_data.get('_type') in ['file', 'image']:
             raw_file_data = py_data.get('raw_content')
             if not raw_file_data:
-                # 直接上传文件
+                # 直接上传文件, 如果 version 一样，或者 size 超了，都会返回 no 的结果
                 reply = self.send_message(action='should_upload_file', message=json_data)
                 if reply.get('message') == 'yes' and os.path.isfile(self.filepath):
                     file_size = os.path.getsize(self.filepath)

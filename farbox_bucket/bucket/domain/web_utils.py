@@ -12,7 +12,7 @@ from farbox_bucket.server.utils.cache_for_function import cache_result
 
 
 @cache_result
-def get_bucket_from_request(try_referrer=True):
+def get_bucket_from_request(try_referrer=True, hit_admin_bucket=True):
     if DEBUG and TMP_BUCKET_FOR_DEBUG: # for debug
         return TMP_BUCKET_FOR_DEBUG
     domain = request.host
@@ -25,7 +25,7 @@ def get_bucket_from_request(try_referrer=True):
             bucket_from_referrer = bucket_c.group(1)
             if is_valid_bucket_name(bucket_from_referrer):
                 bucket = bucket_from_referrer
-    if not bucket:
+    if not bucket and hit_admin_bucket:
         # at last, check the ADMIN_BUCKET
         admin_bucket = get_admin_bucket()
         if admin_bucket:

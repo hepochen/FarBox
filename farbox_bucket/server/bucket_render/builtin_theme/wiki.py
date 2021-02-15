@@ -51,10 +51,11 @@ def show_wiki_nodes_as_sub_site():
     if not wiki_root:
         return
     wiki_root = wiki_root.strip("/")
-    wiki_title = wiki_configs.get("title") or get_just_name(wiki_root, for_folder=True)
+    wiki_title = wiki_configs.get("wiki_title") or get_just_name(wiki_root, for_folder=True)
     path = request.values.get("path", "").strip("/")
     if request.values.get("type") == "data":
         # return json data
+        wiki_root = wiki_root.lower()
         under = "%s/%s" % (wiki_root, path)
         posts_info = get_bucket_posts_info(bucket)
         data = filter_and_get_posts_link_points_info(posts_info, under=under)
@@ -71,7 +72,7 @@ def show_wiki_nodes_as_sub_site():
                         relative_path = get_relative_path(node_id.strip("/"), wiki_root, return_name_if_fail=False)
                         if relative_path:
                             url = "/wiki/post/%s" % relative_path
-                            node["url"] = url
+                            node["url"] =  url
         return force_response(data)
     else:
         return render_api_template("builtin_theme_wiki_nodes.jade", wiki_title=wiki_title)
@@ -91,8 +92,11 @@ def show_wiki_as_sub_site():
         return
     set_data_root_in_request(wiki_root) # set data_root to request
     wiki_root = wiki_root.strip("/")
-    wiki_title = wiki_configs.get("title") or get_just_name(wiki_root, for_folder=True)
+    wiki_title = wiki_configs.get("wiki_title") or get_just_name(wiki_root, for_folder=True)
     wiki_root = wiki_root.lower()
+
+    kwargs = dict(wiki_root=wiki_root, wiki_title=wiki_title, wiki_configs=wiki_configs)
+
     if re.match("wiki/?$", request_path):
         # index
         docs = []
@@ -128,8 +132,7 @@ def show_wiki_as_sub_site():
             doc["wiki_url"] = wiki_url
             index_docs.append(doc)
 
-        return render_api_template("builtin_theme_knowbase_index.jade", docs=index_docs,
-                                   wiki_title=wiki_title, wiki_configs=wiki_configs)
+        return render_api_template("builtin_theme_knowbase_index.jade", docs=index_docs, **kwargs)
 
     elif re.match("wiki/tag/", request_path):
         current_tag = get_offset_path(request_path, 2)
@@ -138,8 +141,7 @@ def show_wiki_as_sub_site():
         docs = get_records_by_tag(bucket, current_tag, sort_by="-date")
         for doc in docs:
             doc["wiki_url"] = get_wiki_url_for_doc(wiki_root, doc)
-        return render_api_template("builtin_theme_knowbase_tag.jade", current_tag=current_tag, docs=docs,
-                                   wiki_root=wiki_root, wiki_title=wiki_title, wiki_configs=wiki_configs)
+        return render_api_template("builtin_theme_knowbase_tag.jade", current_tag=current_tag, docs=docs, **kwargs)
 
     elif re.search("wiki/search(/|$)", request_path):
         keywords = request.values.get("s")
@@ -148,8 +150,7 @@ def show_wiki_as_sub_site():
                                        sort_by='-date', min_limit=8)
         for doc in docs:
             doc["wiki_url"] = get_wiki_url_for_doc(wiki_root, doc)
-        return render_api_template("builtin_theme_knowbase_search.jade", docs=docs,
-                                       wiki_root=wiki_root, wiki_title=wiki_title, wiki_configs=wiki_configs)
+        return render_api_template("builtin_theme_knowbase_search.jade", docs=docs, **kwargs)
 
     elif re.match("wiki/category/", request_path):
         # category
@@ -169,8 +170,7 @@ def show_wiki_as_sub_site():
             for doc in docs:
                 doc["wiki_url"] = get_wiki_url_for_doc(wiki_root, doc)
             return render_api_template("builtin_theme_knowbase_category.jade", category=category, docs=docs,
-                                       wiki_root=wiki_root, wiki_title=wiki_title, wiki_nodes_url=wiki_nodes_url,
-                                       wiki_configs=wiki_configs)
+                                       wiki_nodes_url=wiki_nodes_url, **kwargs)
 
     elif re.match("wiki/post/", request_path):
         # detail
@@ -180,8 +180,7 @@ def show_wiki_as_sub_site():
         if not doc:
             abort(404, "no doc found")
         else:
-            return render_api_template("builtin_theme_knowbase_post.jade", doc=doc,
-                                       wiki_root=wiki_root, wiki_title=wiki_title, wiki_configs=wiki_configs)
+            return render_api_template("builtin_theme_knowbase_post.jade", doc=doc, **kwargs)
 
 
 

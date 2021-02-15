@@ -1,6 +1,6 @@
 #coding: utf8
 import os, shutil
-from farbox_bucket.settings import DEBUG
+from farbox_bucket.settings import DEBUG, MAX_FILE_SIZE
 from farbox_bucket.utils import string_types
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.path import write_file
@@ -82,6 +82,8 @@ class LocalStorage(Storage):
             else:
                 raw_content = get_raw_content_func
             if not raw_content or not isinstance(raw_content, string_types):
+                return "failed"
+            if len(raw_content) > MAX_FILE_SIZE:
                 return "failed"
             if DEBUG:
                 relative_path = record_data.get("path") or ""

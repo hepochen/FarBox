@@ -10,9 +10,9 @@ from farbox_bucket.bucket.storage.default import storage
 from farbox_bucket.bucket.token.utils import get_logined_bucket_by_token
 
 
-def sync_download_file_by_web_request(record_id):
+def sync_download_file_by_web_request(record_id, bucket=None):
     # return response or abort error
-    bucket = get_logined_bucket_by_token()  # by api token
+    bucket = bucket or get_logined_bucket_by_token()  # by api token
     if not bucket:
         error_info = 'no bucket matched'
     else:
@@ -37,16 +37,17 @@ def sync_download_file_by_web_request(record_id):
 
 
 
-def show_bucket_records_for_web_request(bucket=None, default_records_per_page=100, includes_zero_ids=True):
+def show_bucket_records_for_web_request(bucket=None, default_records_per_page=100, includes_zero_ids=True,
+                                        cursor=None, per_page=None):
     # return response or abort error
     bucket = bucket or get_logined_bucket_by_token()  # by api token
     if not bucket:
         abort(404, "no bucket matched")
     set_bucket_in_request_context(bucket)
-    pre_record_id = request.values.get('cursor')
+    pre_record_id = cursor or request.values.get('cursor')
     if not includes_zero_ids and not pre_record_id: # 不包括 zero ids 相当于
         pre_record_id = zero_id_for_finder
-    per_page = to_per_page(default_records_per_page, request.values.get('per_page'), max_per_page=1000)
+    per_page = per_page or to_per_page(default_records_per_page, request.values.get('per_page'), max_per_page=1000)
     records = get_records_for_bucket(bucket, start_record_id=pre_record_id, limit=per_page)
     return jsonify(records)
 

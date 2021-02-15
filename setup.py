@@ -33,6 +33,7 @@ boto = "==2.38.0"
 farbox-gevent-websocket = "*"
 elasticsearch = "==7.10.1"
 xmltodict = "==0.12.0"
+Send2Trash = "==1.5.0"
 """
 
 pipfile_packages = []

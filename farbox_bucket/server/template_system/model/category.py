@@ -6,6 +6,7 @@ from farbox_bucket.utils.path import get_relative_path, is_sub_path, is_same_pat
 from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.bucket.record.get.folder import get_folder_children_count, get_folder_records
+from farbox_bucket.bucket.record.get.tag_related import get_tags_info, get_tags_and_count, get_tags_info_under_path
 from farbox_bucket.server.utils.request_path import auto_bucket_url_path
 from farbox_bucket.server.template_system.namespace.data import get_data
 
@@ -41,6 +42,14 @@ class Category(object):
 
     def __getitem__(self, item):
         return self.__getattr__(item)
+
+
+    @cached_property
+    def tags(self):
+        # [(tag, count), (tag, count)]
+        tags_info = get_tags_info_under_path(self.bucket, self.path)
+        return get_tags_and_count(tags_info)
+
 
     @cached_property
     def parents(self):

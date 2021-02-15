@@ -24,7 +24,7 @@ html
             if referred_back_docs: .referred_back_docs
                 h4= h.i18n("Docs Referred to Current:")
                 .referred_back_docs_items: for sub_doc in referred_back_docs
-                    a(href=sub_doc.url)= "<%s>"%sub_doc.title
+                    a(href=sub_doc.url)= "&lt;%s&gt;"%sub_doc.title
 
 
         folders = d.get_data(type='folder', limit=300, with_page=False)
@@ -67,7 +67,8 @@ html
                             if not is_homepage: .title_container: h1.title= doc.title
                             div= p.get_content_with_referred_docs(doc, show_date=False)
                             +show_referred_back_docs()
-                            +doc.comments_as_html()
+                            if request.path.startswith("/post")
+                                +doc.comments_as_html()
                     +pure(0, 0, 0.3, 0.2)
                         +h.auto_toc(doc)
                 else

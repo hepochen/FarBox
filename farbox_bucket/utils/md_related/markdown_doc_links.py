@@ -36,7 +36,7 @@ def get_link_title_id_in_wiki_syntax(line):
     return link, link_title, link_id
 
 
-def get_linked_docs_from_markdown_content(path, raw_content):
+def get_linked_docs_from_markdown_content(path, raw_content, md_link_abs_check_func=None):
     # return [unicode]
     if not raw_content:
         return [],[]
@@ -92,7 +92,11 @@ def get_linked_docs_from_markdown_content(path, raw_content):
         if maybe_md_link.startswith("/"): # 相对于根目录下已经是完整的地址了
             link = maybe_md_link
         else:
-            link = "%s/%s" % (post_parent_path, maybe_md_link.strip("/"))
+            if md_link_abs_check_func and md_link_abs_check_func(maybe_md_link):
+                # 函数判断，可以省略了 /， 但此时又进行了补全
+                link = "/%s" % maybe_md_link.strip("/")
+            else:
+                link = "%s/%s" % (post_parent_path, maybe_md_link.strip("/"))
         if not link:
             continue
 

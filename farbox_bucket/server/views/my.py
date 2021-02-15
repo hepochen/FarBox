@@ -229,7 +229,7 @@ def render_markdown_page(path=""):
     except:
         pass
 
-    if path in ["about", "links"]:
+    if path in ["about", "links", "contact"]:
         md_doc = get_markdown_record_by_path_prefix(bucket, path)
         show_site_nav = True
     else:

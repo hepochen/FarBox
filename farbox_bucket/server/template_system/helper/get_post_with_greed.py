@@ -39,15 +39,18 @@ def get_post_with_greed(url_body, parent_doc=None):
     current_data_root = get_current_data_root()
     parent_doc = parent_doc or get_doc_in_request()
     if not post_doc and is_a_markdown_file(post_url) and parent_doc and isinstance(parent_doc, dict):
+        filename = post_url
+        if "/post/" in filename:
+            filename = filename.split("/post/", 1)[-1]
         parent_post_doc_path = get_path_from_record(parent_doc)
         if parent_post_doc_path:
             post_doc_parent = os.path.split(parent_post_doc_path)[0]
             if post_doc_parent:
-                abs_path = "%s/%s" % (post_doc_parent.strip("/"), post_url.strip("/"))
+                abs_path = "%s/%s" % (post_doc_parent.strip("/"), filename.strip("/"))
                 post_doc = d.get_doc_by_path(abs_path)
 
         if current_data_root and not post_doc:  # 增加 wiki_root 作为前缀，再尝试匹配
-            abs_path = "%s/%s" % (current_data_root, post_url.strip("/"))
+            abs_path = "%s/%s" % (current_data_root, filename.strip("/"))
             post_doc = d.get_doc_by_path(abs_path)
 
     if not post_doc:  # 尝试 hit keyword 的方式进行搜索匹配

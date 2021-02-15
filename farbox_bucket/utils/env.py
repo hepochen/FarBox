@@ -85,9 +85,9 @@ def set_app_global_envs(envs_configs):
 def load_app_global_envs():
     for path in app_global_envs_may_be_paths:
         if os.path.isfile(path):
-            with open(path, "rb") as f:
-                raw_content = f.read()
             try:
+                with open(path, "rb") as f:
+                    raw_content = f.read()
                 data = json.loads(raw_content)
                 if isinstance(data, dict):
                     return data

@@ -13,6 +13,7 @@ builtin_site_settings_keys_config_info = {
             "categories(title='Custom Items of Homepage', type=dom_list, css_class=one_line, form_keys=[path,summary,icon(type=icon)])",
             "search_placeholder(placeholder=Search, full_width=True)", "_",
             "header_animation(type=bool, default=True)",
+            "header_color(type=color,default=#0697dc)",
             "main_color(type=color,default=#0697dc)",
             "secondary_color(type=color,default=#cd5c5c)",
         ]

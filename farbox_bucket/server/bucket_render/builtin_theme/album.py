@@ -1,13 +1,15 @@
 # coding: utf8
 import re
 from farbox_bucket.utils import smart_unicode
+from farbox_bucket.utils.path import get_just_name
+from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.bucket.utils import get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.utils import get_path_from_record
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.server.template_system.api_template_render import render_api_template
 from farbox_bucket.server.template_system.namespace.data import Data
 from farbox_bucket.server.utils.request_path import get_request_path
-from farbox_bucket.utils.path import get_just_name
+
 
 def show_albums_as_sub_site():
     bucket = get_bucket_in_request_context()
@@ -15,6 +17,9 @@ def show_albums_as_sub_site():
         return
     request_path = get_request_path().strip("/")
     if not re.match("album(/|$)", request_path):
+        return
+    if "." in request_path and guess_type(request_path, default_type="").startswith("image/"):
+        # 可能是直接的图片地址，避免被整个 album 给拦截了
         return
     site_configs = get_bucket_site_configs(bucket)
     albums_root = smart_unicode(site_configs.get("albums_root", ""))

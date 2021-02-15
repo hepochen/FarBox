@@ -4,6 +4,7 @@ from farbox_bucket.utils import smart_unicode
 from farbox_bucket.utils.ssdb_utils import hset, hget, hsize, hdel, hscan_for_dict_docs
 from farbox_bucket.bucket.utils import has_bucket, string_types
 from farbox_bucket.bucket.token.bucket_signature_and_check import get_signature_for_bucket, check_signature_for_bucket
+from farbox_bucket.bucket.domain.utils import get_bucket_domains
 
 
 def get_wechat_bind_code_for_bucket(bucket):
@@ -77,7 +78,11 @@ def get_bucket_bind_status_reply(bucket):
     if not bucket:
         reply = u"尚未绑定任何 Bucket"
     else:
-        reply = u"已绑定至 %s\n\n协作人数: %s" % (bucket, get_bound_wechat_accounts_count(bucket))
+        name = bucket
+        domains = get_bucket_domains(bucket)
+        if domains:
+            name = domains[0]
+        reply = u"已绑定至 %s\n\n协作人数: %s" % (name, get_bound_wechat_accounts_count(bucket))
     return reply
 
 

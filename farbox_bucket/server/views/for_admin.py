@@ -12,6 +12,7 @@ from farbox_bucket.bucket.service.bucket_service_info import change_bucket_expir
 from farbox_bucket.bucket.domain.utils import get_bucket_from_domain, get_bucket_domains
 from farbox_bucket.server.web_app import app
 from farbox_bucket.server.dangerous.restart import try_to_reload_web_app
+from farbox_bucket.server.dangerous.install_py_package import install_py_package_by_web
 from farbox_bucket.server.template_system.api_template_render import render_api_template, render_api_template_as_response
 from farbox_bucket.bucket.usage.bucket_usage_utils import get_bucket_usage, get_all_buckets_bandwidth,\
     get_all_buckets_file_size, get_all_buckets_request
@@ -125,6 +126,18 @@ def system_configs_setup():
     html = render_api_template("page_admin_system_setup.jade", info=info, data_obj=data_obj)
     #print(time.time() - t1)
     return Response(html)
+
+
+@app.route("/admin/install_py_package", methods=["POST", "GET"])
+def install_py_package():
+    if not get_logined_admin_bucket():
+        abort(404, "not admin")
+    package_url = request.values.get("package_url")
+    if request.method == "POST" and package_url:
+        result = install_py_package_by_web(package_url)
+    else:
+        result = ""
+    return render_api_template_as_response("page_admin_install_py_package.jade", result=result)
 
 
 @app.route("/admin/bucket_status")

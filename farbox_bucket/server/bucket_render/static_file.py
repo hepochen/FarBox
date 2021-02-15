@@ -72,7 +72,7 @@ def render_as_static_file_for_farbox_bucket(path):
             anti_theft_chain = False
         if anti_theft_chain and request.referrer:
             refer_host = get_host_from_url(request.referrer)
-            if refer_host != request.host:
+            if refer_host != request.host and "." in request.path:
                 return abort(404, "this url is not allowed for outside")
 
         return storage.get_download_response_for_record(bucket=bucket, record_data=record, try_resized_image=True)

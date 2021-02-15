@@ -64,4 +64,8 @@ class SSDB_Client(object):
 
 
     def __getattr__(self, item):
-        return getattr(self.current_client, item)
+        client = self.current_client
+        if not client:
+            raise AttributeError("ssdb is not valid? can not handle attribute for %s" % item)
+        else:
+            return getattr(client, item)

@@ -10,14 +10,14 @@ def get_a_random_api_token(length = 8):
     return token
 
 
-def get_bucket_api_token(bucket, db_name="_bucket_api_token"):
+def get_bucket_api_token(bucket, db_name="_bucket_api_token",  auto_create=True):
     """
     :param bucket: 需要
     :param db_name: 提供了默认值
     :return: api_token
     """
     token = just_hget(db_name, bucket) or ''
-    if not token:
+    if not token and auto_create:
         token = set_bucket_api_token(bucket, db_name=db_name)
     return token
 
@@ -42,7 +42,7 @@ def check_bucket_api_token(bucket, token, db_name="_bucket_api_token"):
     :param db_name: 提供了默认值
     :return:
     """
-    token_in_db = get_bucket_api_token(bucket, db_name)
+    token_in_db = get_bucket_api_token(bucket, db_name, auto_create=False)
     if token_in_db and token == token_in_db:
         return True
     else:

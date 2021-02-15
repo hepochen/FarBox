@@ -12,6 +12,15 @@ def re_sub_for_referred_docs(re_obj, show_date=True,  post_doc=None, url_root=No
     url = re_obj.group(2)
     url = unqote_url_path_to_unicode(url)
     original_html = re_obj.group(0)
+    html_before_a = re_obj.group(1)
+    html_after_a = re_obj.group(3)
+    if "?x" in url:
+        inline = True
+    else:
+        if html_before_a and html_before_a.startswith("<span ") and html_before_a.endswith(">") and html_after_a:
+            inline = False
+        else:
+            inline = True
     if "://" in url:
         return original_html
     if "original=yes" in url:
@@ -29,18 +38,18 @@ def re_sub_for_referred_docs(re_obj, show_date=True,  post_doc=None, url_root=No
                                    sub_post = sub_post,
                                    show_date = show_date,
                                    post_url = post_url,
-                                   hash_id = hash_id)
+                                   hash_id = hash_id, inline=inline)
 
 
 
 
 
-def compute_content_with_referred_docs(post_doc, show_date=True, url_prefix=None, url_root=None, hit_url_path=False):
+def compute_content_with_referred_docs(post_doc, html_content=None, show_date=True, url_prefix=None, url_root=None, hit_url_path=False):
     path = get_path_from_record(post_doc)
     if not path:
         return ""
-    content = post_doc.get("content") or ""
-    new_content = re.sub(r"""(<[^<>]+>)?<a [^<>]*?href=['"](.*?)['"][^<>]*?>.*?</a>(</\w+>)?""",
+    content = html_content or post_doc.get("content") or ""
+    new_content = re.sub(r"""(<[^<>]+>)?<a [^<>]*?href=['"](.*?)['"][^<>]*?>.*?</a>(</\w+>|<\w+ */>)?""",
                          curry(re_sub_for_referred_docs, show_date=show_date, post_doc=post_doc,
                                url_prefix=url_prefix, url_root=url_root, hit_url_path=hit_url_path, ),
            content)

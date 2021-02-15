@@ -10,7 +10,7 @@ from farbox_bucket.utils.web_utils.response import jsonify
 from farbox_bucket.utils.web_utils.request import to_per_page
 
 from farbox_bucket.bucket import get_bucket_full_info, is_valid_bucket_name
-from farbox_bucket.bucket.token.utils import get_logined_bucket_by_token
+from farbox_bucket.bucket.token.utils import get_logined_bucket_by_token, get_logined_bucket
 from farbox_bucket.bucket.helper.files_related import auto_update_bucket_and_get_files_info
 
 from farbox_bucket.bucket.utils import get_bucket_configs, get_bucket_name_for_path, get_buckets_size, get_bucket_site_configs
@@ -33,11 +33,15 @@ def allowed_to_display_some_bucket_info(bucket=None):
         set_pending_bucket_bucket_in_request(bucket) # 校验用的
     logined_bucket = get_logined_bucket_by_token()
     if not logined_bucket:
-        endpoint_password = get_env("endpoint_password")
-        if endpoint_password:
-            raw_token = request.values.get("api_token") or request.values.get("token") or ""
-            if endpoint_password == raw_token:
+        raw_token = request.values.get("api_token") or request.values.get("token") or ""
+        if raw_token:
+            endpoint_password = get_env("endpoint_password")
+            if endpoint_password and endpoint_password == raw_token:
                 return True
+    if not logined_bucket:
+        logined_bucket = get_logined_bucket()  # try again, by cookie
+    if logined_bucket and logined_bucket == bucket:
+        return True
     return False
 
 
@@ -49,7 +53,9 @@ def show_bucket_theme():
 
 @app.route('/bucket/<bucket>/configs_for_<configs_type>')
 def show_bucket_configs(bucket, configs_type):
-    if not allowed_to_display_some_bucket_info():
+    if configs_type in ["order", "sort", "sorts"]:
+        configs_type = "orders"
+    if not allowed_to_display_some_bucket_info(bucket):
         return abort(404, "token not valid")
     if configs_type == "files":
         configs = auto_update_bucket_and_get_files_info(bucket)

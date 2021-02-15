@@ -8,7 +8,7 @@ from farbox_bucket.bucket.private_configs import update_bucket_private_configs, 
 from farbox_bucket.bucket.utils import get_bucket_files_info, get_bucket_posts_info, get_bucket_pages_configs, \
     get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.folder import get_folder_children_count
-from farbox_bucket.bucket.record.get.tag_related import get_tags_info
+from farbox_bucket.bucket.record.get.tag_related import get_tags_info, get_tags_and_count, get_tags_info_under_path
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_json_content_by_path, has_record_by_path
 from farbox_bucket.server.utils.request import need_login
 from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
@@ -55,14 +55,16 @@ class Site(dict):
     @cached_property
     def tags(self):
         # [(tag, count), (tag, count)]
-        result = []
-        for tag, tag_paths in self._tags_info.items():
-            if not tag_paths:
-                continue
-            if not isinstance(tag_paths, (list, tuple)):
-                continue
-            result.append([tag, len(tag_paths)])
-        return result
+        return get_tags_and_count(self._tags_info)
+
+
+    @cache_result
+    def get_tags_under(self, under):
+        if not isinstance(under, string_types):
+            return []
+        else:
+            tags_info = get_tags_info_under_path(self.bucket, under)
+            return get_tags_and_count(tags_info)
 
     @cached_property
     def text_words(self):

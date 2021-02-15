@@ -73,7 +73,7 @@ def get_logined_bucket(check=True):
 
     # 增加一个限制，只有 bucket 对应的 domain 下才允许登录，避免使用者混淆了
     if check and request.host not in WEBSITE_DOMAINS:
-        bucket_from_domain = get_bucket_from_request()
+        bucket_from_domain = get_bucket_from_request(hit_admin_bucket=False)
         if bucket_from_domain and bucket_from_domain != bucket_in_cookie:
             admin_bucket = get_admin_bucket()
             if admin_bucket == bucket_in_cookie:

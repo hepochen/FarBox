@@ -151,6 +151,8 @@ def get_all_sub_files(root, accept_func=None, max_size=None):
 
 
 def get_relative_path(filepath, root, return_name_if_fail=True):
+    filepath = same_slash(filepath)
+    root = same_slash(root)
     if filepath and root and filepath.startswith(root+'/'):
         return filepath.replace(root, '').strip('/')
     elif filepath == root:

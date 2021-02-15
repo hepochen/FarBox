@@ -16,8 +16,8 @@ allowed_bucket_config_types = ['sorts', 'site']
 def get_path_with_dot_allowed(root, *keywords):
     possible_paths = []
     for keyword in keywords:
+        possible_paths.append(join(root, '.%s' % keyword))
         possible_paths.append(join(root, keyword))
-        possible_paths.append(join(root, '.%s'%keyword))
     path = None # by default
     for path in  possible_paths:
         if os.path.exists(path):

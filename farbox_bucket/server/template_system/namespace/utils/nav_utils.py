@@ -115,6 +115,11 @@ def get_auto_nav_items(bucket): # 自动生成的
             url='/__page/about'
         ))
 
+    if has_markdown_record_by_path_prefix(bucket, "contact"):
+        nav_items.append(dict(
+            name='Contact',
+            url='/__page/contact'
+        ))
 
 
     if 'feed.jade' in pages_configs:

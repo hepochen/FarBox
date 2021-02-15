@@ -1,6 +1,6 @@
 #coding: utf8
 import os, time
-from farbox_bucket.settings import DEBUG, server_secret_key
+from farbox_bucket.settings import DEBUG, MAX_FILE_SIZE
 from farbox_bucket.utils import string_types, smart_str, get_md5
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.clouds.qcloud import sign_qcloud_url
@@ -55,6 +55,9 @@ class QCloudStorage(Storage):
             raw_content = get_raw_content_func()
         else:
             raw_content = get_raw_content_func
+
+        if len(raw_content) > MAX_FILE_SIZE:
+            return "failed"
 
         if not self.exists(bucket, record_data):
             if not raw_content or not isinstance(raw_content, string_types):

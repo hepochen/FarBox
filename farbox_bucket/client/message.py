@@ -65,7 +65,7 @@ def get_data_to_post(node, private_key, message='', action='record'):
 
 
 
-def send_message(node, private_key, message='', action='record', file_to_post=None, timeout=60):
+def send_message(node, private_key, message='', action='record', file_to_post=None, timeout=60, return_response=False):
     node_url, data_to_post = get_data_to_post(node=node, private_key=private_key, message=message, action=action)
     if not node_url and not data_to_post:
         logging.error('bucket or private_key can not be found or error')
@@ -84,7 +84,11 @@ def send_message(node, private_key, message='', action='record', file_to_post=No
             timeout = timeout,
             files = files,
         )
+        if return_response:
+            return response
     except:
+        if return_response:
+            return None
         result = {'message': 'request failed', 'code': 410}
         return result
     try:
@@ -92,7 +96,7 @@ def send_message(node, private_key, message='', action='record', file_to_post=No
         response_result = response.json()
         return response_result
     except:
-        result = {'message': 'json error', 'code': 404, 'content': response.content}
+        result = {'message': 'json error', 'code': 404, 'content': response.content, "response_code": response.status_code}
         return result
     #response_code = response_result.get('code')
     #response_message = response_result.get("message")

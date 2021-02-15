@@ -1,4 +1,4 @@
 #coding: utf8
 from __future__ import absolute_import
 
-version = '0.1871'
+version = '0.1900'

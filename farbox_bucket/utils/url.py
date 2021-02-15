@@ -116,13 +116,14 @@ def decode_url_arg(arg):
 def unqote_url_path_to_unicode(url_path):
     if not isinstance(url_path, string_types):
         return url_path
+    url_path = smart_unicode(url_path)
     if '%' in url_path:
         # 被编码的url，特别是wordpress转过来的
-        _url_path = urllib.unquote(smart_str(url_path))
+        _url_path = smart_unicode(urllib.unquote(smart_str(url_path)))
         if url_path != _url_path:
-            url_path = smart_unicode(_url_path)
+            url_path = _url_path
             return url_path
-    return smart_unicode(url_path)
+    return url_path
 
 
 def get_url_without_prefix(url, prefix=None):

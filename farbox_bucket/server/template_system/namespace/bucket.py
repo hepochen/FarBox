@@ -73,7 +73,8 @@ class Bucket(object):
 
     @cached_property
     def node(self):
-        return NODE
+        node_value = NODE or request.url_root
+        return node_value
 
     def login(self):
         private_key = request.values.get('private_key')

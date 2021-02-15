@@ -1,10 +1,9 @@
 #coding: utf8
-from __future__ import absolute_import
 import time
-from flask import request
-from farbox_bucket.settings import DEBUG, WEBSOCKET
+from flask import request, abort
+from farbox_bucket.settings import DEBUG, WEBSOCKET, MAX_FILE_SIZE
 from farbox_bucket.bucket.storage.default import storage
-from farbox_bucket.utils import force_to_json, string_types
+from farbox_bucket.utils import force_to_json, string_types, to_int
 from farbox_bucket.utils.web_utils.response import json_with_status_code
 
 from farbox_bucket.bucket.utils import set_bucket_configs, has_bucket
@@ -21,6 +20,8 @@ from farbox_bucket.server.utils.request import get_file_content_in_request
 
 from farbox_bucket.server.realtime.utils import push_message_to_bucket
 from farbox_bucket.server.statistics.post_visits import load_all_posts_visits_from_csv
+from farbox_bucket.server.helpers.bucket import sync_download_file_by_web_request, show_bucket_records_for_web_request
+from farbox_bucket.server.utils.response import jsonify
 
 from farbox_bucket.themes import themes
 
@@ -42,6 +43,11 @@ class FarBoxBucketMessageAPIHandler(object):
             'should_upload_file': self.should_upload_file,
             'upload_file': self.upload_file,
             'show_files': self.show_files,
+
+            # download_file + show_records 可以实现反向同步到 client 的逻辑
+            "download_file": self.download_file,
+            "show_records": self.show_records,
+
             'check': self.check_bucket,
             'set_bucket_theme': self.set_bucket_theme,
             'check_filepaths': self.check_filepaths,
@@ -233,7 +239,11 @@ class FarBoxBucketMessageAPIHandler(object):
 
 
     def should_upload_file(self):
-        should = storage.should_upload_file_by_client(self.bucket, self.raw_json_data)
+        file_size = self.raw_json_data.get("size") or self.raw_json_data.get("file_size")
+        if file_size > MAX_FILE_SIZE:
+            should = False
+        else:
+            should = storage.should_upload_file_by_client(self.bucket, self.raw_json_data)
         return json_with_status_code(200, 'yes' if should else 'no')
 
 
@@ -260,6 +270,26 @@ class FarBoxBucketMessageAPIHandler(object):
     def show_files(self):
         files = auto_update_bucket_and_get_files_info(self.bucket)
         return json_with_status_code(200, files)
+
+
+    def download_file(self):
+        record_id = self.raw_json_data.get("record") or self.raw_json_data.get("record_id")
+        if not record_id:
+            abort(404, "no record_id")
+        elif not self.bucket:
+            abort(404, "no bucket matched")
+        else:
+            return sync_download_file_by_web_request(bucket=self.bucket, record_id=record_id)
+
+    def show_records(self):
+        if not self.bucket:
+            return jsonify([])
+        else:
+            per_page = to_int(self.raw_json_data.get("per_page")) or 10
+            response = show_bucket_records_for_web_request(self.bucket,
+                                                       cursor=self.raw_json_data.get("cursor"),
+                                                       per_page=per_page, includes_zero_ids=False)
+            return response
 
 
     def check_bucket(self):

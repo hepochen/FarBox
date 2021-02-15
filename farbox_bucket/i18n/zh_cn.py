@@ -36,6 +36,7 @@ data = {
     'Log & Usage': u'日志与用量',
 
     'Home': u'首页',
+    "Contact": u"联系",
     'Blog': u'博客',
     'Album': u'相册',
     'Archive': u'归档',
@@ -113,5 +114,7 @@ data = {
     # 常用
     'by date and desc': u'按日期降序',
     'by date and asc': u'按日期升序',
+
+    "please custom your template or choose a theme for site first, no homepage found.": u"请先自定义模板或者为网站选择一个主题，没有匹配到主页。"
 
 }
