@@ -32,12 +32,7 @@ sudo xserver install_live
 
 At this point, FarBox is already running, visit `http://your-ip` for the first installation on the web side; of course that ports 80 and 443 of the service should be open.
 
-Note: 
-1. memcache is the basic cache service required for FarBox to run, if the server memory is limited, you can adjust the 200mb in the above demo to be smaller. 
-2. You need to choose a template in the Dashboard first for your new bucket(site).
-
-
-After initializing the first Bucket on the web side, you may need to restart the service (if the data on the web side is normal, you don't need to deal with it): ```bash
+After initializing the first Bucket on the web side, you may need to restart the service (if the data on the web side is normal, you don't need to deal with it): 
 ```bash
 docker exec -it farbox bash
 supervisorctl restart all
@@ -62,6 +57,7 @@ On iPhone and iPad, you can try **Metion**, for macOS, you can try [MarkEditor](
 Of course Python script can sync with FarBox too, the contents of script are similar to the blow:
 ```python
 from farbox_bucket.client.sync import sync_to_farbox, sync_from_farbox
+
 sync_to_farbox(
     node = "<your_web_server_node>",
     root = "<your_local_folder_path>",
