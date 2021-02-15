@@ -25,12 +25,12 @@ sudo xserver install_start
 ```
 
 
-Alternatively, you can run the following command to check every 2 minutes if the FarBox service container has failed and needs to be restarted:
+Alternatively, you can run the following command to watch and auto-restart failed FarBox service container every 2 minutes:
 ```bash
 sudo xserver install_live
 ```
 
-At this point, FarBox is already running, visit `http://your-ip` for the first installation on the web side; of course that ports 80 and 443 of the service should be open.
+At this point, FarBox is already running, visit `http://your-ip` for the first installation on the web side.
 
 After initializing the first Bucket on the web side, you may need to restart the service (if the data on the web side is normal, you don't need to deal with it): 
 ```bash
