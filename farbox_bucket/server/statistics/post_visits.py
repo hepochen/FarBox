@@ -5,8 +5,9 @@ from flask import request
 from farbox_bucket.utils import to_float, to_int, string_types, is_a_markdown_file
 from farbox_bucket.utils.data import dump_csv
 from farbox_bucket.utils.ssdb_utils import hincr, hclear, hget, hset, hgetall, hsize
-from farbox_bucket.bucket.utils import get_bucket_in_request_context
+from farbox_bucket.bucket.utils import get_bucket_in_request_context, get_bucket_updated_at_diff_to_now
 from farbox_bucket.server.utils.request_context_vars import get_doc_in_request, get_doc_type_in_request, get_doc_path_in_request
+from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
 
 
 one_year_seconds = 365 * 24 * 60 * 60
@@ -63,6 +64,12 @@ def async_update_visits(bucket, visits_key, visitors_key, is_visitor=False):
     if is_visitor:
         hincr(visits_db_name, visitors_key, 1)  # uv 要做次判断，
 
+    diff = get_bucket_updated_at_diff_to_now(bucket)
+    if diff > 3 * 24 * 60 * 60: # 每隔 3 天的间隙，把访问数的统计路径进行一次 dump
+        visits_csv_raw_content = export_all_posts_visits_as_csv(bucket)
+        if not visits_csv_raw_content:
+            return
+        sync_file_by_server_side(bucket, relative_path="_data/visits.csv", content=visits_csv_raw_content)
 
 
 def get_post_visits_count(doc, field='visits'):
@@ -82,8 +89,6 @@ def get_post_visits_count(doc, field='visits'):
 
 
 def load_all_posts_visits_from_csv(bucket, csv_file_record):
-    # todo 要更新从 _data/visits.csv 过来的数据，update 到数据库中
-    # todo 要看下实际的性能怎么样，可能更新的比较多
     visits_db_name = get_visits_db_name_for_bucket(bucket)
     current_visits_size = hsize(visits_db_name)
     if current_visits_size > 5000: # 如果超过了 5k 的数量，先clear，避免过度冗余
@@ -93,8 +98,8 @@ def load_all_posts_visits_from_csv(bucket, csv_file_record):
         return
     if not isinstance(raw_objects, (list, tuple)):
         return
-    for data_obj in raw_objects[:2000]:
-        # 最多处理 2k 条记录，避免一个 bucket 过于庞大，出现性能问题
+    for data_obj in raw_objects[:3000]:
+        # 最多处理 3k 条记录，避免一个 bucket 过于庞大，出现性能问题
         if not isinstance(data_obj, dict):
             continue
         path = data_obj.get('path')

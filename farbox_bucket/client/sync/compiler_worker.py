@@ -13,7 +13,6 @@ from farbox_bucket.client.sync.compiler.visits_compiler import VisitsSyncCompile
 from farbox_bucket.client.sync.compiler.comments_compiler import CommentsSyncCompiler
 from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.encrypt.key_encrypt import get_md5_for_key
-from farbox_bucket.utils.encrypt.simple import simple_encrypt
 
 
 
@@ -97,12 +96,6 @@ class FarBoxSyncCompilerWorker(object):
             if doc_type in ['visits', 'comments']:
                 # visits & comments 是强制要进行 clean 的， 不然数据会无限冗余下去
                 data['_auto_clean_bucket'] = True
-
-            if doc_type in ['comments'] and self.private_key_md5:
-                # 直接对 objects 这个数据进行加密, 避免一些略敏感的数据直接曝露了
-                objects = data.get('objects')
-                if objects:
-                    data['objects'] = simple_encrypt(json_dumps(objects), password=self.private_key_md5)
 
 
     def json_dumps(self, data):

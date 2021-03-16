@@ -1,5 +1,6 @@
 #coding: utf8
 import os, time
+from farbox_bucket import version as farbox_version
 from farbox_bucket.utils import md5_for_file, get_md5, smart_str
 from farbox_bucket.utils.path import same_slash, read_file
 from farbox_bucket.utils.functional import cached_property
@@ -181,7 +182,8 @@ class BasicSyncCompiler(object):
             _is_encrypted = self.should_encrypt_file,
             _type = _type,
             type = _type,
-            timestamp = int(time.time())
+            timestamp = int(time.time()),
+            _v = farbox_version,  # FarBox Bucket Package version
         )
         if not self.abs_filepath:
             data['mtime'] = time.time()

@@ -67,8 +67,9 @@ def get_record_ids_by_paths(bucket, paths, ignore_marked_id=True):
     return record_ids
 
 
-def get_paths_and_ids_under(bucket, under='', max_limit=10000):
+def get_paths_and_ids_under(bucket, under="", max_limit=10000):
     path_bucket = get_bucket_name_for_path(bucket)
+    under = under or ""
     path_under = under.lower().strip('/')  # prefix
     if not path_under:
         path_under_key_start = ''
@@ -153,11 +154,10 @@ def has_markdown_record_by_path_prefix(bucket, prefix):
 
 
 
-def get_raw_content_by_path(bucket, path):
-    # 只处理有 raw_content 这个字段的
-    record = get_record_by_path(bucket, path)
-    if not record:
-        return ''
+
+def get_raw_content_by_record(record):
+    if not record or not isinstance(record, dict):
+        return ""
     raw_content = record.get('raw_content')
     if not raw_content:
         return ''
@@ -167,6 +167,11 @@ def get_raw_content_by_path(bucket, path):
         except:
             pass
     return raw_content
+
+def get_raw_content_by_path(bucket, path):
+    # 只处理有 raw_content 这个字段的
+    record = get_record_by_path(bucket, path)
+    return get_raw_content_by_record(record)
 
 
 def get_json_content_by_path(bucket, path, force_dict=False):

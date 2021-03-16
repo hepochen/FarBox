@@ -7,7 +7,9 @@ from farbox_bucket.utils.mime import guess_type
 from farbox_bucket.utils.url import get_host_from_url
 from farbox_bucket.bucket.storage.default import storage
 from farbox_bucket.bucket.utils import get_bucket_site_configs, get_bucket_in_request_context
+from farbox_bucket.bucket.record.utils import get_path_from_record
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
+from farbox_bucket.bucket.token.utils import is_bucket_login
 
 from farbox_bucket.server.utils.site_resource import get_pages_configs, get_template_static_resource_content
 from farbox_bucket.server.utils.response import set_304_response_for_doc, get_304_response, is_doc_modified, p_redirect
@@ -48,7 +50,6 @@ def render_as_static_resource_in_pages_for_farbox_bucket(template_filename):
 def render_as_static_file_for_farbox_bucket(path):
     if not path or path == "/":
         path = "index.html"
-    set_context_value_from_request("is_static_file", True)
     bucket = get_bucket_in_request_context()
     if not bucket:
         return
@@ -57,6 +58,12 @@ def render_as_static_file_for_farbox_bucket(path):
         record = get_record_by_path(bucket, "_direct/favicon.ico") # 兼容 Bitcron
     if not record:
         return
+    record_path = get_path_from_record(record)
+    if record_path and record_path.startswith("/_data/"):
+        ext = os.path.splitext(record_path)[-1].strip(".").lower()
+        if ext in ["csv"] and not is_bucket_login(bucket):
+            return abort(404, "csv under /_data is not allowed to download directly")
+    set_context_value_from_request("is_static_file", True)
     if record.get('compiled_type') and record.get('compiled_content'):
         raw_content = record.get('compiled_content')
         content_type = record.get('compiled_type')

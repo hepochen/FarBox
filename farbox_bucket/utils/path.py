@@ -117,7 +117,7 @@ def get_file_list(root_path, split=False):
 
 
 
-def get_all_sub_files(root, accept_func=None, max_size=None):
+def get_all_sub_files(root, accept_func=None, max_tried_times=None):
     # ignore_folders 里的文件，不处理； accept_func可以处理当前的 path 是否支持
     root = same_slash(root)
     result = []
@@ -142,7 +142,7 @@ def get_all_sub_files(root, accept_func=None, max_size=None):
                 accepted = True
             if accepted:
                 result.append(filepath)
-            if max_size and tried >= max_size:
+            if max_tried_times and tried >= max_tried_times:
                 to_break = True
                 break
         if to_break:

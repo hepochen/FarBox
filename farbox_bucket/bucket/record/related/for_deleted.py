@@ -5,7 +5,7 @@ from farbox_bucket.utils.ssdb_utils import hset, hget, hdel, zset, zdel, hincr, 
 from farbox_bucket.bucket.record.get.path_related import get_record_id_by_path, get_record_by_path
 from farbox_bucket.bucket.utils import get_bucket_name_for_url, get_bucket_name_for_path, get_bucket_name_for_slash
 from farbox_bucket.bucket.record.utils import get_path_from_record, get_data_type, get_url_path, get_bucket_name_for_order_by_record
-from .sub.utils import update_files_and_tags
+from .sub.utils import update_tags_info_for_posts
 
 # 一般未必是 record 被删除
 # 很可能只是 is_deleted 的标记
@@ -20,12 +20,17 @@ def after_path_related_record_deleted(bucket, record_data):
     bucket_name_for_slash = get_bucket_name_for_slash(bucket)
     bucket_name_for_order = get_bucket_name_for_order_by_record(bucket, record_data)
 
+    #bucket_name_for_order_file_type = "%s_file_order" % bucket
+
     # path 上清掉
     hdel(bucket_name_for_id, path)
 
     # 数据类型，对应的排序
     if bucket_name_for_order:
         zdel(bucket_name_for_order, path)
+
+    #if bucket_name_for_order != bucket_name_for_order_file_type:
+    #    zdel(bucket_name_for_order_file_type, path)
 
     # slash 上清掉
     zdel(bucket_name_for_slash, path)
@@ -62,7 +67,7 @@ def delete_path_related_record_by_path(bucket, path, record_data=None, continue_
 
     if not continue_to_create_record:
         # 后面如果是继续创建 record，还是会调用到 update_files_and_tags 的逻辑
-        update_files_and_tags(bucket=bucket, record_data=record_data)  # files and posts info
+        update_tags_info_for_posts(bucket=bucket, record_data=record_data)  # files and posts info
 
 
 

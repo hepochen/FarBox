@@ -1,13 +1,13 @@
 # coding: utf8
 import os, time
 from farbox_bucket.utils.objectid import ObjectId
-from farbox_bucket.utils import to_float, to_unicode
-from farbox_bucket.utils.ssdb_utils import hset, hget, hdel, zset, zdel, hincr, py_data_to_ssdb_data
+from farbox_bucket.utils import to_float
+from farbox_bucket.utils.ssdb_utils import hset, zset
 from farbox_bucket.bucket.defaults import BUCKET_RECORD_SLASH_TYPES
 from farbox_bucket.bucket.utils import get_bucket_name_for_url, get_bucket_name_for_path, get_bucket_name_for_slash, is_valid_bucket_name
 from farbox_bucket.bucket.record.utils import get_path_from_record, get_data_type, get_url_path, get_bucket_name_for_order_by_record
 from farbox_bucket.bucket.record.get.path_related import has_record_by_path
-from .sub.utils import update_files_and_tags
+from .sub.utils import update_tags_info_for_posts
 
 
 
@@ -44,7 +44,7 @@ def create_record_for_a_folder(bucket="", folder_path=""):
 
 
 
-def update_record_order_value_to_related_db(bucket, record_data):
+def update_record_order_value_to_related_db(bucket, record_data, force_value=None):
     # 设定排序, 如果没有排序逻辑的，实际上根据 get_data(type) 的逻辑是无法取出内容的
     path = get_path_from_record(record_data)
     if not path:
@@ -59,6 +59,8 @@ def update_record_order_value_to_related_db(bucket, record_data):
         data_order = time.time()
     if data_order is not None:
         data_order = to_float(data_order, default_if_fail=None)
+    if force_value is not None:
+        data_order = force_value
     if data_order is not None and bucket_name_for_order:
         zset(bucket_name_for_order, path, data_order)
 
@@ -83,7 +85,7 @@ def after_path_related_record_created(bucket, record_id, record_data):
     bucket_name_for_path = get_bucket_name_for_path(bucket)
     bucket_name_for_url = get_bucket_name_for_url(bucket)
     bucket_name_for_slash = get_bucket_name_for_slash(bucket)
-    bucket_name_for_order = get_bucket_name_for_order_by_record(bucket, record_data)
+    #bucket_name_for_order = get_bucket_name_for_order_by_record(bucket, record_data)
 
     to_mark_object_id = False
     data_type = get_data_type(record_data)
@@ -117,7 +119,8 @@ def after_path_related_record_created(bucket, record_id, record_data):
     hset(bucket_name_for_path, path, value)
 
     # 设定排序, 如果没有排序逻辑的，实际上根据 get_data(type) 的逻辑是无法取出内容的
-    update_record_order_value_to_related_db(bucket, record_data)
+    # 如果是 post，并且是非 public 的， 强制 order=0，这样在外部提取 paths 进行分页的时候，默认在 -date 排序的时候，就会排在最后
+    update_record_order_value_to_related_db(bucket, record_data, force_value=0 if to_mark_object_id else None)
 
     # slash number 绑定到 path
     # 指定的类型才能处理 slash
@@ -125,5 +128,5 @@ def after_path_related_record_created(bucket, record_id, record_data):
         zset(bucket_name_for_slash, path, score=slash_number)
 
 
-    update_files_and_tags(bucket=bucket, record_data=record_data) # files and posts info
+    update_tags_info_for_posts(bucket=bucket, record_data=record_data) # files and posts info
 

@@ -20,6 +20,14 @@ def sync_file_by_server_side(bucket, relative_path, content=None, is_dir=False, 
         data["size"] = len(content)
         if not data["version"]:
             data["version"] = get_md5(content)
+    file_version = data.get("version")
+    if file_version:
+        old_record = get_record_by_path(bucket=bucket, path=relative_path, force_dict=True)
+        if old_record:
+            old_file_version = old_record.get("version")
+            if file_version == old_file_version:
+                # 路径 & 内容一致，不做处理
+                return
     if not data:
         result  = 'no data to create a record'
     else:

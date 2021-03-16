@@ -61,6 +61,15 @@ def is_child_parent_repeated(child, parent, tree):
         return False
 
 
+def _get_is_string_or_number(value):
+    if isinstance(value, (int, float)):
+        return True
+    elif isinstance(value, string_types):
+        return True
+    else:
+        return False
+
+
 
 
 class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
@@ -134,7 +143,7 @@ class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
             return list(left) + list(right)
         elif operator == '+' and isinstance(left, (int, float)) and isinstance(right, (int, float)):
             return left + right
-        elif operator == '+' and isinstance(left, (unicode, int, float, str)) and isinstance(right, (unicode, int, float, str)):
+        elif operator == '+' and _get_is_string_or_number(left) and _get_is_string_or_number(right):
             return '%s%s' % (left, right)
         else:
             # todo 这里要优化

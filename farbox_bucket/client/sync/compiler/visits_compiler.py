@@ -19,6 +19,8 @@ class VisitsSyncCompiler(BasicSyncCompiler):
         objects = csv_data_to_objects(data_list)
         data = dict(
             objects = objects,
+            raw_content = self.raw_content,
+            data=data_list,
         )
         return data
 

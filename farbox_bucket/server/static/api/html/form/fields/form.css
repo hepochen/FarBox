@@ -187,7 +187,7 @@ form, .form {
     margin-top: 0; }
     .dom_list .dom_list_actions {
       text-align: right;
-      margin-top: -3.5em;
+      margin-top: -30px;
       margin-bottom: 1em; }
       .dom_list .dom_list_for_children .dom_list_item .dom_list_item_element {
         display: block; }

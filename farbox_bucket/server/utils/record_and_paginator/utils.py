@@ -72,7 +72,7 @@ def does_hit_type(record, data_type):
 
 def filter_records(records, path_prefix='', status=None, excludes=None, data_type=None):
     # 主要是获取list数据类型的， 然后最最终的结果进行一次过滤
-    if excludes is None:
+    if excludes is None and data_type in ["folder"]:
         excludes = default_excludes
     if isinstance(excludes, string_types):
         excludes = [smart_unicode(excludes)]

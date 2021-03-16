@@ -66,11 +66,14 @@ def auto_pg(bucket, data_type, limit=None, page=None, pager_name=None, with_page
             min_limit=0, return_total_count=False, date_start=None, date_end=None):
     """
     如果函数是获取列表式的，那么第一个函数可以使用g.pg来获得分页信息。
+    data_type 指定的时候效率比较高， 如果有 level_start & level_end， 需要找到对应 level，然后再过滤 path
     """
     not_matched = False
     if not isinstance(bucket, string_types):
         not_matched = True
-    if not bucket or not data_type:
+    if not bucket: #  or not data_type
+        not_matched = True
+    if not data_type and level_end is None and level_start is None:
         not_matched = True
     if not_matched:
         if return_total_count:

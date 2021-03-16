@@ -3,8 +3,6 @@ from __future__ import absolute_import
 import os
 import json
 from farbox_bucket.utils import smart_unicode, string_types
-from farbox_bucket.utils.data import json_dumps
-from farbox_bucket.utils.encrypt.simple import simple_encrypt
 from farbox_bucket.bucket import get_bucket_by_private_key
 from farbox_bucket.bucket.utils import encrypt_configs_for_bucket
 from farbox_bucket.client.dump_template import get_template_info

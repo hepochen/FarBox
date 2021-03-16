@@ -1,15 +1,14 @@
 #coding: utf8
-from __future__ import absolute_import
+import os
 from flask import request
 from farbox_bucket.utils import smart_unicode, get_md5, get_value_from_data, is_closed, string_types, to_float
 from farbox_bucket.utils.date import utc_date_parse
+from farbox_bucket.utils.data import csv_data_to_objects
 from farbox_bucket.bucket.utils import get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
+from farbox_bucket.bucket.record.update import update_record
 from farbox_bucket.server.avatar import get_avatar_url
 from farbox_bucket.server.utils.site_resource import get_bucket_site_configs
-
-#from dateutil.parser import parse as date_parse
-import os
 
 
 def to_doc_path(path_or_doc):
@@ -47,12 +46,36 @@ def get_comment_author_name(original_author, author_email):
 
 
 
-def get_comments_record(bucket, doc_path): # 已经解密了的
+
+def patch_comments_for_old_farbox(bucket, comments_doc):
+    # 临时的修正， 原来的 objects 都是被 client 端加密过的
+    if not comments_doc or not isinstance(comments_doc, dict):
+        return []
+    raw_data = comments_doc.get("data")
+    if not raw_data or not isinstance(raw_data, (list, tuple)):
+        return []
+    comments_doc_id = comments_doc.get("_id")
+    if not comments_doc_id:
+        return []
+    raw_objects = comments_doc.get("objects")
+    if raw_objects and isinstance(raw_objects, string_types):
+        objects = csv_data_to_objects(raw_data) or []
+        update_record(bucket=bucket, record_id=comments_doc_id, objects=objects)
+        comments_doc["objects"] = objects
+        return objects
+    else:
+        return []
+
+
+
+def get_comments_record(bucket, doc_path):
     comments_path = doc_path_to_comments_path(doc_path)  # 评论的文档存储路径
     comments_doc = get_record_by_path(bucket=bucket, path=comments_path)  or {} # 获得对应 comments 的 record
     if comments_doc:
-        objects = comments_doc.get('objects') or []
-        comments_doc['objects'] = objects
+        objects = comments_doc.get('objects')
+        if not isinstance(objects, (list, tuple)):
+            objects = patch_comments_for_old_farbox(bucket=bucket, comments_doc=comments_doc)
+            comments_doc['objects'] = objects
     return comments_doc
 
 

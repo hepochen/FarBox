@@ -275,6 +275,15 @@ def get_bucket_last_updated_at(bucket):
     return last_updated_at
 
 
+def get_bucket_updated_at_diff_to_now(bucket):
+    last_updated_at = get_bucket_last_updated_at(bucket)
+    if last_updated_at and isinstance(last_updated_at, (int, float)):
+        diff = int(time.time()*1000) -  last_updated_at
+        diff_seconds = int(float(diff)/1000)
+        return diff_seconds
+    else:
+        return None
+
 def set_bucket_last_record_id(bucket, record_id):
     # # path 相关的，因为有 delete 的关系，单独进行 last_record_id 的存储，不然直接 hget_max 就可以了
     if not is_object_id(record_id):

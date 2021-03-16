@@ -88,6 +88,7 @@ from farbox_bucket.server.views.api import *
 from farbox_bucket.server.views.for_admin import *
 from farbox_bucket.server.views.my import *
 from farbox_bucket.server.views.file_manager import *
+from farbox_bucket.server.avatar_view import *
 
 # 3rd clouds
 from farbox_bucket.clouds.wechat.views import *

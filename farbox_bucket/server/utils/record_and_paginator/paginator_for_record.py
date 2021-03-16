@@ -1,14 +1,11 @@
 #coding: utf8
-from __future__ import absolute_import
-import urllib
 from math import ceil
-from flask import request, abort
+from flask import abort
 from farbox_bucket.utils.functional import cached_property
-from farbox_bucket.utils import smart_unicode, to_int
-from farbox_bucket.utils.ssdb_utils import zsize
+from farbox_bucket.utils import to_int
 from farbox_bucket.bucket.utils import get_order_bucket_name, get_bucket_configs, get_bucket_name_for_path
 from farbox_bucket.bucket.record.get.mix import mix_get_record_paths
-from farbox_bucket.bucket.record.get.path_related import get_records_by_paths, get_record_by_path
+from farbox_bucket.bucket.record.get.path_related import get_records_by_paths
 from farbox_bucket.server.utils.record_and_paginator.base_paginator import BasePaginator
 
 

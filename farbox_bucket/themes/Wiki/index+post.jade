@@ -7,7 +7,7 @@ html
         doc = d.get_doc('index.md')
         is_homepage = True
     head
-        +h.load('/template/static/markdown.css')
+        +h.load("markdown")
         +h.load('/template/static/style.scss')
         +h.load("post_preview")
         if not is_homepage and doc
@@ -77,7 +77,8 @@ html
                             if not is_homepage: .title_container: h1.title= doc.title
                             div= p.get_content_with_referred_docs(doc, show_date=False)
                             +show_referred_back_docs()
-                            +doc.comments_as_html()
+                            if request.path.startswith("/post")
+                                +doc.comments_as_html()
 
         +h.load('jquery')
         script

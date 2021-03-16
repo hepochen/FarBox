@@ -5,8 +5,6 @@ from farbox_bucket.bucket.utils import get_bucket_in_request_context, get_bucket
 from farbox_bucket.bucket.record.get.folder import get_folder_children_count
 from farbox_bucket.bucket.record.utils import get_type_from_record
 from farbox_bucket.server.statistics.post_visits import get_post_visits_count
-from farbox_bucket.server.comments.utils import get_comments
-from farbox_bucket.server.comments.contacts import get_all_contacts_from_post
 from farbox_bucket.server.template_system.api_template_render import render_api_template
 from farbox_bucket.server.template_system.model.category import get_record_parent_category
 from farbox_bucket.server.template_system.namespace.data import get_data
@@ -31,6 +29,7 @@ def visitors(obj):
 
 
 def comments(obj):
+    from farbox_bucket.server.comments.utils import get_comments
     cmts = get_comments(obj) or []
     obj['comments'] = cmts
     return cmts
@@ -96,6 +95,7 @@ def comments_as_html(obj):
 
 
 def get_comments_people(obj, prefix='@'):
+    from farbox_bucket.server.comments.contacts import get_all_contacts_from_post
     if not obj:
         return []
     doc_type = obj.get('_type')

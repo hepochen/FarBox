@@ -8,11 +8,12 @@ from farbox_bucket.server.utils.record_and_paginator.paginator import get_pagina
 
 from farbox_bucket.bucket.utils import get_bucket_configs, get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_record_by_url,\
-    get_json_content_by_path, has_record_by_path
+    get_json_content_by_path, has_record_by_path, get_raw_content_by_record
 
 from farbox_bucket.utils.functional import cached_property
-from farbox_bucket.server.utils.record_and_paginator.paginator import auto_pg, pg_with_keywords_search
 from farbox_bucket.utils.data import make_tree as _make_tree
+
+from farbox_bucket.server.utils.record_and_paginator.paginator import auto_pg, pg_with_keywords_search
 from farbox_bucket.server.utils.doc_url import get_doc_url_for_template_api
 from farbox_bucket.server.utils.request_context_vars import set_doc_in_request
 from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
@@ -63,8 +64,11 @@ class Data(object):
         if isinstance(type, (list, tuple)) and type:
             type = type[0]
 
-        if "+" in type: # 兼容旧的 Bitcron， 查询索引所限，只能单一 post
+        if isinstance(type, string_types) and "+" in type: # 兼容旧的 Bitcron， 查询索引所限，只能单一 post
             type = type.split("+")[0].strip()
+
+        if type == "all":
+            type = None
 
         if level is not None and level_start is None and level_end is None:
             # 重新计算 level，如果给 level，是相当于 path 的相对路径
@@ -174,6 +178,10 @@ class Data(object):
             doc['raw_content'] = json.dumps(get_bucket_site_configs(self.bucket), indent=4, ensure_ascii=False) #ensure_ascii
         if not doc:
             return
+
+        if doc.get("_zipped"):
+            doc["raw_content"] = get_raw_content_by_record(doc)
+
         doc_type = doc.get('_type') or doc.get('type')
         if kwargs.get('type') and kwargs.get('type')!=doc_type:
             return None

@@ -23,7 +23,8 @@ db_client = SSDB_Client(ssdb_ip, ssdb_port)
 
 STATIC_FILE_VERSION = version # 静态资源通过 h.load 载入的时候，增加 version 的逻辑
 
-MAX_RECORD_SIZE = 300 * 1024 # 300Kb
+# Markdown 解析的时候会有扩容的情况，估计 100k 的（多行）文档会膨胀到 500k
+MAX_RECORD_SIZE = 500 * 1024 # 500Kb
 
 # 这个只是对 verify 时候起作用的，如果是 system 直接写入的，不在受限范围
 MAX_RECORD_SIZE_FOR_CONFIG = 800 * 1024 ## 800Kb
@@ -134,3 +135,5 @@ auto_reset_elasticsearch_memory_config_when_app_started()
 HUMECH_PAGE_VERSION = get_env("HUMECH_PAGE_VERSION") or "0.1"
 
 TMP_BUCKET_FOR_DEBUG = get_env("TMP_BUCKET_FOR_DEBUG")
+
+PAGE_CACHE_VERSION = "0.21"

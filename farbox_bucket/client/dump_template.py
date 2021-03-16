@@ -53,7 +53,7 @@ def get_template_info(template_dir):
     template_dir = template_dir.strip().rstrip('/')
     if not os.path.isdir(template_dir):
         return info # ignore
-    filepaths = get_all_sub_files(template_dir, accept_func=os.path.isfile, max_size=1000)
+    filepaths = get_all_sub_files(template_dir, accept_func=os.path.isfile, max_tried_times=1000)
     for filepath in filepaths:
         relative_path = get_relative_path(filepath, root=template_dir).lower()  # lower case
         if not os.path.isfile(filepath):

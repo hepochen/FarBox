@@ -8,6 +8,22 @@
 	word-break: normal;
 	overflow-wrap:break-word;
 
+  .md_figure{
+        margin: 0;
+    }
+    .md_image_figure{
+        margin-bottom: 1.2em;
+    }
+    .md_image_figure img{
+        display: block;
+        margin-bottom: 8px;
+    }
+    .md_image_figure figcaption{
+        font-size: 90%;
+        text-align: center;
+        line-height: 1.5;
+    }
+
 	.md_line_dom_embed{
 		text-indent: 0 !important;
 	}

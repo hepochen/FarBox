@@ -2,6 +2,7 @@
 import pickle
 import re
 from flask import request, Response
+from farbox_bucket.settings import PAGE_CACHE_VERSION
 from farbox_bucket.utils import get_md5
 from farbox_bucket.utils.memcache import get_cache_client
 from farbox_bucket.bucket.utils import get_bucket_last_updated_at, get_bucket_in_request_context
@@ -20,7 +21,7 @@ def get_cache_key_for_page():
     if not bucket_last_updated_at:
         return
     url = request.url
-    raw_cache_key = '%s-%s-%s' % (bucket, bucket_last_updated_at, url)
+    raw_cache_key = '%s-%s-%s-%s' % (bucket, bucket_last_updated_at, url, PAGE_CACHE_VERSION)
     lang = get_language()
     if lang:
         raw_cache_key += "-%s"%lang

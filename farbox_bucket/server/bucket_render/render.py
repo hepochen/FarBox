@@ -5,10 +5,15 @@ from flask.globals import _request_ctx_stack
 from jinja2.exceptions import TemplateNotFound
 from farbox_bucket.settings import STATIC_FILE_VERSION, DEBUG
 
-from farbox_bucket.bucket.utils import get_admin_bucket, set_bucket_in_request_context, get_bucket_in_request_context
+from farbox_bucket.utils import get_md5
 from farbox_bucket.utils.functional import curry
-
+from farbox_bucket.utils.cache import LimitedSizeDict
+from farbox_bucket.utils.convert.jade2jinja import jade_to_template
 from farbox_bucket.utils.gevent_utils import get_result_by_gevent_with_timeout_block
+
+from farbox_bucket.bucket.utils import get_admin_bucket, set_bucket_in_request_context, get_bucket_in_request_context
+from farbox_bucket.bucket.record.get.path_related import get_record_by_url
+
 from farbox_bucket.server.utils.request_path import get_request_path
 from farbox_bucket.server.utils.site_resource import get_site_config, get_site_configs, has_template_by_name
 from farbox_bucket.server.utils.response_html import insert_into_footer, insert_into_header
@@ -16,7 +21,7 @@ from farbox_bucket.server.utils.response_html import insert_into_footer, insert_
 from farbox_bucket.server.template_system.env import farbox_bucket_env
 from farbox_bucket.server.template_system.app_functions.after_request.cache_page import get_response_from_memcache
 from farbox_bucket.server.template_system.api_template_render import render_api_template_as_response
-from farbox_bucket.bucket.record.get.path_related import get_record_by_url
+
 from farbox_bucket.server.static.static_render import send_static_frontend_resource
 
 from farbox_bucket.server.bucket_render.builtin_theme._render import show_builtin_theme_as_sub_site
@@ -88,7 +93,11 @@ def render_template_for_farbox_bucket(**kwargs):
         if e.name == "index":
             abort(404, Html.i18n("please custom your template or choose a theme for site first, no homepage found."))
         else:
-            abort(404, 'not found for %s' % e.name)
+            if request_path.strip("/") == "feed" and not has_template_by_name("feed"):
+                # 如果没有自定义 feed 页面，系统默认配置的
+                return render_api_template_as_response("feed.jade")
+            else:
+                abort(404, 'not found for %s' % e.name)
     except Exception as e:
         raise e
 
@@ -189,6 +198,7 @@ mermaid_script = """'<script type="text/javascript" src="/__lib/markdown_js/merm
 def after_render_html(html):
     if '</body>' not in html:
         return html
+    html = render_code_blocks_inside(html) # ```code jade_template```
     site_configs = get_site_configs()
     echarts = site_configs.get('echarts')
     mathjax = site_configs.get('mathjax')
@@ -207,3 +217,44 @@ def after_render_html(html):
 
 
 ############ for markdown scripts ends ############
+
+
+
+
+############# embed_in jade template for markdown doc starts ########
+env_templates_cache = LimitedSizeDict(size_limit=10000)
+def get_template_by_env(source, try_jade=True):
+    # 由某个指定的 env，解析 template, 并处理 cache
+    template_key = get_md5(source)
+    if template_key in env_templates_cache:
+        return env_templates_cache[template_key]
+    if try_jade:
+        try:
+            template = jade_to_template(source, env=farbox_bucket_env)
+        except:
+            template = farbox_bucket_env.from_string('<b style="color:red">`code` block means template source code,'
+                                       ' error format will break current page!!</b>')
+    else:
+        template = farbox_bucket_env.from_string(source)
+    env_templates_cache[template_key] = template
+    return template
+
+def _render_template_in_html_func(match_obj):
+    #raw = match_obj.group()
+    template_source = match_obj.groups()[1].strip()
+    template_source = template_source.replace('&lt;', '<').replace("&gt;", '>')
+    template = get_template_by_env(template_source, try_jade=True)
+    return template.render()
+    #return '`code` block means template source code, error format will break current page!!'
+    #try:
+    #    return template.render()
+    #except:
+    #    return raw
+
+
+def render_code_blocks_inside(html):
+    new_html = re.sub(r'(<pre class="lang_code"><code>)(.*?)(</code></pre>)',
+                  _render_template_in_html_func, html, flags=re.M|re.S)
+    return new_html
+
+############# embed_in jade template for markdown doc ends ########

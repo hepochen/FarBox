@@ -11,7 +11,7 @@ from farbox_bucket.bucket.utils import get_bucket_files_configs, set_bucket_conf
     get_bucket_last_record_id_computed, set_bucket_last_record_id_computed
 
 
-# max files is 5000, max depth is 10
+# max files is 20000, max depth is 10
 def get_files_info(bucket):
     data = {}
     path_bucket = get_bucket_name_for_path(bucket)
@@ -21,7 +21,7 @@ def get_files_info(bucket):
     data['lower_folders'] = []  # not a dict
     lower_folders = []
     lower_folders_count = {}
-    records = hscan(path_bucket, key_start='', limit=5000)
+    records = hscan(path_bucket, key_start='', limit=20000)
     for filepath, filepath_data_string in records:
         if filepath.startswith('_'):
             continue

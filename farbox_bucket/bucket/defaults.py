@@ -49,6 +49,6 @@ config_names_not_allowed_set_by_user = ['init', 'histories', 'statistics', 'inbo
 
 
 
-BUCKET_RECORD_SORT_TYPES = ('post', 'image', 'file', 'folder', 'comments', 'license', 'redeem', 'sorted_file')
+BUCKET_RECORD_SORT_TYPES = ('post', 'image', 'file', 'folder', 'comments')
 
-BUCKET_RECORD_SLASH_TYPES = ('post', 'image', 'file', 'folder', 'comments')
+BUCKET_RECORD_SLASH_TYPES = ('post', 'image', 'file', 'folder', 'comments', "visits")
