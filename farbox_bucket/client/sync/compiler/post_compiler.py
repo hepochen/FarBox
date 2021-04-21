@@ -39,7 +39,7 @@ class PostSyncCompiler(BasicSyncCompiler):
         # 编译为 markdown 的内容
         raw_content = self.raw_content
         raw_content = smart_unicode(raw_content[:500000])  # 最多不超过50w字节, 约500k
-        raw_content = raw_content.strip().replace(u'\ufeff', '')  # 去除头尾
+        raw_content = raw_content.strip().replace(u'\ufeff', '').replace("\r\n", "\n")  # 去除头尾
         post_path = self.path
         if self.real_relative_path:
             post_path = self.real_relative_path

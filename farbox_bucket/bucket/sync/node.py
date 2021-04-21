@@ -1,13 +1,14 @@
 #coding: utf8
 from __future__ import absolute_import
-import os
 from functools import partial
 import requests
 
 
 from farbox_bucket.bucket import set_buckets_cursor_for_remote_node, get_buckets_cursor_for_remote_node
-from farbox_bucket.utils.gevent_run import do_by_gevent_pool
 from farbox_bucket.bucket.node import get_node_url, get_remote_nodes_to_sync_from
+from farbox_bucket.utils.env import get_env
+from farbox_bucket.utils.gevent_run import do_by_gevent_pool
+
 
 from farbox_bucket.bucket.sync.sync_api import sync_bucket_from_remote_node
 
@@ -52,7 +53,10 @@ def sync_from_remote_node(remote_node):
     buckets = get_buckets_to_sync_from_remote_node(remote_node)
     if not buckets:
         return
-    job_func = partial(sync_bucket_from_remote_node, remote_node=remote_node)
+    server_sync_token = get_env("server_sync_token")
+    if not server_sync_token:
+        return
+    job_func = partial(sync_bucket_from_remote_node, remote_node=remote_node, server_sync_token=server_sync_token)
     do_by_gevent_pool(pool_size=100, job_func=job_func, loop_items=buckets, timeout=30*60)
 
 

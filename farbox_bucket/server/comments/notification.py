@@ -118,6 +118,8 @@ def send_notification_emails(new_comment):
     notification_content = get_comment_notification_content(comment_obj=new_comment, parent_obj=new_comment.parent_obj, current_link=parent_url)
 
     spawn(send_mail_by_system, to_address=emails, subject='New Comment', content=notification_content,)  # 异步处理
+
+    request.emails_sent_info = "comment-%s-people" % len(emails)
     #send_mail_by_system(to_address=emails, subject='New Comment', content= notification_content,)
 
 

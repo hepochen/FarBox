@@ -39,6 +39,7 @@ def wechat_text_image_handler(wechat_user_id, bucket, xml_data):
     add_nickname = wechat_configs.get("add_nickname", False)
     draft_by_default = wechat_configs.get("draft_by_default", False)
     one_user_one_post = wechat_configs.get("one_user_one_post", False)
+    user_post_per_day = wechat_configs.get("user_post_per_day", False)
 
     if msg_type == "image":  # 纯图片
         pic_url = xml_data.get("PicUrl")
@@ -75,10 +76,20 @@ def wechat_text_image_handler(wechat_user_id, bucket, xml_data):
             return u"昵称已设定为 %s" % name
 
     if one_user_one_post:
-        if post_root:
-            post_path = "%s/%s.txt" %  (post_root, wechat_user_id)
+        if user_post_per_day:
+            today_string = get_now_from_bucket(bucket, "%Y-%m-%d")
         else:
-            post_path = "%s.txt" % wechat_user_id
+            today_string = ""
+        if post_root:
+            if today_string:
+                post_path = "%s/%s/%s.txt" % (post_root, wechat_user_id, today_string)
+            else:
+                post_path = "%s/%s.txt" %  (post_root, wechat_user_id)
+        else:
+            if today_string:
+                post_path = "%s/%s.txt" % (wechat_user_id, today_string)
+            else:
+                post_path = "%s.txt" % wechat_user_id
     else:
         if post_root:
             post_path = post_root + "/" + get_now_from_bucket(bucket, "%Y-%m-%d.txt")

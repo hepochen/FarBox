@@ -38,8 +38,8 @@ def should_sync_remote_node(remote_node):
 
 
 
-def sync_bucket_from_remote_node(bucket, remote_node, user='', password='', cursor=None, per_page=1000,
-                                 loop=True, check_should_or_not=True, print_log=False):
+def sync_bucket_from_remote_node(bucket, remote_node, api_token='', cursor=None, per_page=1000,
+                                 loop=True, check_should_or_not=True, print_log=False, server_sync_token=None):
     # 本质上，一个 node 的 sync，都是对这个函数的调用
     # bucket 上的记录，是多次调用这个 API，利用 cursor 来保持连接；如果一次调用失败，下次继续调用的时候， 并不影响
     logger = get_file_logger('sync_bucket')
@@ -53,6 +53,10 @@ def sync_bucket_from_remote_node(bucket, remote_node, user='', password='', curs
         logger.info('no need to sync from remote_node %s, self or not live' % remote_node)
         return
 
+    if not api_token and not server_sync_token:
+        logger.info("set api token of the bucket first")
+        return
+
     t1 = time.time()
     remote_uri = 'bucket/%s/list' % bucket
     remote_url = get_node_url(remote_node, remote_uri)
@@ -60,9 +64,10 @@ def sync_bucket_from_remote_node(bucket, remote_node, user='', password='', curs
     data_to_post = {'per_page': per_page}
     if cursor:
         data_to_post['cursor'] = cursor
-    if user or password:
-        data_to_post['user'] = user
-        data_to_post['password'] = password
+    if api_token:
+        data_to_post['api_token'] = api_token
+    if server_sync_token:
+        data_to_post["server_sync_token"] = server_sync_token
     try:
         if print_log:
             print('will get data from %s?cursor=%s   per_page is %s' % (remote_url, cursor or '', per_page))
@@ -120,9 +125,10 @@ def sync_bucket_from_remote_node(bucket, remote_node, user='', password='', curs
         if records_length == per_page:
             # 当前 结果数 和 per_page 的设定一样的时候，认为是有下一页的
             sync_bucket_from_remote_node(bucket, remote_node,
-                                         user=user, password=password,
+                                         api_token=api_token,
                                          cursor=last_record_id, per_page=per_page,
-                                         loop=True, check_should_or_not=False, print_log=print_log)
+                                         loop=True, check_should_or_not=False, print_log=print_log,
+                                         server_sync_token = server_sync_token,)
         else:
             if print_log:
                 print('sync records from %s is done.\n' % bucket)

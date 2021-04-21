@@ -2,7 +2,7 @@
 import re
 import time
 from farbox_bucket.utils import string_types, smart_unicode, is_a_markdown_file, to_int
-from farbox_bucket.bucket.utils import has_bucket
+from farbox_bucket.bucket.utils import has_bucket, get_now_from_bucket
 from farbox_bucket.bucket.record.utils import get_type_from_record
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path
 from farbox_bucket.server.helpers.file_manager import sync_file_by_server_side
@@ -59,14 +59,15 @@ def append_to_markdown_doc_and_sync(bucket, path, content, lines_to_append=1, re
                 content = '%s%s' % (old_content, new_content)
         else:
             return
-    else:
+    else: # new doc
         content = content.strip()
         if draft_by_default:
             # 新建文档默认是 draft 的状态
             if re.match(u"\w+[:\uff1a]", content): # 可能用户自己声明了 metadata
                 content = "status: draft\n%s" % content
             else:
-                content = "status: draft\n\n%s" % content
+                now = get_now_from_bucket(bucket)
+                content = "date:%s\nstatus: draft\n\n%s" % (now, content)
 
     sync_file_by_server_side(bucket=bucket, relative_path=path, content=content)
 

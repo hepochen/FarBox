@@ -9,6 +9,7 @@ from farbox_bucket.server.utils.record_and_paginator.paginator import get_pagina
 from farbox_bucket.bucket.utils import get_bucket_configs, get_bucket_site_configs, get_bucket_in_request_context
 from farbox_bucket.bucket.record.get.path_related import get_record_by_path, get_record_by_url,\
     get_json_content_by_path, has_record_by_path, get_raw_content_by_record
+from farbox_bucket.bucket.record.get.tag_related import get_records_by_tag
 
 from farbox_bucket.utils.functional import cached_property
 from farbox_bucket.utils.data import make_tree as _make_tree
@@ -61,6 +62,20 @@ class Data(object):
     def get_data(type='post', limit=None, page=None, path=None, level=None, level_start=None, level_end=None, excludes=None,
                  status=None, with_page=True, pager_name=None, sort='desc', return_count=False,
                  date_start=None, date_end=None, ignore_marked_id=None, prefix_to_ignore=None, keywords=None, min_limit=0, **kwargs):
+
+        # 对 Bitcron 的兼容, tag for get_data
+        tag_to_match = kwargs.get("tags") or kwargs.get("tag")
+        if tag_to_match:
+            if isinstance(tag_to_match, (list, tuple)):
+                tag_to_match = tag_to_match[0]
+        if tag_to_match:
+            tag_match_records= get_records_by_tag(get_bucket_in_request_context(), tag=tag_to_match,
+                                      sort_by="-date" if sort=="desc" else "date")
+            if return_count:
+                return len(tag_match_records)
+            return tag_match_records
+
+
         if isinstance(type, (list, tuple)) and type:
             type = type[0]
 

@@ -27,6 +27,8 @@ from farbox_bucket.server.utils.request_context_vars import set_pending_bucket_b
 
 
 
+# server_sync_token 是用来同步服务器之间同步 records-list 用的
+# endpoint_password 主要是呈现非 records-list 的一些信息的管理员密码
 
 def allowed_to_display_some_bucket_info(bucket=None):
     if bucket:
@@ -105,7 +107,7 @@ def show_bucket_info(bucket):
 default_records_per_page = 100
 @app.route('/bucket/<bucket>/list', methods=['POST', 'GET'])
 def list_bucket(bucket):
-    set_pending_bucket_bucket_in_request(bucket) # 校验用的
+    set_pending_bucket_bucket_in_request(bucket) # 校验用的, 不直接把 bucket 传给  show_bucket_records_for_web_request
     return show_bucket_records_for_web_request(default_records_per_page=default_records_per_page, includes_zero_ids=True)
 
 

@@ -1,4 +1,5 @@
 # coding: utf8
+from flask import request
 import uuid
 from farbox_bucket.utils import smart_str
 from farbox_bucket.server.utils.cookie import set_cookies, get_cookie, set_cookie
@@ -37,6 +38,10 @@ def default_response_handler(response):
     cache_key = get_page_cache_key_in_request()
     if cache_key:
         response.headers['x-cache-key'] = smart_str(cache_key)
+
+    emails_sent_info = getattr(request, "emails_sent_info", None)
+    if emails_sent_info:
+        response.headers['x-emails-sent'] = smart_str(emails_sent_info)
 
     if response.status_code > 400:
         return response

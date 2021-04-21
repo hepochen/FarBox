@@ -31,6 +31,7 @@ builtin_site_settings_keys_config_info = {
             "silent_reply(type=bool, default=False)",
             "draft_by_default(type=bool, default=False)",
             "one_user_one_post(type=bool, default=False)",
+            "user_post_per_day(type=bool, default=False)",
             "auto_add_date(type=bool, default=False)",
             "add_nickname(type=bool, default=False)",
         ]

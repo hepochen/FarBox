@@ -1,10 +1,13 @@
 #coding: utf8
 from __future__ import absolute_import
-import boto, datetime, requests
+import boto3
 
 from farbox_bucket.utils import smart_str, smart_unicode
 from farbox_bucket.utils.mail.basic_utils import pure_email_address, is_email_address, get_valid_addresses
 
+
+#https://stackoverflow.com/questions/62757921/is-aws-boto-python-supporting-ses-signature-version-4
+# https://docs.aws.amazon.com/general/latest/gr/sigv4-signed-request-examples.html
 
 
 def get_mail_server_domain(address):
@@ -28,26 +31,10 @@ def get_address_and_sub_info_from_address(address):
     return address, sub_info
 
 
+# us-east-1 Region
 
-def raw_send_email_by_ses(from_address, to_address, content, ses_id, ses_key, subject=None):
-    ses_connection = boto.connect_ses(ses_id, ses_key)
-    if not isinstance(to_address, (list, tuple)):
-        to_address = [to_address]
-    addresses = get_valid_addresses(to_address)
-    if not addresses:
-        return
-    if isinstance(content, unicode):
-        content = content.encode('utf8')
-    result = ses_connection.send_raw_email(content, source=from_address, destinations=addresses)
-    try:
-        message_id = result['SendRawEmailResponse']['SendRawEmailResult']['MessageId']
-        return message_id
-    except:
-        return result
-
-
-def send_email_by_ses(from_address, to_address,  content, ses_id, ses_key, subject=''):
-    ses_connection = boto.connect_ses(ses_id, ses_key)
+def send_email_by_ses(from_address, to_address,  content, ses_id, ses_key, subject='', region="us-east-1"):
+    client = boto3.client("ses", aws_access_key_id=ses_id, aws_secret_access_key=ses_key, region_name=region or "us-east-1")
     if not isinstance(to_address, (list, tuple)):
         to_address = [to_address]
 
@@ -55,17 +42,27 @@ def send_email_by_ses(from_address, to_address,  content, ses_id, ses_key, subje
     if not addresses:
         return
 
-    result = ses_connection.send_email(
-        source=from_address,
-        subject=subject,
-        body = '',
-        html_body=content,
-        to_addresses= addresses
+    result = client.send_email(
+        Source = from_address,
+        Destination = {
+            "ToAddresses": addresses
+        },
+        Message = {
+            "Subject": {
+                "Data": subject,
+            },
+            "Body": {
+                "Html": {
+                    "Data": content
+                }
+            }
+        }
     )
     # {u'SendEmailResponse': {u'ResponseMetadata': {u'RequestId': u'436aa914-56e2-11e6-842f-575aa5bf2b20'},
     # u'SendEmailResult': {u'MessageId': u'010001563f7e2795-b2c75be1-7bc4-4511-be81-e9ab0d3329e0-000000'}}}
     try:
-        message_id = result['SendEmailResponse']['SendEmailResult']['MessageId']
+        #message_id = result['SendEmailResponse']['SendEmailResult']['MessageId']
+        message_id = result["MessageId"]
         return message_id
     except:
         return result
@@ -76,41 +73,9 @@ def send_email_by_amazon(from_address, to_address, content,  ses_id, ses_key, su
     # 对 SES 的直接调用
     if not ses_id or not ses_key:
         return None
-    if raw:
-        func = raw_send_email_by_ses
-    else:
-        func = send_email_by_ses
-    message_id = func(from_address=from_address, to_address=to_address, content=content, subject=subject, ses_id=ses_id, ses_key=ses_key)
+    message_id = send_email_by_ses(from_address=from_address, to_address=to_address, content=content, subject=subject, ses_id=ses_id, ses_key=ses_key)
 
     return message_id
-
-
-
-def send_email_by_mailgun(from_address, to_address, subject, html_content, api_host, api_key):
-    if not isinstance(to_address, (list, tuple)):
-        to_address = [to_address]
-
-    addresses = get_valid_addresses(to_address)
-    if not addresses:
-        return
-
-    response = requests.post(
-        api_host,
-        auth=("api", api_key),
-        data={"from": from_address,
-              "to": addresses,
-              "subject": smart_str(subject),
-              "html": smart_str(html_content)}
-    )
-    # {u'id': u'<20160731050105.19538.10328.09D720EA@farbox.com>',
-    # u'message': u'Queued. Thank you.'}
-    try:
-        result = response.json()
-        message_id = result['id']
-        message_id = message_id.lstrip('<').rstrip('>')
-        return message_id
-    except:
-        return response
 
 
 

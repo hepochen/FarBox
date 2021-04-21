@@ -130,7 +130,7 @@ class FarboxBucketEnvironment(SandboxedEnvironment): #  Environment
         if isinstance(right, Undefined):
             right = ''
 
-        if isinstance(left, (str, unicode)) and isinstance(right, (str, unicode)):
+        if isinstance(left, string_types) and isinstance(right, string_types):
             if operator in ['/', '//', '*', '**', '-']:
                 return '%s%s%s' % (smart_unicode(left), operator, smart_unicode(right))
 

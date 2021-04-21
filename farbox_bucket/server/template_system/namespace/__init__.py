@@ -36,7 +36,9 @@ def i18n(key, *args): # i18n 专用函数名
 
 
 namespace_shortcuts = {
-    '_': i18n,
-    'i18n': i18n,
-    'get_data': get_data,
+    "_": i18n,
+    "i18n": i18n,
+    "get_data": get_data,
+    "load": Html.load
+
 }

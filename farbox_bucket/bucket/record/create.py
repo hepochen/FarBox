@@ -92,6 +92,7 @@ def create_record(bucket, record_data, avoid_repeated=True, auto_id=True, file_c
 # 通过 node 之间同步创建的 record 信息
 # record 必然是 dict 类型
 # 如果 record_id 在本地已经存在的，就以本地的为准
+# create_record_by_sync 是不会处理 auto clean 的，从某种角度来说，它是可以做到所有历史记录的备份的逻辑
 def create_record_by_sync(bucket, record, check_bucket=False):
     if not isinstance(record, dict):
         return 'record is not a dict'

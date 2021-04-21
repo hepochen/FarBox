@@ -29,12 +29,13 @@ xserver = "*"
 pillow = "==5.4.1"
 cos-python-sdk-v5 = "==1.9.0"
 itsdangerous = "==1.1.0"
-boto = "==2.38.0"
+boto3 = "==1.17.54"
 farbox-gevent-websocket = "*"
 elasticsearch = "==7.10.1"
 xmltodict = "==0.12.0"
 Send2Trash = "==1.5.0"
 """
+# boto = "==2.38.0"
 
 pipfile_packages = []
 for pip_package_name, pip_package_version in re.findall('([\w-]+)\s*=\s*.*?(?:==)?([0-9.*]+)', raw_pipfile_packages):

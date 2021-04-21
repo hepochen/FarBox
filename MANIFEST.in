@@ -1,2 +1,3 @@
 recursive-include farbox_bucket/server/static *
 recursive-include farbox_bucket/themes *
+recursive-include farbox_bucket/deploy/run *

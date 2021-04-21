@@ -251,6 +251,21 @@ class Posts(object):
         return ''  # return nothing
 
 
+    def search(self, keywords=None, limit=30, sort='-date'):
+        # 全文检索，从而得到post_list
+        # keywords 可以是字符串，也可以是 list/tuple
+        if not keywords:
+            return []
+        limit = to_int(limit, 30)
+        if isinstance(keywords, (tuple, list)):
+            try: keywords = ' '.join(keywords)
+            except: return []
+        if not keywords:
+            return []
+        pager_name = 'search_posts'
+        return self.data_namespace.get_data(type='post', keywords=keywords, pager_name=pager_name,
+                                            min_limit=self.min_per_page, limit=limit, sort=sort)
+
     def search_in_html(self, base_url='', under='', just_js=False, **kwargs):
         # 产生搜索的HTML代码片段
         return render_api_template('search_posts.jade', search_base_url=base_url,
