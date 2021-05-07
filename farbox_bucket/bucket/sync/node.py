@@ -37,12 +37,12 @@ def get_buckets_to_sync_from_remote_node(remote_node):
         raw_result = response.json()
     except:
         return []
-    bucket_cursor = None
-    for bucket, bucket_cursor in raw_result:
+    cursor = None
+    for bucket, _cursor in raw_result:
         buckets.append(bucket)
-    if bucket_cursor: # last one
-        set_buckets_cursor_for_remote_node(remote_node, bucket_cursor)
-    return buckets
+    #if bucket_cursor: # last one
+    #    set_buckets_cursor_for_remote_node(remote_node, bucket_cursor)
+    return buckets, cursor
 
 
 
@@ -50,15 +50,15 @@ def get_buckets_to_sync_from_remote_node(remote_node):
 def sync_from_remote_node(remote_node):
     # 从 remote node 上完全同步所有 buckets 的时候， 每次任务实际上是每次 1000 个 buckets
     # 在下次 cronjob 触发的时候，会在上次 cursor 保存的状态后，进行后面 1000 个同步，如此周而复始
-    buckets = get_buckets_to_sync_from_remote_node(remote_node)
+    buckets, cursor = get_buckets_to_sync_from_remote_node(remote_node)
     if not buckets:
         return
     server_sync_token = get_env("server_sync_token")
     if not server_sync_token:
         return
+    callback_func = partial(set_buckets_cursor_for_remote_node, remote_node, cursor)
     job_func = partial(sync_bucket_from_remote_node, remote_node=remote_node, server_sync_token=server_sync_token)
-    do_by_gevent_pool(pool_size=100, job_func=job_func, loop_items=buckets, timeout=30*60)
-
+    do_by_gevent_pool(pool_size=100, job_func=job_func, loop_items=buckets, timeout=30*60, callback_func=callback_func)
 
 
 

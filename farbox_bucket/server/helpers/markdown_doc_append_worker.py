@@ -67,7 +67,7 @@ def append_to_markdown_doc_and_sync(bucket, path, content, lines_to_append=1, re
                 content = "status: draft\n%s" % content
             else:
                 now = get_now_from_bucket(bucket)
-                content = "date:%s\nstatus: draft\n\n%s" % (now, content)
+                content = "date: %s\nstatus: draft\n\n%s" % (now, content)
 
     sync_file_by_server_side(bucket=bucket, relative_path=path, content=content)
 

@@ -16,6 +16,7 @@ class BasicSyncCompiler(object):
                  is_deleted=False,  is_dir=None, ipfs_key=None, doc_type=None, version=None,
                  raw_content = None, files_info=None,
                  real_relative_path = None,
+                 utc_offset = None,
                  ):
         if raw_content: # 直接传入内容， abs_filepath 直接无效
             abs_filepath = None
@@ -40,6 +41,8 @@ class BasicSyncCompiler(object):
         self._raw_byte_content = smart_str(raw_content or '')
 
         self.version = version
+
+        self.utc_offset = utc_offset
 
     @cached_property
     def lower_path(self):
@@ -149,7 +152,7 @@ class BasicSyncCompiler(object):
             return ''
 
         # todo 这里如何加密的问题需要处理
-        if os.path.isfile(self.abs_filepath):
+        if self.abs_filepath and os.path.isfile(self.abs_filepath):
             return read_file(self.abs_filepath)
         else:
             return ''

@@ -308,6 +308,8 @@ def get_bucket_last_record_id_computed(bucket):
 
 
 def set_buckets_cursor_for_remote_node(node, cursor):
+    if cursor is None:
+        return
     hset('_remote_buckets_cursor', node, cursor)
 
 

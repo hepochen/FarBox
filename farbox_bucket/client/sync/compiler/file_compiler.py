@@ -22,7 +22,7 @@ class FileSyncCompiler(BasicSyncCompiler):
             if not self.abs_filepath:
                 timestamp = time.time()
             else:
-                timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath)
+                timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath, utc_offset=self.utc_offset)
             return timestamp
 
 

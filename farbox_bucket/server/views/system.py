@@ -1,7 +1,7 @@
 # coding: utf8
 from flask import request, abort, Response
 from farbox_bucket.server.web_app import app
-from farbox_bucket.utils.ssdb_utils import hlist, zrscan, hscan
+from farbox_bucket.utils.ssdb_utils import hlist, zrscan, hscan, zscan
 from farbox_bucket.utils.system_status_recorder import get_system_timed_records
 from farbox_bucket.utils.cache import cached
 from farbox_bucket.bucket.utils import is_valid_bucket_name
@@ -56,7 +56,7 @@ def show_buckets():
         cursor = int(request.values.get('cursor') or '')
     except:
         cursor = ''
-    buckets_result = zrscan('buckets', score_start=cursor, limit=per_page)
+    buckets_result = zscan('buckets', score_start=cursor, limit=per_page)
     return jsonify(buckets_result)
 
 @app.route('/_system/domains', methods=['POST', 'GET'])

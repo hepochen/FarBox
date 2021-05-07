@@ -4,8 +4,9 @@ import datetime
 try: import send2trash
 except: send2trash = None
 from functools import partial
-from farbox_bucket.settings import DEBUG
+from farbox_bucket import settings
 from farbox_bucket.utils import get_md5_for_file, smart_str
+from farbox_bucket.utils.error import print_error
 from farbox_bucket.utils.path import join, make_sure_path, read_file
 from farbox_bucket.client.message import send_message
 
@@ -57,7 +58,13 @@ def sync_from_farbox(root, private_key, node,
 
     records = send_message(node, private_key, action="show_records", message=message)
     if not isinstance(records, (list, tuple)):
+        if settings.DEBUG:
+            print("error:records from node is not list/tuple type")
         return
+
+    #if settings.DEBUG:
+    #    print("get %s records from node" % len(records))
+
     last_cursor = None
     error_happened = False
     will_continue = False
@@ -83,8 +90,8 @@ def sync_from_farbox(root, private_key, node,
         if server_side_file_version and os.path.isfile(abs_filepath):
             if get_md5_for_file(abs_filepath) == server_side_file_version:
                 # 文件已经存在且重复了
-                if DEBUG:
-                    print("has same file on server side for %s" % abs_filepath)
+                #if settings.DEBUG:
+                    #print("has same file on server side for %s" % abs_filepath)
                 continue
 
         # 开始下载文件
@@ -103,7 +110,7 @@ def sync_from_farbox(root, private_key, node,
         if not raw_file_content:
             continue
 
-        # 存储前的 hook
+        # 存储前的 hook, 比如做版本的存储
         if before_file_sync_func and hasattr(before_file_sync_func, "__call__"):
             before_file_sync_func(abs_filepath)
 
@@ -117,9 +124,11 @@ def sync_from_farbox(root, private_key, node,
             make_sure_path(abs_filepath)
             with open(abs_filepath, "wb") as f:
                 f.write(smart_str(raw_file_content))
-            if DEBUG:
+            if settings.DEBUG:
                 print("downloaded %s" % abs_filepath)
         except:
+            if settings.DEBUG:
+                print_error()
             error_happened = True
 
         # 存储后的 hook
@@ -144,7 +153,7 @@ def sync_from_farbox(root, private_key, node,
                 store_sync_from_log(root, "records updated")
             else:
                 store_sync_from_log(root, "sync finished, no need to update")
-            if DEBUG:
-                print("sync finished, %s records" % len(records))
+            if settings.DEBUG:
+                print("sync-from finished, %s records" % len(records))
 
 

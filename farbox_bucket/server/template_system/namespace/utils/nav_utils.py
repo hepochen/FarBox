@@ -122,11 +122,11 @@ def get_auto_nav_items(bucket): # 自动生成的
         ))
 
 
-    if 'feed.jade' in pages_configs:
-        nav_items.append(dict(
-            name='Feed',
-            url='/feed'
-        ))
+    #if 'feed.jade' in pages_configs:
+    nav_items.append(dict(
+    name='Feed',
+    url='/feed'
+    ))
 
     return nav_items
 

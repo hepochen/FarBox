@@ -34,9 +34,11 @@ class FarBoxSyncCompilerWorker(object):
                     private_key=None, should_encrypt_file=False,
                     is_dir=False, is_deleted=False, ipfs_key=None,
                     version=None, auto_clean_bucket=True,
-                    relative_path=None, real_relative_path=None,raw_content=None, files_info=None
+                    relative_path=None, real_relative_path=None,raw_content=None,
+                    files_info=None, utc_offset=None,
                  ):
         self.files_info = files_info
+        self.utc_offset = utc_offset
 
         self.server_node = server_node
         self.root = root
@@ -123,6 +125,7 @@ class FarBoxSyncCompilerWorker(object):
 
             raw_content = self._raw_content,
             files_info = self.files_info,
+            utc_offset = self.utc_offset,
         )
 
         matched_compiler = None
@@ -235,7 +238,8 @@ class FarBoxSyncCompilerWorker(object):
 
 
 
-def get_compiler_data_directly(relative_path, content=None, is_deleted=False, is_dir=False, real_relative_path=None):
+def get_compiler_data_directly(relative_path, content=None, is_deleted=False, is_dir=False,
+                               real_relative_path=None, utc_offset=None):
     if not relative_path:
         return
     if content and len(content) > MAX_RECORD_SIZE:
@@ -244,8 +248,8 @@ def get_compiler_data_directly(relative_path, content=None, is_deleted=False, is
     compiler_worker = FarBoxSyncCompilerWorker(server_node=None, root=None, filepath=None,
                                                relative_path=relative_path, raw_content=content,
                                                is_deleted = is_deleted, is_dir = is_dir,
-                                               real_relative_path=real_relative_path
-                                               )
+                                               real_relative_path=real_relative_path,
+                                               utc_offset=utc_offset)
     json_data = compiler_worker.json_data_for_sync
     if json_data:
         data = json_loads(json_data)

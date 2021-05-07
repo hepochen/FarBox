@@ -136,9 +136,11 @@ class PostSyncCompiler(BasicSyncCompiler):
     @cached_property
     def post_timestamp(self):
         if self.abs_filepath:
-            timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath, metadata=self.metadata)
+            timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath,
+                                           metadata=self.metadata, utc_offset=self.utc_offset)
         elif self.metadata:
-            timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath, metadata=self.metadata)
+            timestamp = get_file_timestamp(relative_path=self.relative_path, abs_filepath=self.abs_filepath,
+                                           metadata=self.metadata, utc_offset=self.utc_offset)
         else:
             timestamp = time.time()
         if not timestamp:

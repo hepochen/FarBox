@@ -1,7 +1,7 @@
 #coding: utf8
 import os
 import datetime
-from farbox_bucket.settings import DEBUG
+from farbox_bucket import settings
 from farbox_bucket.utils.data import json_dumps
 from farbox_bucket.utils import get_value_from_data, to_unicode, to_bytes, get_md5_for_file
 from farbox_bucket.utils.functional import curry
@@ -166,16 +166,16 @@ class FarBoxBucketSyncWorker(object):
             if not remote_file_version:
                 remote_file_version = get_value_from_data(lower_files_info_on_server.get(lower_relative_path), 'hash')
             if remote_file_version == file_version:
-                if DEBUG:
-                    print('has same file on server already for %s' % relative_path)
+                #if settings.DEBUG:
+                #    print('has same file on server already for %s' % relative_path)
                 should_ignore = True
             self.ipfs_files[relative_path] = dict(hash=file_version, size=file_size, real_size=file_real_size)
 
         is_dir = os.path.isdir(filepath)
         if is_dir:
             if lower_relative_path in lower_folders_info_on_server:
-                if DEBUG:
-                    print('has same folder on server already for %s' % relative_path)
+                #if settings.DEBUG:
+                #   print('has same folder on server already for %s' % relative_path)
                 should_ignore = True
         if should_ignore:
             # ignore 的进行保存，避免下次 loop 继续被找到
@@ -199,6 +199,9 @@ class FarBoxBucketSyncWorker(object):
             if sync_status and sync_status.get('code') == 200:
                 synced = True
                 after_synced(filepath, root=self.root, app_name=self.app_name_for_sync)
+
+                if settings.DEBUG:
+                    print("synced (to) %s" % filepath)
 
                 if should_store_files_info:
                     self.store_files_info()
@@ -248,6 +251,9 @@ class FarBoxBucketSyncWorker(object):
                 synced = True
                 # at last, mark status as synced
                 after_sync_deleted(filepath_to_delete, root=self.root, app_name=self.app_name_for_sync)
+
+                if settings.DEBUG:
+                    print("sync_deleted %s" % filepath_to_delete)
 
         # files on server, but no in local side, clean the configs_for_files
         # should run after self.sync_for_updated_files, to get self.files_info_on_server

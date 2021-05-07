@@ -49,7 +49,7 @@ def send_email_by_ses(from_address, to_address,  content, ses_id, ses_key, subje
         },
         Message = {
             "Subject": {
-                "Data": subject,
+                "Data": subject or "",
             },
             "Body": {
                 "Html": {
@@ -69,7 +69,7 @@ def send_email_by_ses(from_address, to_address,  content, ses_id, ses_key, subje
 
 
 
-def send_email_by_amazon(from_address, to_address, content,  ses_id, ses_key, subject=None, raw=False):
+def send_email_by_amazon(from_address, to_address, content,  ses_id, ses_key, subject="", raw=False):
     # 对 SES 的直接调用
     if not ses_id or not ses_key:
         return None

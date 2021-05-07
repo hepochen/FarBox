@@ -27,6 +27,10 @@ def is_a_hidden_path(path):
         return True
     elif re.search(r'~\.[^.]+$', path):
         return True
+    elif re.search(r"/@eaDir/", path, flags=re.I): # 群晖
+        return True
+    elif re.search(r"@SynoEAStream$", path, flags=re.I): # 群晖
+        return True
     elif path.endswith('~'):
         return True
     else:

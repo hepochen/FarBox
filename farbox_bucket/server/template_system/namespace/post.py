@@ -1,4 +1,5 @@
 # coding: utf8
+import re
 from flask import abort, request
 
 from farbox_bucket.utils import smart_unicode, to_int
@@ -46,6 +47,13 @@ class Posts(object):
         if hasattr(obj, '__iter__'):
             return obj.__iter__()
         return obj
+
+    def __getattr__(self, item):
+        # 找不到attribute的时候，会调用getattr
+        if re.match('^recent_?\d+$', item): # 获得最近的几篇文章
+            limit = re.search('\d+', item).group()
+            limit = to_int(limit)
+            return self.get_recent(limit)
 
     def get_recent(self, limit=8):
         limit = to_int(limit, 8)

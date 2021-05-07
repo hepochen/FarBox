@@ -41,7 +41,7 @@ def run_long_time(*args, **kwargs):
 
 
 
-def do_by_gevent_pool(pool_size=100, job_func=None, loop_items=None, timeout=None, wait_timeout=5*60, **kwargs):
+def do_by_gevent_pool(pool_size=100, job_func=None, loop_items=None, timeout=None, wait_timeout=5*60, callback_func=None, **kwargs):
     if not job_func or not loop_items:
         return
     worker_pool = Pool(pool_size)
@@ -54,6 +54,9 @@ def do_by_gevent_pool(pool_size=100, job_func=None, loop_items=None, timeout=Non
         worker_pool.spawn(job_func, item, **kwargs)
     try:
         worker_pool.join(timeout=timeout)
+        if callback_func and hasattr(callback_func, "__call__"):
+            try:callback_func()
+            except: pass
         return True # 表示处理完成
     except:
         return False

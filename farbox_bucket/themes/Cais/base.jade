@@ -19,7 +19,8 @@ html
 
 		.sidebar: .sidebar_body
 		    nav_data = (['首页', '/'], ['归档', '/archive'],['订阅', '/feed'])
-			+h.get_nav(nav_data, load_front_sources=False)
+			//+h.get_nav(nav_data, load_front_sources=False)
+			+site.just_nav
 
 		.header
 			.logo_title

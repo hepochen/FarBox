@@ -29,7 +29,7 @@ def get_meta_value(key, metadata=None, default=None):
 
 
 
-def get_file_timestamp(relative_path=None, metadata=None, abs_filepath=None):
+def get_file_timestamp(relative_path=None, metadata=None, abs_filepath=None, utc_offset=None):
     # 主要是获取 post 的date信息
     # relative_path 是相对于 root 的 path
     if abs_filepath and not metadata:
@@ -57,7 +57,7 @@ def get_file_timestamp(relative_path=None, metadata=None, abs_filepath=None):
                 part1, part2 = name_from_path.split(' ', 1)
                 try:
                     s = '%s %s' % (part1, part2.replace('-', ':'))
-                    date = utc_date_parse(s)
+                    date = utc_date_parse(s, utc_offset=utc_offset)
                     return date
                 except:
                     pass
@@ -65,7 +65,7 @@ def get_file_timestamp(relative_path=None, metadata=None, abs_filepath=None):
             date_search = re.search('/?([123]\d{3}-\d{1,2}-\d{1,2})[^/]*', relative_path)
             if date_search: # 可以从文件的路径中取， 兼容jekyll
                 date_s = date_search.groups()[0]
-        date = utc_date_parse(date_s)
+        date = utc_date_parse(date_s, utc_offset=utc_offset)
     except (ValueError, TypeError):
         return time.time()
     timestamp = date_to_timestamp(date)
